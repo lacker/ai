@@ -1,5 +1,9 @@
 *.py[cod]
 
+# Emacs stuff
+*~
+.#*
+
 # C extensions
 *.so
 
