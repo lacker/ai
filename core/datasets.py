@@ -1,11 +1,20 @@
 #!/usr/bin/python
+"""
+In theory this could run in on a GPU but it does not because I have
+not had enough GPU memory to test.
+"""
 
 import cPickle
 import gzip
 import numpy
 import os
 import theano
+import theano.sandbox.cuda as cuda
+import theano.tensor as T
 import urllib
+ 
+print "%.1fMB free GPU memory" % (cuda.mem_info()[0] / (2.0 ** 20))
+
 
 # Contains pickled Theano data for digit recognition
 MNIST = "http://www.iro.umontreal.ca/~lisa/deep/data/mnist/mnist.pkl.gz"
@@ -39,7 +48,7 @@ the GPU.
 Don't mutate the return value.
 """
 def make_int_shared(data):
-  assert data.dtype == "int32"
+  assert str(data.dtype).startswith("int")
   float_data = numpy.asarray(data, dtype=theano.config.floatX)
   shared = theano.shared(float_data, borrow=True)
   return T.cast(shared, "int32")
@@ -72,5 +81,4 @@ def mnist():
   s_test_output = make_int_shared(test_output)
 
 if __name__ == "__main__":
-  # See if we can load the data into the GPU
   mnist()
