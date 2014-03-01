@@ -1,7 +1,6 @@
 #!/usr/bin/python
 """
-In theory this could run in on a GPU but it does not because I have
-not had enough GPU memory to test.
+This does manage to store data on the GPU.
 """
 
 import cPickle
