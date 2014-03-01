@@ -61,12 +61,16 @@ def mnist():
    (check_input, check_output),
    (test_input, test_output)) = unshared_mnist()
 
-  print "mapping training data"
+  print "copying training data to GPU"
   s_train_input = make_shared(train_input)
   s_train_output = make_int_shared(train_output)
-  print "mapping validation data"
+  print "copying validation data to GPU"
   s_check_input = make_shared(check_input)
   s_check_output = make_int_shared(check_output)
-  print "mapping testing data"
+  print "copying testing data to GPU"
   s_test_input = make_shared(test_input)
   s_test_output = make_int_shared(test_output)
+
+if __name__ == "__main__":
+  # See if we can load the data into the GPU
+  mnist()
