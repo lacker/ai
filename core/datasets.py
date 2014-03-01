@@ -1,8 +1,11 @@
 #!/usr/bin/python
 
+import cPickle
+import gzip
 import os
 import urllib
 
+# Contains pickled Theano data for digit recognition
 MNIST = "http://www.iro.umontreal.ca/~lisa/deep/data/mnist/mnist.pkl.gz"
 
 """
@@ -16,4 +19,12 @@ def data_path(source):
     print "Downloading data from " + source
     urllib.urlretrieve(source, answer)
   return answer
-  
+
+"""
+Returns the MNIST image processing data
+"""
+def mnist():
+  f = gzip.open(data_path(MNIST), 'rb')
+  train, valid, test = cPickle.load(f)
+  f.close()
+  return train, valid, test
