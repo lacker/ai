@@ -78,6 +78,10 @@ def mnist():
   print "copying testing data to GPU"
   s_test_input = make_shared(test_input)
   s_test_output = make_int_shared(test_output)
+  return ((s_train_input, s_train_output),
+          (s_check_input, s_check_output),
+          (s_test_input, s_test_output))
+
 
 if __name__ == "__main__":
   mnist()
