@@ -31,18 +31,21 @@ class LinearClassifier(object):
     self.b = theano.shared(value=init_b, name="b")
 
     # x will be provided anew for each batch to train, so we can leave
-    # it symbolic. It should have dimension batch size * input dimension
+    # it symbolic. It should have shape: batch size * input dimension
     self.x = T.matrix("x")
 
     # Predict categories with a linear transform plus max. The softmax
     # is just for the purposes of gradient descent.
+    # y is a matrix with shape: batch size * num categories
     self.y = T.dot(self.x, self.W) + self.b
 
     # y_prob is the probability predicted for each category
+    # y_prob is a matrix with shape: batch size * num categories
     self.y_prob = T.nnet.softmax(self.y)
 
-    # y_pred is a 1 in the predicted category, 0 in others
-    self.y_pred = T.argmax(self.y_prob, axis=1)
+    # predictions is which category is the most predicted.
+    # predictions is a vector with shape: batch size
+    self.predictions = T.argmax(self.y_prob, axis=1)
 
   """
   A formula for the loss function which we are trying to minimize,
@@ -59,6 +62,18 @@ class LinearClassifier(object):
     target_log_probs = log_probs[T.arange(target.shape[0]), target]
     return -T.mean(target_log_probs)
     
+  """
+  A formula for the error rate in classification, given the target
+  correct classification.
+  The target should be an array of length batch size, since each
+  member of the batch has one correct classification.
+  """
+  def errors(self, target):
+    assert target.ndim == self.predictions.ndim
+    assert target.dtype.startswith("int")
+    return T.mean(T.neq(target, self.predictions))
+    
+
     
 if __name__ == "__main__":
   # Run logistic regression on MNIST images
