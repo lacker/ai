@@ -3,7 +3,9 @@
 # TODO: figure out path relativity
 import datasets
 
+import numpy
 import theano
+import theano.tensor as T
 
 """
 The formula to categorize an input vector 'x' is
@@ -47,4 +49,4 @@ class LinearClassifier(object):
 if __name__ == "__main__":
   # Run logistic regression on MNIST images
   batch_size = 600
-  classifier = LinearClassifier(batch_size, 28 * 28, 10)
+  classifier = LinearClassifier(28 * 28, 10)
