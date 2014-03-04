@@ -66,20 +66,20 @@ Returns the MNIST image processing data in shared memory.
 """
 def mnist():
   ((train_input, train_output),
-   (check_input, check_output),
+   (valid_input, valid_output),
    (test_input, test_output)) = unshared_mnist()
 
   # print "copying training data to GPU"
   s_train_input = make_shared(train_input)
   s_train_output = make_int_shared(train_output)
   # print "copying validation data to GPU"
-  s_check_input = make_shared(check_input)
-  s_check_output = make_int_shared(check_output)
+  s_valid_input = make_shared(valid_input)
+  s_valid_output = make_int_shared(valid_output)
   # print "copying testing data to GPU"
   s_test_input = make_shared(test_input)
   s_test_output = make_int_shared(test_output)
   return ((s_train_input, s_train_output),
-          (s_check_input, s_check_output),
+          (s_valid_input, s_valid_output),
           (s_test_input, s_test_output))
 
 

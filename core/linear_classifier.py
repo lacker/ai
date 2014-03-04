@@ -74,8 +74,38 @@ class LinearClassifier(object):
     return T.mean(T.neq(target, self.predictions))
     
 
+"""
+A helper to break matrices of shared data into batches.
+If the data doesn't slice evenly into batches, this just drops the
+data at the end that doesn't fit into a batch.
+Slices along the first dimension.
+"""
+class Batcher(object):
+  def __init__(self, batch_size, data):
+    self.batch_size = batch_size
+    self.data = data
+
+    # Rounds down to not include non-full batches.
+    self.num_batches = (self.data.get_value(borrow=True).shape[0] /
+                        self.batch_size)
+
+  """
+  Returns a tensor variable containing the indexth batch of data.
+  """
+  def batch(self, index):
+    assert index < self.num_batches
+    return self.data[index * self.num_batches:
+                     (index + 1) * self.num_batches]
+
     
 if __name__ == "__main__":
   # Run logistic regression on MNIST images
+  # Hyperparameters
   batch_size = 600
+  learning_rate = 0.13 
+
+  ((train_input, train_output),
+   (valid_input, valid_output),
+   (test_input, test_output)) = datasets.mnist()
+
   classifier = LinearClassifier(28 * 28, 10)
