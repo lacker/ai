@@ -56,7 +56,7 @@ def make_int_shared(data):
 Returns the MNIST image processing data in normal arrays.
 """
 def unshared_mnist():
-  f = gzip.open(data_path(MNIST), 'rb')
+  f = gzip.open(data_path(MNIST), "rb")
   answer = cPickle.load(f)
   f.close()
   return answer

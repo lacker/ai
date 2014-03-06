@@ -19,7 +19,7 @@ We use logistic regression treating the classification step as a
 softmax to train this classifier.
 """
 class LinearClassifier(object):
-  def __init__(self, input_dimension, num_categories):
+  def __init__(self, x, input_dimension, num_categories):
     # W and b are the parameters we need to learn.
     # We just initialize them with zeros; we don't need to
     # break symmetry because there are no hidden units.
@@ -30,18 +30,17 @@ class LinearClassifier(object):
                          dtype=theano.config.floatX)
     self.b = theano.shared(value=init_b, name="b")
 
-    # x will be provided anew for each batch to train, so we can leave
-    # it symbolic. It should have shape: batch size * input dimension
-    self.x = T.matrix("x")
+    # Tensor variable for input
+    self.x = x
 
     # Predict categories with a linear transform plus max. The softmax
     # is just for the purposes of gradient descent.
     # y is a matrix with shape: batch size * num categories
-    self.y = T.dot(self.x, self.W) + self.b
+    self.y_calculated = T.dot(self.x, self.W) + self.b
 
     # y_prob is the probability predicted for each category
     # y_prob is a matrix with shape: batch size * num categories
-    self.y_prob = T.nnet.softmax(self.y)
+    self.y_prob = T.nnet.softmax(self.y_calculated)
 
     # predictions is which category is the most predicted.
     # predictions is a vector with shape: batch size
@@ -68,7 +67,7 @@ class LinearClassifier(object):
   The target should be an array of length batch size, since each
   member of the batch has one correct classification.
   """
-  def errors(self, target):
+  def error_rate(self, target):
     assert target.ndim == self.predictions.ndim
     assert target.dtype.startswith("int")
     return T.mean(T.neq(target, self.predictions))
@@ -76,36 +75,62 @@ class LinearClassifier(object):
 
 """
 A helper to break matrices of shared data into batches.
-If the data doesn't slice evenly into batches, this just drops the
-data at the end that doesn't fit into a batch.
 Slices along the first dimension.
+This does not bounds-check because it is surprisingly difficult to get
+the size of tensor variables in general.
 """
 class Batcher(object):
   def __init__(self, batch_size, data):
     self.batch_size = batch_size
     self.data = data
 
-    # Rounds down to not include non-full batches.
-    self.num_batches = (self.data.get_value(borrow=True).shape[0] /
-                        self.batch_size)
-
   """
   Returns a tensor variable containing the indexth batch of data.
   """
   def batch(self, index):
-    assert index < self.num_batches
-    return self.data[index * self.num_batches:
-                     (index + 1) * self.num_batches]
+    return self.data[index * self.batch_size:
+                     (index + 1) * self.batch_size]
 
     
 if __name__ == "__main__":
   # Run logistic regression on MNIST images
   # Hyperparameters
-  batch_size = 600
+  batch_size = 500
   learning_rate = 0.13 
 
   ((train_input, train_output),
    (valid_input, valid_output),
    (test_input, test_output)) = datasets.mnist()
 
-  classifier = LinearClassifier(28 * 28, 10)
+  # We need some symbolic values for the algorithm.
+  # It seems like ideally these would be part of the LinearClassifier
+  # and would not be exposed.
+  index = T.lscalar()
+  x = T.matrix("x")
+  y = T.ivector("y")
+
+  classifier = LinearClassifier(x, 28 * 28, 10)
+  
+  # Minimize this function during training
+  cost = classifier.negative_log_likelihood(y)
+
+  # Create symbolic methods to calculate error rate on test and
+  # validation data
+  test_input_batcher = Batcher(batch_size, test_input)
+  test_output_batcher = Batcher(batch_size, test_output)
+  test_error_rate = theano.function(
+    inputs=[index],
+    outputs=classifier.error_rate(y),
+    givens={
+      x: test_input_batcher.batch(index),
+      y: test_output_batcher.batch(index)})
+  valid_input_batcher = Batcher(batch_size, valid_input)
+  valid_output_batcher = Batcher(batch_size, valid_output)
+  valid_error_rate = theano.function(
+    inputs=[index],
+    outputs=classifier.error_rate(y),
+    givens={
+      x: valid_input_batcher.batch(index),
+      y: valid_output_batcher.batch(index)})
+  
+  
