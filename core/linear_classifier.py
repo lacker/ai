@@ -67,30 +67,58 @@ class LinearClassifier(object):
   The target should be an array of length batch size, since each
   member of the batch has one correct classification.
   """
-  def error_rate(self, target):
+  def batch_error_rate(self, target):
     assert target.ndim == self.predictions.ndim
     assert target.dtype.startswith("int")
     return T.mean(T.neq(target, self.predictions))
+
+  """
+  Creates a function to calculate error rate on a dataset for a
+  particular batch index.
+  """
+  def batch_error_rate_function(self, dataset):
+    index = T.lscalar()
+    y = T.ivector("y")
+    return theano.function(
+      inputs=[index],
+      outputs=classifier.batch_error_rate(y),
+      givens={
+        self.x: dataset.input_batch(index),
+        y: dataset.output_batch(index)})
+
+  """
+  Compile a function to calculate the error rate over a whole dataset.
+  This goes batch-by-batch to save GPU memory.
+  """
+  def error_rate_function(self, dataset):
+    f = self.batch_error_rate_function(dataset)
+    n = dataset.num_batches
+    return lambda: numpy.mean(map(f, range(n)))
+
     
-
 """
-A helper to break matrices of shared data into batches.
-Slices along the first dimension.
-This does not bounds-check because it is surprisingly difficult to get
-the size of tensor variables in general.
+A helper to analyze an input/output dataset pair.
 """
-class Batcher(object):
-  def __init__(self, batch_size, data):
+class Dataset(object):
+  def __init__(self, input_set, output_set, batch_size):
+    self.input_set = input_set
+    self.output_set = output_set
     self.batch_size = batch_size
-    self.data = data
+    self.num_batches = (input_set.get_value(borrow=True).shape[0] /
+                        batch_size)
 
-  """
-  Returns a tensor variable containing the indexth batch of data.
-  """
-  def batch(self, index):
-    return self.data[index * self.batch_size:
-                     (index + 1) * self.batch_size]
-
+  def input_batch(self, index):
+    # Can't run this because index will be a tensor variable
+    # assert index < self.num_batches
+    return self.input_set[index * self.batch_size:
+                          (index + 1) * self.batch_size]
+    
+  def output_batch(self, index):
+    # Can't run this because index will be a tensor variable
+    # assert index < self.num_batches
+    return self.output_set[index * self.batch_size:
+                          (index + 1) * self.batch_size]
+    
     
 if __name__ == "__main__":
   # Run logistic regression on MNIST images
@@ -101,11 +129,14 @@ if __name__ == "__main__":
   ((train_input, train_output),
    (valid_input, valid_output),
    (test_input, test_output)) = datasets.mnist()
-
+  training = Dataset(train_input, train_output, batch_size)
+  validation = Dataset(valid_input, valid_output, batch_size)
+  testing = Dataset(test_input, test_output, batch_size)
+  
   # We need some symbolic values for the algorithm.
-  # It seems like ideally these would be part of the LinearClassifier
-  # and would not be exposed.
-  index = T.lscalar()
+  # TODO: put a lot more of this logic into the LinearClassifier
+  # itself. It doesn't really make sense to include arbitrary tensor
+  # variables out here.
   x = T.matrix("x")
   y = T.ivector("y")
 
@@ -114,23 +145,35 @@ if __name__ == "__main__":
   # Minimize this function during training
   cost = classifier.negative_log_likelihood(y)
 
-  # Create symbolic methods to calculate error rate on test and
-  # validation data
-  test_input_batcher = Batcher(batch_size, test_input)
-  test_output_batcher = Batcher(batch_size, test_output)
-  test_error_rate = theano.function(
+  # Find the gradients for cost relative to the shared parameters
+  W_gradient = T.grad(cost=cost, wrt=classifier.W)
+  b_gradient = T.grad(cost=cost, wrt=classifier.b)
+
+  # Update with gradient descent
+  updates = [(classifier.W, classifier.W - learning_rate * W_gradient),
+             (classifier.b, classifier.b - learning_rate * b_gradient)]
+
+  # Compile a method to train one step of training
+  index = T.lscalar()
+  train = theano.function(
     inputs=[index],
-    outputs=classifier.error_rate(y),
+    outputs=cost,
+    updates=updates,
     givens={
-      x: test_input_batcher.batch(index),
-      y: test_output_batcher.batch(index)})
-  valid_input_batcher = Batcher(batch_size, valid_input)
-  valid_output_batcher = Batcher(batch_size, valid_output)
-  valid_error_rate = theano.function(
-    inputs=[index],
-    outputs=classifier.error_rate(y),
-    givens={
-      x: valid_input_batcher.batch(index),
-      y: valid_output_batcher.batch(index)})
-  
+      x: training.input_batch(index),
+      y: training.output_batch(index)})
+
+  runs = 100
+  validator = classifier.error_rate_function(validation)
+  tester = classifier.error_rate_function(testing)
+  for run in range(runs):
+    print "training pass", run
+    for batch_index in range(training.num_batches):
+      c = train(batch_index)
+      if batch_index % 20 == 0:
+        print "training on batch", batch_index, "had cost", c
+    if run % 10 == 9:
+      print "validation error rate:", validator()
+  print "testing error rate:", tester()
+      
   
