@@ -10,19 +10,27 @@ import datasets
 import cPickle
 import numpy
 import os
+import PIL.Image as Image
 import theano
 import theano.tensor as T
 
 """
-Turns an array into a picture of a digit.
+Turns an array into a picture of a digit and display it.
 """
-def save_png(arr, name="image"):
-  pass
+def show(arr):
+  image = Image.new("RGB", (28, 28))
+  pixels = image.load()
+  matrix = arr.reshape(28, 28)
+  for x in range(28):
+    for y in range(28):
+      val = int(matrix.T[x][y] * 256)
+      pixels[x, y] = (val, val, val)
+  image.show()
 
 """
 Turns a picture of a digit into an array.
 """
-def load_png(name="image"):
+def load_pic(name="image"):
   pass
 
 """
@@ -151,7 +159,7 @@ class Dataset(object):
     
 
 """
-Pickles a classifier into the data directory.
+Pickles an object into the data directory.
 """
 def save(obj, name):
   path = os.path.abspath(os.path.expanduser("~/data/" + name + ".pkl"))
@@ -160,9 +168,9 @@ def save(obj, name):
   f.close()
 
 """
-Loads a classifier saved with 'save'.
+Loads something saved with 'save'.
 LinearClassifier might have to be imported in the current scope for
-this to work, depending on how it was saved. Sorry.
+this to work for classifiers, depending on how it was saved. Sorry.
 """
 def load(name="digits"):
   path = os.path.abspath(os.path.expanduser("~/data/" + name + ".pkl"))
