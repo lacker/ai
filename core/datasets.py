@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python -i
 """
 This does manage to store data on the GPU.
 """

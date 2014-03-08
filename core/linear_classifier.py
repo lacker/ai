@@ -1,11 +1,29 @@
-#!/usr/bin/python
+#!/usr/bin/python -i
+"""
+This has some linear-classifier-specific stuff and some
+digit-image-specific stuff.
+"""
 
 # TODO: figure out path relativity
 import datasets
 
+import cPickle
 import numpy
+import os
 import theano
 import theano.tensor as T
+
+"""
+Turns an array into a picture of a digit.
+"""
+def save_png(arr, name="image"):
+  pass
+
+"""
+Turns a picture of a digit into an array.
+"""
+def load_png(name="image"):
+  pass
 
 """
 The formula to categorize an input vector 'x' is
@@ -31,6 +49,7 @@ class LinearClassifier(object):
     self.b = theano.shared(value=init_b, name="b")
 
     # Tensor variable for input
+    # x needs dimension batch size * input dimension
     self.x = x
 
     # Predict categories with a linear transform plus max. The softmax
@@ -46,6 +65,17 @@ class LinearClassifier(object):
     # predictions is a vector with shape: batch size
     self.predictions = T.argmax(self.y_prob, axis=1)
 
+    
+  """
+  Compiles a function to predict the category of a single vector input.
+  """
+  def predictor(self):
+    matrix_predictor = theano.function(
+      inputs=[self.x],
+      outputs=self.predictions)
+    return lambda v: matrix_predictor(v.reshape(1, -1))[0]
+    
+    
   """
   A formula for the loss function which we are trying to minimize,
   given the target correct classification.
@@ -119,8 +149,33 @@ class Dataset(object):
     return self.output_set[index * self.batch_size:
                           (index + 1) * self.batch_size]
     
-    
-if __name__ == "__main__":
+
+"""
+Pickles a classifier into the data directory.
+"""
+def save(obj, name):
+  path = os.path.abspath(os.path.expanduser("~/data/" + name + ".pkl"))
+  f = open(path, "w")
+  cPickle.dump(obj, f)
+  f.close()
+
+"""
+Loads a classifier saved with 'save'.
+LinearClassifier might have to be imported in the current scope for
+this to work, depending on how it was saved. Sorry.
+"""
+def load(name="digits"):
+  path = os.path.abspath(os.path.expanduser("~/data/" + name + ".pkl"))
+  f = open(path)
+  answer = cPickle.load(f)
+  f.close()
+  return answer
+  
+
+"""
+Trains a classifier, saves it to "digits", and returns it.
+"""
+def do_training():
   # Run logistic regression on MNIST images
   # Hyperparameters
   batch_size = 500
@@ -170,10 +225,14 @@ if __name__ == "__main__":
     print "training pass", run
     for batch_index in range(training.num_batches):
       c = train(batch_index)
-      if batch_index % 20 == 0:
+      if batch_index == 0:
         print "training on batch", batch_index, "had cost", c
     if run % 10 == 9:
       print "validation error rate:", validator()
   print "testing error rate:", tester()
       
-  
+  save(classifier, "digits")
+
+
+if __name__ == "__main__":
+  raise Exception("entering interpreter")
