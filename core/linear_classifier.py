@@ -30,9 +30,18 @@ def show(arr):
 """
 Turns a picture of a digit into an array.
 """
-def load_pic(name="image"):
-  pass
+def load_pic(name="test"):
+  image = Image.open(os.path.expanduser("~/data/%s.png" % name))
+  image = image.resize((28, 28), Image.ANTIALIAS)
+  pixels = image.load()
+  matrix = numpy.zeros((28, 28), dtype="float32")
+  for x in range(28):
+    for y in range(28):
+      val = pixels[x, y][0] / 256.0
+      matrix[x][y] = val
+  return matrix.T.reshape(-1)
 
+  
 """
 The formula to categorize an input vector 'x' is
 
