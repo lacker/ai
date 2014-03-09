@@ -3,7 +3,7 @@
 Some hex-playing strategies.
 """
 
-import core.hex.board.Board as Board
+from hex.board import Board
 import random
 
 "Picks a move at random."
