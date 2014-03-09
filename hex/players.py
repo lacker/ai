@@ -3,9 +3,12 @@
 Some hex-playing strategies.
 """
 
+from collections import defaultdict
+import random
+
 from hex import board
 from hex import viewer
-import random
+
 
 "Picks a move at random."
 def rand(b):
@@ -17,7 +20,25 @@ I.e., in random playouts, picks the cell that is most likely to
 correspond to the winning side.
 """
 def montecarlo(b):
-  pass
+  scores = defaultdict(int)
+  empty = b.empty_spots()
+
+  for n in range(50):
+    random.shuffle(empty)
+    copy = b.copy()
+    for spot in empty:
+      copy.move(spot, check_for_winner=False)
+    winner = copy.winner()
+    for i, j in empty:
+      if copy.board[i][j] == winner:
+        scores[(i, j)] += 1
+
+  print scores
+        
+  score, spot = max((sc, sp) for (sp, sc) in scores.iteritems())
+  print "best score: %d at %s" % (score, spot)
+  return spot
+
   
 """
 Treats a human's clicks as playing for this color whenever it is the
@@ -45,8 +66,8 @@ if __name__ == "__main__":
   b = board.Board()
   v = viewer.Viewer(b)
 
-  # Make the human play vs rand
-  make_computer(rand, board.BLACK, b)
+  # Make the human play vs a computer
+  make_computer(montecarlo, board.BLACK, b)
   make_human(v, board.WHITE, b)
 
   b.move((1, 1))
