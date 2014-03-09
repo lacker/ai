@@ -7,6 +7,9 @@ BLACK = -1
 WHITE = 1
 EMPTY = 0
 
+def color_name(color):
+  return ["Black", "Empty", "White"][color + 1]
+
 class Board(object):
   def __init__(self, size=11):
     self.size = size
@@ -48,7 +51,7 @@ class Board(object):
 
   "Returns the empty spots."
   def empty_spots(self):
-    return [(i, j) for i in range(size) for j in range(size)
+    return [(i, j) for i in range(self.size) for j in range(self.size)
             if self.board[i][j] == EMPTY]
 
   "Adds a listener to get triggered whenever a move is made."
@@ -70,6 +73,11 @@ class Board(object):
     self.to_move = -self.to_move
     for f in self.listeners:
       f()
+
+    winner = self.winner()
+    if winner != EMPTY:
+      self.to_move = EMPTY
+      print color_name(winner), "wins!"
     return True
 
   "Return whether black has won the game."
@@ -100,7 +108,7 @@ class Board(object):
         new_spot = (a, b)
         if new_spot in checked:
           continue
-        if b == size - 1:
+        if b == self.size - 1:
           return True
         active.add(new_spot)
 
