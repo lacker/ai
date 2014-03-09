@@ -5,7 +5,7 @@ digit-image-specific stuff.
 """
 
 # TODO: figure out path relativity
-import datasets
+import core.datasets as datasets
 
 import cPickle
 import numpy
