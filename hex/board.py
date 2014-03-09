@@ -32,6 +32,8 @@ class Board(object):
     # Let's say black goes first
     self.to_move = BLACK
 
+    self.listeners = []
+
     
   """
   Constructs a new board that exchanges the role of black and white.
@@ -44,7 +46,19 @@ class Board(object):
         new_board.board[i][j] = -self.board[j][i]
     return new_board
 
-  "Makes a move. Returns whether that move was valid."
+  "Returns the empty spots."
+  def empty_spots(self):
+    return [(i, j) for i in range(size) for j in range(size)
+            if self.board[i][j] == EMPTY]
+
+  "Adds a listener to get triggered whenever a move is made."
+  def add_listener(self, listener):
+    self.listeners.append(listener)
+    
+  """
+  Makes a move. Returns whether that move was valid.
+  If the move was valid, triggers listeners.
+  """
   def move(self, spot):
     i, j = spot
     if i < 0 or i >= self.size or j < 0 or j >= self.size:
@@ -54,6 +68,8 @@ class Board(object):
       return False
     self.board[i][j] = self.to_move
     self.to_move = -self.to_move
+    for f in self.listeners:
+      f()
     return True
 
   "Return whether black has won the game."
