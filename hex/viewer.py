@@ -25,6 +25,7 @@ class Viewer(object):
     self.listeners.append(listener)
   
   def redraw(self):
+    print "redrawing"
     i_x = 40
     i_y = 0
     j_x = 20
@@ -38,7 +39,8 @@ class Viewer(object):
         def onclick(event, a=i, b=j):
           self.click(a, b)
         self.canvas.tag_bind(item_id, "<ButtonPress-1>", onclick)
-
+    self.root.update_idletasks()
+        
   def click(self, i, j):
     # print "clicked", i, j
     for f in self.listeners:

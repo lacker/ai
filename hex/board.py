@@ -81,8 +81,6 @@ class Board(object):
       return False
     self.board[i][j] = self.to_move
     self.to_move = -self.to_move
-    for f in self.listeners:
-      f()
 
     if check_for_winner:
       winner = self.winner()
@@ -90,6 +88,9 @@ class Board(object):
         self.to_move = EMPTY
         print color_name(winner), "wins!"
 
+    for f in self.listeners:
+      f()
+        
     return True
 
   "Return whether black has won the game."
