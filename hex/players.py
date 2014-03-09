@@ -12,6 +12,14 @@ def rand(b):
   return random.choice(b.empty_spots())
 
 """
+Does treeless RAVE algorithm.
+I.e., in random playouts, picks the cell that is most likely to
+correspond to the winning side.
+"""
+def montecarlo(b):
+  pass
+  
+"""
 Treats a human's clicks as playing for this color whenever it is the
 appropriate turn.
 """

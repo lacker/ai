@@ -39,16 +39,26 @@ class Board(object):
 
     
   """
-  Constructs a new board that exchanges the role of black and white.
+  Copies the board. If transpose, transposes to replace black and white.
   """
-  def transpose(self):
+  def copy(self, transpose=False):
     new_board = Board(self.size)
-    new_board.to_move = -self.to_move
+    if transpose:
+      new_board.to_move = -self.to_move
+    else:
+      new_board.to_move = self.to_move
     for i in range(self.size):
       for j in range(self.size):
-        new_board.board[i][j] = -self.board[j][i]
+        if transpose:
+          new_board.board[i][j] = -self.board[j][i]
+        else:
+          new_board.board[i][j] = self.board[i][j]
     return new_board
 
+  "Shortcut for copying with transpose=True."
+  def transpose(self):
+    return self.copy(transpose=True)
+    
   "Returns the empty spots."
   def empty_spots(self):
     return [(i, j) for i in range(self.size) for j in range(self.size)
@@ -62,7 +72,7 @@ class Board(object):
   Makes a move. Returns whether that move was valid.
   If the move was valid, triggers listeners.
   """
-  def move(self, spot):
+  def move(self, spot, check_for_winner=True):
     i, j = spot
     if i < 0 or i >= self.size or j < 0 or j >= self.size:
       return False
@@ -74,10 +84,12 @@ class Board(object):
     for f in self.listeners:
       f()
 
-    winner = self.winner()
-    if winner != EMPTY:
-      self.to_move = EMPTY
-      print color_name(winner), "wins!"
+    if check_for_winner:
+      winner = self.winner()
+      if winner != EMPTY:
+        self.to_move = EMPTY
+        print color_name(winner), "wins!"
+
     return True
 
   "Return whether black has won the game."
