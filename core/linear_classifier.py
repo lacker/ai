@@ -1,4 +1,4 @@
-#!/usr/bin/python -i
+#!/usr/bin/python
 """
 This has some linear-classifier-specific stuff and some
 digit-image-specific stuff.
@@ -128,7 +128,7 @@ class LinearClassifier(object):
     y = T.ivector("y")
     return theano.function(
       inputs=[index],
-      outputs=classifier.batch_error_rate(y),
+      outputs=self.batch_error_rate(y),
       givens={
         self.x: dataset.input_batch(index),
         y: dataset.output_batch(index)})
@@ -181,7 +181,7 @@ Loads something saved with 'save'.
 LinearClassifier might have to be imported in the current scope for
 this to work for classifiers, depending on how it was saved. Sorry.
 """
-def load(name="digits"):
+def load(name):
   path = os.path.abspath(os.path.expanduser("~/data/" + name + ".pkl"))
   f = open(path)
   answer = cPickle.load(f)
@@ -249,7 +249,18 @@ def do_training():
   print "testing error rate:", tester()
       
   save(classifier, "digits")
-
+  return classifier
+  
 
 if __name__ == "__main__":
-  raise Exception("entering interpreter")
+  # To train anew
+  c = do_training()
+  print "that should have gotten to ~ cost 0.23535"
+  
+  # To check against the old data
+  # c = load("digits-old")
+
+  pred = c.predictor()
+  print "loading a four to test..."
+  pic = load_pic("four")
+  print "looks like a", pred(pic)
