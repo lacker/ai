@@ -1,10 +1,12 @@
-#!/usr/bin/python -i
+#!/usr/bin/python
 """
 Some hex-playing strategies.
 """
 
 from collections import defaultdict
+import os
 import random
+import sys
 import time
 
 from hex import board
@@ -75,7 +77,7 @@ def shallow_tree(b):
   record = {}
 
   # Run the playouts
-  playouts = 2000
+  playouts = 500
   for n in range(playouts):
     random.shuffle(empty)
     copy = b.copy()
@@ -137,8 +139,38 @@ def make_computer(f, color, b):
     if b.to_move == color:
       b.move(f(b))
   b.add_listener(play_if_my_turn)
+
+
+"""
+Runs a sample game starting with a random move.
+Must run two computers.
+Returns the board.
+"""
+def sample_game(white_player, black_player):
+  b = board.Board()
+  make_computer(black_player, board.BLACK, b)
+  make_computer(white_player, board.WHITE, b)
+  b.move((random.randint(0, 10), random.randint(0, 10)))
+  return b
+
+"""
+Saves a game history to a csv file. Appends it.
+"""
+def save_history(b, filename="games.csv"):
+  encoded = ",".join(["%d-%d" % spot for spot in b.history])
+  f = open(os.path.expanduser("~/data/" + filename), "a")
+  f.write(encoded + "\n")
+  f.close()
+  
   
 if __name__ == "__main__":
+  if True:
+    # Run a game that we don't watch
+    b = sample_game(shallow_tree, shallow_tree)
+    save_history(b)
+    sys.exit(0)
+  
+  # Run a game that we watch
   b = board.Board()
   v = viewer.Viewer(b)
 

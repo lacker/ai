@@ -35,11 +35,16 @@ class Board(object):
     # Let's say black goes first
     self.to_move = BLACK
 
+    # Track move history
+    self.history = []
+    
     self.listeners = []
 
     
   """
-  Copies the board. If transpose, transposes to replace black and white.
+  Copies the board. If transpose, transposes to replace black and
+  white.
+  Does not copy the move history.
   """
   def copy(self, transpose=False):
     new_board = Board(self.size)
@@ -88,6 +93,8 @@ class Board(object):
         self.to_move = EMPTY
         print color_name(winner), "wins!"
 
+    self.history.append(spot)
+        
     for f in self.listeners:
       f()
         
