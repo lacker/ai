@@ -6,6 +6,11 @@ import (
 
 const BoardSize = 11;
 
+// The Color pseudo-enum
+const Black = -1;
+const White = 1;
+const Empty = 0;
+
 /*
 The board is a grid. Each value is either BLACK, WHITE, or EMPTY.
 In the external world, spots are typically referred to with a
@@ -25,9 +30,8 @@ Black goes top to bottom; White goes left to right.
 So Black could win with a single column; White could win with a single row.
 */
 
-// TODO make a Color enum
 type Spot struct {
-	Row, Col byte
+	Row, Col int8
 }
 
 func main() {
