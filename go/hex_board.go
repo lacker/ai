@@ -31,7 +31,7 @@ So Black could win with a single column; White could win with a single row.
 */
 
 type Spot struct {
-	Row, Col int8
+	Row, Col int
 }
 
 type Board struct {
@@ -41,6 +41,18 @@ type Board struct {
 
 	// Whose move it is
 	ToMove Color
+}
+
+func (b *Board) PossibleMoves() []Spot {
+	answer := make([]Spot, 0);
+	for r, col := range b.Board {
+		for c, color := range col {
+			if color == Empty {
+				answer = append(answer, Spot{Row:r, Col:c})
+			}
+		}
+	}
+	return answer
 }
 
 func main() {
