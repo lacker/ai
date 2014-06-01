@@ -34,6 +34,15 @@ type Spot struct {
 	Row, Col int8
 }
 
+type Board struct {
+	// Contents of the board
+	// indices are Row, Col
+	Board [BoardSize][BoardSize]Color
+
+	// Whose move it is
+	ToMove Color
+}
+
 func main() {
 	fmt.Printf("sup\n");
 }
