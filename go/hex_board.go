@@ -6,10 +6,10 @@ import (
 
 const BoardSize = 11;
 
-// The Color pseudo-enum
-const Black = -1;
-const White = 1;
-const Empty = 0;
+type Color int8
+const Black Color = -1;
+const White Color = 1;
+const Empty Color = 0;
 
 /*
 The board is a grid. Each value is either BLACK, WHITE, or EMPTY.
