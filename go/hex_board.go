@@ -47,6 +47,14 @@ func NewBoard() Board {
 	return Board{ToMove: Black}
 }
 
+func (b *Board) Get(spot Spot) Color {
+	return b.Board[spot.Row][spot.Col];
+}
+
+func (b *Board) Set(spot Spot, color Color) {
+	b.Board[spot.Row][spot.Col] = color;
+}
+
 func (b *Board) PossibleMoves() []Spot {
 	answer := make([]Spot, 0);
 	for r, col := range b.Board {
@@ -57,6 +65,19 @@ func (b *Board) PossibleMoves() []Spot {
 		}
 	}
 	return answer
+}
+
+// Returns whether it was a possible move
+func (b *Board) MakeMove(s Spot) bool {
+	if b.ToMove == Empty {
+		panic("this isn't a valid board, there is nobody to move")
+	}
+	if b.Get(s) != Empty {
+		return false
+	}
+	b.Set(s, b.ToMove)
+	b.ToMove = -b.ToMove
+	return true
 }
 
 func main() {
