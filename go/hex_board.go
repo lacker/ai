@@ -43,6 +43,10 @@ type Board struct {
 	ToMove Color
 }
 
+func NewBoard() Board {
+	return Board{ToMove: Black}
+}
+
 func (b *Board) PossibleMoves() []Spot {
 	answer := make([]Spot, 0);
 	for r, col := range b.Board {
