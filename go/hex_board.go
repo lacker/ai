@@ -4,12 +4,13 @@ import (
 	"fmt"
 )
 
-const BoardSize = 11;
+const BoardSize = 11
+const NumSpots = BoardSize * BoardSize
 
 type Color int8
-const Black Color = -1;
-const White Color = 1;
-const Empty Color = 0;
+const Black Color = -1
+const White Color = 1
+const Empty Color = 0
 
 /*
 The board is a grid. Each value is either BLACK, WHITE, or EMPTY.
@@ -32,6 +33,16 @@ So Black could win with a single column; White could win with a single row.
 
 type Spot struct {
 	Row, Col int
+}
+
+func AllSpots() [NumSpots]Spot {
+	var answer [NumSpots]Spot
+	for r := 0; r < BoardSize; r++ {
+		for c := 0; c < BoardSize; c++ {
+			answer[r * BoardSize + c] = Spot{r, c};
+		}
+	}
+	return answer
 }
 
 type Board struct {
@@ -60,7 +71,7 @@ func (b *Board) PossibleMoves() []Spot {
 	for r, col := range b.Board {
 		for c, color := range col {
 			if color == Empty {
-				answer = append(answer, Spot{Row:r, Col:c})
+				answer = append(answer, Spot{r, c})
 			}
 		}
 	}
@@ -78,6 +89,15 @@ func (b *Board) MakeMove(s Spot) bool {
 	b.Set(s, b.ToMove)
 	b.ToMove = -b.ToMove
 	return true
+}
+
+func (b *Board) Transpose() Board {
+	t := NewBoard()
+	t.ToMove = -b.ToMove
+	for _, spot := range AllSpots() {
+		t.Board[spot.Row][spot.Col] = -b.Board[spot.Col][spot.Row]
+	}
+	return t
 }
 
 func main() {
