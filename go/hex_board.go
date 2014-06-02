@@ -45,6 +45,30 @@ func AllSpots() [NumSpots]Spot {
 	return answer
 }
 
+func (s *Spot) Transpose() Spot {
+	return Spot{Row:s.Col, Col:s.Row}
+}
+
+func (s *Spot) Neighbors() []Spot {
+	answer := make([]Spot, 0)
+	possible := []Spot{
+		Spot{s.Row - 1, s.Col},
+		Spot{s.Row + 1, s.Col},
+		Spot{s.Row, s.Col - 1},
+		Spot{s.Row, s.Col + 1},
+		Spot{s.Row + 1, s.Col - 1},
+		Spot{s.Row - 1, s.Col + 1},
+	}
+	for _, spot := range possible {
+		if spot.Row < 0 || spot.Row >= BoardSize ||
+			spot.Col < 0 || spot.Col >= BoardSize {
+			continue
+		}
+		answer = append(answer, spot)
+	}
+	return answer
+}
+
 type Board struct {
 	// Contents of the board
 	// indices are Row, Col
@@ -95,9 +119,47 @@ func (b *Board) Transpose() Board {
 	t := NewBoard()
 	t.ToMove = -b.ToMove
 	for _, spot := range AllSpots() {
-		t.Board[spot.Row][spot.Col] = -b.Board[spot.Col][spot.Row]
+		t.Set(spot, -b.Get(spot.Transpose()))
 	}
 	return t
+}
+
+// Black wins if you can get from row 0 to row BoardSize - 1 with just
+// black spots.
+func (b *Board) IsBlackTheWinner() bool {
+	// Frontier is black stones we haven't investigated yet.
+	// Checked is any previously-frontier stone we already processed.
+	// Start off with the frontier of all the row-zero black stones.
+	frontier := make([]Spot, 0)
+	checked := make(map[Spot]bool)
+	for col, color := range(b.Board[0]) {
+		if color == Black {
+			frontier = append(frontier, Spot{Row:0, Col:col});
+		}
+	}
+
+	// The search loop continuously processes the frontier
+	for len(frontier) > 0 {
+		spot := frontier[0]
+		frontier = frontier[1:]
+		checked[spot] = true
+
+		// Find all the neighboring black stones
+		for _, neighbor := range spot.Neighbors() {
+			if b.Get(neighbor) != Black {
+				continue
+			}
+			if checked[neighbor] {
+				continue
+			}
+			if neighbor.Col == BoardSize - 1 {
+				return true
+			}
+			frontier = append(frontier, neighbor)
+		}
+	}
+	
+	return false
 }
 
 func main() {
