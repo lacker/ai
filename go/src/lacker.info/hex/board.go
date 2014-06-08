@@ -206,7 +206,7 @@ func testWhiteWin() {
 	}
 }
 
-func runAllTests() {
+func RunAllTests() {
 	testBlackWin()
 	testWhiteWin()
 	fmt.Printf("OK\n")
