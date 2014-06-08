@@ -1,4 +1,4 @@
-package main
+package hex
 
 import (
 	"fmt"
@@ -212,6 +212,4 @@ func runAllTests() {
 	fmt.Printf("OK\n")
 }
 
-func main() {
-	runAllTests()
-}
+
