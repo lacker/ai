@@ -6,6 +6,7 @@ Some hex-playing strategies.
 from collections import defaultdict
 import os
 import random
+import subprocess
 import sys
 import time
 
@@ -21,6 +22,17 @@ def partcrazy(b):
   if random.random() < 0.1:
     return rand(b)
   return montecarlo(b)
+
+"""
+Shells out to go to figure out what to play.
+"""
+def go_shell(b):
+  print "go_shell called"
+  fname = board.__file__ + "/../../go/src/lacker.info/play_hex.go"
+  fname = os.path.abspath(fname)
+  output = subprocess.check_output(["go", "run", fname, b.to_json()])
+  print "got:", output
+  raise "TODO: implement doing something with that output"
   
 """
 Does treeless RAVE algorithm.
@@ -176,9 +188,9 @@ if __name__ == "__main__":
   b = board.Board()
   v = viewer.Viewer(b)
 
-  make_computer(shallow_tree, board.BLACK, b)
-  # make_computer(montecarlo, board.WHITE, b)
-  
+  make_computer(go_shell, board.BLACK, b)
+
+  # make_computer(montecarlo, board.WHITE, b)  
   make_human(v, board.WHITE, b)
 
   v.root.after_idle(lambda: b.move((3, 3)))
