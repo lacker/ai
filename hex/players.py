@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python -i
 """
 Some hex-playing strategies.
 """
@@ -164,19 +164,21 @@ def save_history(b, filename="games.csv"):
   
   
 if __name__ == "__main__":
-  if True:
-    # Run a game that we don't watch
+  if False:
+    # Run a game that we don't watch.
+    # Must not be run with -i
     b = sample_game(shallow_tree, shallow_tree)
     save_history(b)
     sys.exit(0)
   
-  # Run a game that we watch
+  # Run a game that we watch.
+  # Must be run with -i
   b = board.Board()
   v = viewer.Viewer(b)
 
   make_computer(shallow_tree, board.BLACK, b)
-
   # make_computer(montecarlo, board.WHITE, b)
+  
   make_human(v, board.WHITE, b)
 
   v.root.after_idle(lambda: b.move((3, 3)))
