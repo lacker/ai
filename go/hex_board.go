@@ -78,8 +78,8 @@ type Board struct {
 	ToMove Color
 }
 
-func NewBoard() Board {
-	return Board{ToMove: Black}
+func NewBoard() *Board {
+	return &Board{ToMove: Black}
 }
 
 func (b *Board) Get(spot Spot) Color {
@@ -115,7 +115,7 @@ func (b *Board) MakeMove(s Spot) bool {
 	return true
 }
 
-func (b *Board) Transpose() Board {
+func (b *Board) Transpose() *Board {
 	t := NewBoard()
 	t.ToMove = -b.ToMove
 	for _, spot := range AllSpots() {
@@ -163,7 +163,18 @@ func (b *Board) IsBlackTheWinner() bool {
 	return false
 }
 
-func test() {
+func (b *Board) winner() Color {
+	if b.IsBlackTheWinner() {
+		return Black
+	}
+	if b.Transpose().IsBlackTheWinner() {
+		return White
+	}
+	return Empty
+}
+
+// Bunches of tests
+func testBlackWin() {
 	b := NewBoard()
 	for r := 0; r < BoardSize; r++ {
 		if r != 5 {
@@ -177,9 +188,30 @@ func test() {
 	if !b.IsBlackTheWinner() {
 		panic("black is supposed to be the winner because *, 3 is set")
 	}
+}
+
+func testWhiteWin() {
+	b := NewBoard()
+	for c := 0; c < BoardSize; c++ {
+		if c != 8 {
+			b.Set(Spot{7, c}, White)
+		}
+	}
+	if b.winner() != Empty {
+		panic("expected empty")
+	}
+	b.Set(Spot{7, 8}, White)
+	if b.winner() != White {
+		panic("expected white")
+	}
+}
+
+func runAllTests() {
+	testBlackWin()
+	testWhiteWin()
 	fmt.Printf("OK\n")
 }
 
 func main() {
-	test()
+	runAllTests()
 }
