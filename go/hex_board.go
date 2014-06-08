@@ -152,7 +152,8 @@ func (b *Board) IsBlackTheWinner() bool {
 			if checked[neighbor] {
 				continue
 			}
-			if neighbor.Col == BoardSize - 1 {
+			// fmt.Printf("processing %d, %d\n", neighbor.Row, neighbor.Col)
+			if neighbor.Row == BoardSize - 1 {
 				return true
 			}
 			frontier = append(frontier, neighbor)
@@ -162,6 +163,23 @@ func (b *Board) IsBlackTheWinner() bool {
 	return false
 }
 
+func test() {
+	b := NewBoard()
+	for r := 0; r < BoardSize; r++ {
+		if r != 5 {
+			b.Set(Spot{r, 3}, Black)
+		}
+	}
+	if b.IsBlackTheWinner() {
+		panic("black is not supposed to be the winner because 5, 3 is missing")
+	}
+	b.Set(Spot{5, 3}, Black)
+	if !b.IsBlackTheWinner() {
+		panic("black is supposed to be the winner because *, 3 is set")
+	}
+	fmt.Printf("OK\n")
+}
+
 func main() {
-	fmt.Printf("sup\n");
+	test()
 }
