@@ -179,16 +179,6 @@ func (b *Board) winner() Color {
 	return Empty
 }
 
-// The JSON encoding for boards will include both the board content
-// and whose turn it is to move.
-func ToJSON(b interface{}) string {
-	j, err := json.Marshal(b)
-	if err != nil {
-		log.Fatal("could not encode object", err)
-	}
-	return string(j[:])
-}
-
 func NewBoardFromJSON(j string) *Board {
 	b := new(Board)
 	err := json.Unmarshal([]byte(j[:]), &b)
