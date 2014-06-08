@@ -1,7 +1,7 @@
 package hex
 
 import (
-	"fmt"
+	// "fmt"
 )
 
 const BoardSize = 11
@@ -173,43 +173,6 @@ func (b *Board) winner() Color {
 	return Empty
 }
 
-// Bunches of tests
-func testBlackWin() {
-	b := NewBoard()
-	for r := 0; r < BoardSize; r++ {
-		if r != 5 {
-			b.Set(Spot{r, 3}, Black)
-		}
-	}
-	if b.IsBlackTheWinner() {
-		panic("black is not supposed to be the winner because 5, 3 is missing")
-	}
-	b.Set(Spot{5, 3}, Black)
-	if !b.IsBlackTheWinner() {
-		panic("black is supposed to be the winner because *, 3 is set")
-	}
-}
 
-func testWhiteWin() {
-	b := NewBoard()
-	for c := 0; c < BoardSize; c++ {
-		if c != 8 {
-			b.Set(Spot{7, c}, White)
-		}
-	}
-	if b.winner() != Empty {
-		panic("expected empty")
-	}
-	b.Set(Spot{7, 8}, White)
-	if b.winner() != White {
-		panic("expected white")
-	}
-}
-
-func RunAllTests() {
-	testBlackWin()
-	testWhiteWin()
-	fmt.Printf("OK\n")
-}
 
 
