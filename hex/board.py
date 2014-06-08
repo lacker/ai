@@ -3,6 +3,8 @@
 A hex board class useful for basic operations.
 """
 
+import json
+
 BLACK = -1
 WHITE = 1
 EMPTY = 0
@@ -40,6 +42,16 @@ class Board(object):
     
     self.listeners = []
 
+
+  """
+  Converts to json.
+  Uses the keys "Board" and "ToMove" for go compatibility.
+  """
+  def to_json(self):
+    return json.dumps({
+      "Board": self.board,
+      "ToMove": self.to_move,
+      })
     
   """
   Copies the board. If transpose, transposes to replace black and
