@@ -1,7 +1,7 @@
 package hex
 
 import (
-	// "fmt"
+	"fmt"
 )
 
 const BoardSize = 11
@@ -11,6 +11,10 @@ type Color int8
 const Black Color = -1
 const White Color = 1
 const Empty Color = 0
+
+func PrintInfo() {
+	fmt.Printf("Playing hex on a size-%d board.\n", BoardSize)
+}
 
 /*
 The board is a grid. Each value is either BLACK, WHITE, or EMPTY.
