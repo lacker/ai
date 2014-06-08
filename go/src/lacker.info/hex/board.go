@@ -183,7 +183,7 @@ func NewBoardFromJSON(j string) *Board {
 	b := new(Board)
 	err := json.Unmarshal([]byte(j[:]), &b)
 	if err != nil {
-		log.Fatal("got a json parsing error", err)
+		log.Fatal("NewBoardFromJSON failed: ", err)
 	}
 	return b
 }
