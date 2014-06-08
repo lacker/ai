@@ -1,7 +1,9 @@
 package hex
 
 import (
+	"encoding/json"
 	"fmt"
+	"log"
 )
 
 const BoardSize = 11
@@ -109,7 +111,7 @@ func (b *Board) PossibleMoves() []Spot {
 // Returns whether it was a possible move
 func (b *Board) MakeMove(s Spot) bool {
 	if b.ToMove == Empty {
-		panic("this isn't a valid board, there is nobody to move")
+		log.Fatal("this isn't a valid board, there is nobody to move")
 	}
 	if b.Get(s) != Empty {
 		return false
@@ -177,6 +179,23 @@ func (b *Board) winner() Color {
 	return Empty
 }
 
+// The JSON encoding for boards will include both the board content
+// and whose turn it is to move.
+func ToJSON(b interface{}) string {
+	j, err := json.Marshal(b)
+	if err != nil {
+		log.Fatal("could not encode object", err)
+	}
+	return string(j[:])
+}
 
+func NewBoardFromJSON(j string) *Board {
+	b := new(Board)
+	err := json.Unmarshal([]byte(j[:]), &b)
+	if err != nil {
+		log.Fatal("got a json parsing error", err)
+	}
+	return b
+}
 
 

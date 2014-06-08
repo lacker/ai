@@ -34,4 +34,9 @@ func TestWhiteWin(t *testing.T) {
 	if b.winner() != White {
 		t.Fatalf("expected white")
 	}
+	encoded := ToJSON(b)
+	b2 := NewBoardFromJSON(encoded)
+	if b2.winner() != White {
+		t.Fatalf("something wacky happened with encoding")
+	}
 }
