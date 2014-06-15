@@ -1,7 +1,9 @@
 package hex
 
 import (
+	"fmt"
 	"log"
+	"os"
 )
 
 /*
@@ -24,7 +26,7 @@ type ShallowRave struct {
 	NumPlayouts int
 }
 
-func (s *ShallowRave) Play(b *Board) Spot {
+func (s ShallowRave) Play(b *Board) Spot {
 	records := make(map[Spot]*WinLossRecord)
 	moves := b.PossibleMoves()
 	for _, move := range moves {
@@ -83,6 +85,8 @@ func (s *ShallowRave) Play(b *Board) Spot {
 	if bestMove.Row == -1 {
 		log.Fatal("there was no nonnegative score")
 	}
+	fmt.Fprintf(os.Stderr,
+		"%d, %d scores %.2f\n", bestMove.Row, bestMove.Col, bestScore)
 	return bestMove
 }
 

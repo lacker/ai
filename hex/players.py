@@ -25,15 +25,22 @@ def partcrazy(b):
   return montecarlo(b)
 
 """
-Shells out to go to figure out what to play.
+Constructs a go player that will shell to go with the given player type
 """
-def go_shell(b):
+def go_player(player_type):
+  return lambda b: go_shell(player_type, b)
+  
+"""
+Shells out to go to play a move.
+"""
+def go_shell(player_type, b):
   fname = board.__file__ + "/../../go/src/lacker.info/play_hex.go"
   fname = os.path.abspath(fname)
-  output = subprocess.check_output(["go", "run", fname, b.to_json()])
+  output = subprocess.check_output([
+    "go", "run", fname, player_type, b.to_json()])
   json_spot = json.loads(output)
   answer = json_spot["Row"], json_spot["Col"]
-  print "bot played", answer
+  print player_type, "played", answer
   return answer
   
 """
@@ -177,23 +184,25 @@ def save_history(b, filename="games.csv"):
   f.write(encoded + "\n")
   f.close()
   
+def make_player_by_type(viewer, color, board, player_type):
+  if player_type == "human":
+    return make_human(viewer, color, board)
+  return make_computer(go_player(player_type), color, board)
+
   
 if __name__ == "__main__":
-  if False:
-    # Run a game that we don't watch.
-    # Must not be run with -i
-    b = sample_game(shallow_tree, shallow_tree)
-    save_history(b)
-    sys.exit(0)
-  
   # Run a game that we watch.
   # Must be run with -i
   b = board.Board()
   v = viewer.Viewer(b)
 
-  make_computer(go_shell, board.BLACK, b)
+  players = list(sys.argv[1:])
+  while len(players) < 2:
+    players.append("human")
 
-  # make_computer(montecarlo, board.WHITE, b)  
-  make_human(v, board.WHITE, b)
+  print "playing", players[0], "vs", players[1]
+    
+  make_player_by_type(v, board.BLACK, b, players[0])
+  make_player_by_type(v, board.WHITE, b, players[1])
 
   v.root.after_idle(lambda: b.move((3, 3)))

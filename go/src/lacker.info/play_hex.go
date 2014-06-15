@@ -10,16 +10,18 @@ import (
 
 func main() {
 	// Load a board position from args.
-	// A board in json form should be passed as the first argument.
+	// The first arg should be the player type to play.
+	// A board in json form should be passed as the second argument.
 	flag.Parse()
 	args := flag.Args()
-	if len(args) != 1 {
-		log.Fatal("expected exactly 1 arg to play_hex")
+	if len(args) != 2 {
+		log.Fatal("expected exactly 2 args to play_hex")
 	}
-	board := hex.NewBoardFromJSON(args[0])
+	playerType := args[0]
+	board := hex.NewBoardFromJSON(args[1])
 
 	// Have a player figure out what move to make on this board.
-	player := hex.ShallowRave{500}
+	player := hex.GetPlayer(playerType)
 	spot := player.Play(board)
 
 	// Print out the move to make.

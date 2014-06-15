@@ -25,7 +25,7 @@ class Viewer(object):
     self.listeners.append(listener)
   
   def redraw(self):
-    print "redrawing"
+    # print "redrawing"
     col_x = 40
     col_y = 0
     row_x = 20
@@ -42,7 +42,7 @@ class Viewer(object):
     self.root.update_idletasks()
         
   def click(self, r, c):
-    print "clicked", r, c
+    # print "clicked", r, c
     for f in self.listeners:
       f((r, c))
 
