@@ -9,6 +9,8 @@ import (
 )
 
 func main() {
+	hex.Seed()
+
 	// Load a board position from args.
 	// The first arg should be the player type to play.
 	// A board in json form should be passed as the second argument.

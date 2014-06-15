@@ -4,8 +4,9 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
-	"os"
 	"math/rand"
+	"os"
+	"time"
 )
 
 // Generic json encoder
@@ -28,4 +29,8 @@ func ShuffleSpots(spots []Spot) {
 // Prints a string to stderr
 func Eprint(s string) {
 	fmt.Fprintf(os.Stderr, s)
+}
+
+func Seed() {
+	rand.Seed(time.Now().UTC().UnixNano())
 }
