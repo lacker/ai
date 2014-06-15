@@ -1,5 +1,9 @@
 package hex
 
+import (
+	"log"
+)
+
 /*
 The shallow rave algorithm is that you do playouts from the given
 position, and the spot with (roughly) the best win/loss record when
@@ -26,7 +30,7 @@ func (s *ShallowRave) Play(b *Board) Spot {
 		// To playout, first shuffle all possible moves
 		moves := b.PossibleMoves()
 		if len(moves) == 0 {
-			panic("no possible moves")
+			log.Fatal("no possible moves")
 		}
 		ShuffleSpots(moves)
 
@@ -39,13 +43,14 @@ func (s *ShallowRave) Play(b *Board) Spot {
 				ourMoves = append(ourMoves, move)
 			}
 			if !b.MakeMove(move) {
-				panic("a playout somehow played an invalid move")
+				log.Fatal("a playout somehow played an invalid move")
 			}
 		}
 
 		winner := playout.Winner()
 		if winner == Empty {
-			panic("there was no winner after a full playout")
+			playout.Print()
+			log.Fatal("there was no winner after a full playout")
 		}
 		if winner == b.ToMove {
 			// We won.
@@ -71,7 +76,7 @@ func (s *ShallowRave) Play(b *Board) Spot {
 		}
 	}
 	if bestMove.Row == -1 {
-		panic("there was no nonnegative score")
+		log.Fatal("there was no nonnegative score")
 	}
 	return bestMove
 }

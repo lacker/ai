@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
+	"strings"
 )
 
 const BoardSize = 11
@@ -94,6 +95,27 @@ func (b *Board) Get(spot Spot) Color {
 
 func (b *Board) Set(spot Spot, color Color) {
 	b.Board[spot.Row][spot.Col] = color
+}
+
+func (b *Board) Print() {
+	Eprint("Board:\n")
+	for r, col := range b.Board {
+		Eprint(strings.Repeat(" ", r))
+		for c, color := range col {
+			if c > 0 {
+				Eprint(" ")
+			}
+			switch color {
+			case Black:
+				Eprint("B")
+			case White:
+				Eprint("w")
+			case Empty:
+				Eprint(".")
+			}
+		}
+		Eprint("\n")
+	}
 }
 
 func (b *Board) PossibleMoves() []Spot {

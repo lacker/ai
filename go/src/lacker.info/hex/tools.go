@@ -2,7 +2,9 @@ package hex
 
 import (
 	"encoding/json"
+	"fmt"
 	"log"
+	"os"
 	"math/rand"
 )
 
@@ -21,4 +23,9 @@ func ShuffleSpots(spots []Spot) {
     j := rand.Intn(i + 1)
     spots[i], spots[j] = spots[j], spots[i]
 	}
+}
+
+// Prints a string to stderr
+func Eprint(s string) {
+	fmt.Fprintf(os.Stderr, s)
 }
