@@ -19,7 +19,7 @@ func main() {
 	board := hex.NewBoardFromJSON(args[0])
 
 	// Have a player figure out what move to make on this board.
-	player := hex.Random{}
+	player := hex.ShallowRave{500}
 	spot := player.Play(board)
 
 	// Print out the move to make.

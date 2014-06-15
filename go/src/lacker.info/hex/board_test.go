@@ -27,16 +27,16 @@ func TestWhiteWin(t *testing.T) {
 			b.Set(Spot{7, c}, White)
 		}
 	}
-	if b.winner() != Empty {
+	if b.Winner() != Empty {
 		t.Fatalf("expected empty")
 	}
 	b.Set(Spot{7, 8}, White)
-	if b.winner() != White {
+	if b.Winner() != White {
 		t.Fatalf("expected white")
 	}
 	encoded := ToJSON(b)
 	b2 := NewBoardFromJSON(encoded)
-	if b2.winner() != White {
+	if b2.Winner() != White {
 		t.Fatalf("something wacky happened with encoding")
 	}
 }

@@ -130,6 +130,15 @@ func (b *Board) Transpose() *Board {
 	return t
 }
 
+func (b *Board) Copy() *Board {
+	c := NewBoard()
+	c.ToMove = b.ToMove
+	for _, spot := range AllSpots() {
+		c.Set(spot, b.Get(spot))
+	}
+	return c
+}
+
 // Black wins if you can get from row 0 to row BoardSize - 1 with just
 // black spots.
 func (b *Board) IsBlackTheWinner() bool {
@@ -169,7 +178,7 @@ func (b *Board) IsBlackTheWinner() bool {
 	return false
 }
 
-func (b *Board) winner() Color {
+func (b *Board) Winner() Color {
 	if b.IsBlackTheWinner() {
 		return Black
 	}
