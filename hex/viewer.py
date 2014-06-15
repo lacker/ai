@@ -26,25 +26,25 @@ class Viewer(object):
   
   def redraw(self):
     print "redrawing"
-    i_x = 40
-    i_y = 0
-    j_x = 20
-    j_y = 40
-    for i in range(self.board.size):
-      for j in range(self.board.size):
-        x = i * i_x + j * j_x + 50
-        y = i * i_y + j * j_y + 50
-        color = ["black", "#EBCEAC", "white"][self.board.board[i][j] + 1]
+    col_x = 40
+    col_y = 0
+    row_x = 20
+    row_y = 40
+    for row in range(self.board.size):
+      for col in range(self.board.size):
+        x = row * row_x + col * col_x + 50
+        y = row * row_y + col * col_y + 50
+        color = ["black", "#EBCEAC", "white"][self.board.board[row][col] + 1]
         item_id = self.canvas.create_oval(x, y, x + 30, y + 30, fill=color)
-        def onclick(event, a=i, b=j):
-          self.click(a, b)
+        def onclick(event, r=row, c=col):
+          self.click(r, c)
         self.canvas.tag_bind(item_id, "<ButtonPress-1>", onclick)
     self.root.update_idletasks()
         
-  def click(self, i, j):
-    # print "clicked", i, j
+  def click(self, r, c):
+    print "clicked", r, c
     for f in self.listeners:
-      f((i, j))
+      f((r, c))
 
 if __name__ == "__main__":
   b = Board()

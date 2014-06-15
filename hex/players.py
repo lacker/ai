@@ -32,7 +32,9 @@ def go_shell(b):
   fname = os.path.abspath(fname)
   output = subprocess.check_output(["go", "run", fname, b.to_json()])
   json_spot = json.loads(output)
-  return json_spot["Row"], json_spot["Col"]
+  answer = json_spot["Row"], json_spot["Col"]
+  print "bot played", answer
+  return answer
   
 """
 Does treeless RAVE algorithm.
@@ -138,6 +140,7 @@ def make_human(viewer, color, b):
   def try_to_play(spot):
     if b.to_move != color:
       return
+    print "human played", spot
     b.move(spot)
       
   viewer.add_listener(try_to_play)

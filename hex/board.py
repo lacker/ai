@@ -28,8 +28,9 @@ class Board(object):
     #    \    \    4
     #     -----
     #
-    # In the board variable, the first index represents the number,
-    # and the second the integer.
+    # The board is indexed by (row, column). So the first index
+    # represents the integer, and the second index represents the
+    # letter.
     # Black goes top to bottom; White goes left to right.
     
     self.board = [[EMPTY] * self.size for _ in range(self.size)]
@@ -114,12 +115,12 @@ class Board(object):
 
   "Return whether black has won the game."
   def did_black_win(self):
-    # Searches top-down. Start from [_][0]
+    # Searches top-down. Start from [0][_] which is the top row.
     active = set()
     checked = set()
     for i in range(self.size):
-      if self.board[i][0] == BLACK:
-        active.add((i, 0))
+      if self.board[0][i] == BLACK:
+        active.add((0, i))
 
     while active:
       spot = active.pop()
@@ -140,7 +141,7 @@ class Board(object):
         new_spot = (a, b)
         if new_spot in checked:
           continue
-        if b == self.size - 1:
+        if a == self.size - 1:
           return True
         active.add(new_spot)
 
