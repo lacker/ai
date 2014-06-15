@@ -9,6 +9,7 @@ import (
 )
 
 func main() {
+	// Load a board position from args.
 	// A board in json form should be passed as the first argument.
 	flag.Parse()
 	args := flag.Args()
@@ -16,5 +17,11 @@ func main() {
 		log.Fatal("expected exactly 1 arg to play_hex")
 	}
 	board := hex.NewBoardFromJSON(args[0])
-	fmt.Printf("%s\n", hex.ToJSON(board))
+
+	// Have a player figure out what move to make on this board.
+	player := hex.Random{}
+	spot := player.Play(board)
+
+	// Print out the move to make.
+	fmt.Printf("%s\n", hex.ToJSON(spot))
 }

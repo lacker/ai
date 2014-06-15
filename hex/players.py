@@ -4,6 +4,7 @@ Some hex-playing strategies.
 """
 
 from collections import defaultdict
+import json
 import os
 import random
 import subprocess
@@ -27,12 +28,11 @@ def partcrazy(b):
 Shells out to go to figure out what to play.
 """
 def go_shell(b):
-  print "go_shell called"
   fname = board.__file__ + "/../../go/src/lacker.info/play_hex.go"
   fname = os.path.abspath(fname)
   output = subprocess.check_output(["go", "run", fname, b.to_json()])
-  print "got:", output
-  raise "TODO: implement doing something with that output"
+  json_spot = json.loads(output)
+  return json_spot["Row"], json_spot["Col"]
   
 """
 Does treeless RAVE algorithm.

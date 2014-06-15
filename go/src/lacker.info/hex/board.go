@@ -45,7 +45,7 @@ func AllSpots() [NumSpots]Spot {
 	var answer [NumSpots]Spot
 	for r := 0; r < BoardSize; r++ {
 		for c := 0; c < BoardSize; c++ {
-			answer[r * BoardSize + c] = Spot{r, c};
+			answer[r * BoardSize + c] = Spot{r, c}
 		}
 	}
 	return answer
@@ -89,15 +89,15 @@ func NewBoard() *Board {
 }
 
 func (b *Board) Get(spot Spot) Color {
-	return b.Board[spot.Row][spot.Col];
+	return b.Board[spot.Row][spot.Col]
 }
 
 func (b *Board) Set(spot Spot, color Color) {
-	b.Board[spot.Row][spot.Col] = color;
+	b.Board[spot.Row][spot.Col] = color
 }
 
 func (b *Board) PossibleMoves() []Spot {
-	answer := make([]Spot, 0);
+	answer := make([]Spot, 0)
 	for r, col := range b.Board {
 		for c, color := range col {
 			if color == Empty {
@@ -140,7 +140,7 @@ func (b *Board) IsBlackTheWinner() bool {
 	checked := make(map[Spot]bool)
 	for col, color := range(b.Board[0]) {
 		if color == Black {
-			frontier = append(frontier, Spot{Row:0, Col:col});
+			frontier = append(frontier, Spot{Row:0, Col:col})
 		}
 	}
 
