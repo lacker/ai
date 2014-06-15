@@ -26,6 +26,11 @@ type ShallowRave struct {
 
 func (s *ShallowRave) Play(b *Board) Spot {
 	records := make(map[Spot]*WinLossRecord)
+	moves := b.PossibleMoves()
+	for _, move := range moves {
+		records[move] = new(WinLossRecord)
+	}
+
 	for i := 0; i < s.NumPlayouts; i++ {
 		// To playout, first shuffle all possible moves
 		moves := b.PossibleMoves()
@@ -42,14 +47,14 @@ func (s *ShallowRave) Play(b *Board) Spot {
 			if playout.ToMove == b.ToMove {
 				ourMoves = append(ourMoves, move)
 			}
-			if !b.MakeMove(move) {
+			if !playout.MakeMove(move) {
 				log.Fatal("a playout somehow played an invalid move")
 			}
 		}
 
 		winner := playout.Winner()
 		if winner == Empty {
-			playout.Print()
+			playout.Eprint()
 			log.Fatal("there was no winner after a full playout")
 		}
 		if winner == b.ToMove {

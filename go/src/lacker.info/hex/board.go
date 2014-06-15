@@ -97,7 +97,7 @@ func (b *Board) Set(spot Spot, color Color) {
 	b.Board[spot.Row][spot.Col] = color
 }
 
-func (b *Board) Print() {
+func (b *Board) Eprint() {
 	Eprint("Board:\n")
 	for r, col := range b.Board {
 		Eprint(strings.Repeat(" ", r))
