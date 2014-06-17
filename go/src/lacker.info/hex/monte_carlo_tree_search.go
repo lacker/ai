@@ -12,6 +12,7 @@ type TreeNode struct {
 	BlackWins int
 	WhiteWins int
 	Board *Board
+	NumPossibleMoves int
 	Children map[Spot]*TreeNode
 	Parent *TreeNode
 }
@@ -20,6 +21,23 @@ func NewRoot(b *Board) *TreeNode {
 	node := new(TreeNode)
 	node.Board = b.Copy()
 	node.Children = make(map[Spot]*TreeNode)
+	node.NumPossibleMoves = len(node.Board.PossibleMoves())
+	return node
+}
+
+func NewChild(parent *TreeNode, move Spot) *TreeNode {
+	if parent.Children[move] != nil {
+		panic("cannot create a duplicate child")
+	}
+	node := new(TreeNode)
+	b := parent.Board.Copy()
+	if !b.MakeMove(move) {
+		panic("cannot create new child with invalid move")
+	}
+	parent.Children[move] = node
+	node.Children = make(map[Spot]*TreeNode)
+	node.NumPossibleMoves = parent.NumPossibleMoves - 1
+	node.Parent = parent
 	return node
 }
 
