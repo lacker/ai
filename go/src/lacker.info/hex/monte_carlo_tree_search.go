@@ -26,12 +26,18 @@ func NewRoot(b *Board) *TreeNode {
 }
 
 func NewChild(parent *TreeNode, move Spot) *TreeNode {
+	if parent == nil {
+		panic("cannot create a child of nil")
+	}
 	if parent.Children[move] != nil {
 		panic("cannot create a duplicate child")
 	}
 	node := new(TreeNode)
-	b := parent.Board.Copy()
-	if !b.MakeMove(move) {
+	if parent.Board == nil {
+		panic("bad parent - board should not be nil")
+	}
+	node.Board = parent.Board.Copy()
+	if !node.Board.MakeMove(move) {
 		panic("cannot create new child with invalid move")
 	}
 	parent.Children[move] = node
