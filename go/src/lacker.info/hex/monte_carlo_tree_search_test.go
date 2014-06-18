@@ -5,7 +5,7 @@ import (
 	"testing"
 )
 
-func TestMCTS(t *testing.T) {
+func TestSimpleChain(t *testing.T) {
 	board := NewBoard()
 	root := NewRoot(board)
 	if root.UCT() != math.Inf(1) {
@@ -33,3 +33,29 @@ func TestMCTS(t *testing.T) {
 	}
 }
 
+func TestExpansion(t *testing.T) {
+	board := NewBoard()
+	root := NewRoot(board)
+	for i := 0; i < 121; i++ {
+		if root.SelectLeaf() != root {
+			t.Fatalf("root.SelectLeaf() should be root at iteration %d", i)
+		}
+		depth := root.Depth()
+		if i > 0 && depth != 2 {
+			t.Fatalf("on iteration %d got depth %d", i, depth)
+		}
+		if root.Expand() == nil {
+			t.Fatalf("could not expand root on iteration %d", i)
+		}
+	}
+	
+	// Finally the root should be full
+	leaf := root.SelectLeaf()
+	if leaf == root {
+		t.Fatalf("leaf should not be root when root is full")
+	}
+	leaf.Expand()
+	if root.Depth() != 3 {
+		t.Fatalf("root depth should be three after expanding a child")
+	}
+}

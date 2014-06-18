@@ -102,6 +102,35 @@ func (n *TreeNode) SelectLeaf() *TreeNode {
 	return bestChild.SelectLeaf()
 }
 
+// Expands from the given leaf node if possible by choosing a new
+// possible child and creating it.
+// Returns the child if expansion was possible, or nil if it was not
+// possible.
+func (n *TreeNode) Expand() *TreeNode {
+	if n.NumPossibleMoves <= len(n.Children) {
+		return nil
+	}
+	possibleMoves := n.Board.PossibleMoves()
+	for _, move := range possibleMoves {
+		_, ok := n.Children[move]
+		if !ok {
+			return NewChild(n, move)
+		}
+	}
+	panic("children everywhere")
+}
+
+func (n *TreeNode) Depth() int {
+	if n == nil {
+		return 0
+	}
+	answer := 1
+	for _, child := range n.Children {
+		answer = Intmax(answer, child.Depth() + 1)
+	}
+	return answer
+}
+
 type MonteCarloTreeSearch struct {
 	Root *TreeNode
 }

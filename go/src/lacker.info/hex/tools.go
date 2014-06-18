@@ -18,6 +18,14 @@ func ToJSON(b interface{}) string {
 	return string(j[:])
 }
 
+func Intmax(x int, y int) int {
+	if x < y {
+		return y
+	} else {
+		return x
+	}
+}
+
 // Shuffles a list of spots
 func ShuffleSpots(spots []Spot) {
 	for i := range spots {
