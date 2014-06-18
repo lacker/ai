@@ -5,7 +5,7 @@ import (
 	"testing"
 )
 
-func TestUCT(t *testing.T) {
+func TestMCTS(t *testing.T) {
 	board := NewBoard()
 	root := NewRoot(board)
 	if root.UCT() != math.Inf(1) {
@@ -26,6 +26,10 @@ func TestUCT(t *testing.T) {
 
 	if leaf.NumPossibleMoves != 119 {
 		t.Fatalf("bad num possible moves")
+	}
+
+	if root.SelectLeaf() != root {
+		t.Fatalf("the root should also be a leaf according to SelectLeaf")
 	}
 }
 
