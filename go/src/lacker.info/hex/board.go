@@ -161,6 +161,27 @@ func (b *Board) Copy() *Board {
 	return c
 }
 
+// Makes moves repeatedly. When this stops the game is over.
+// Returns the winner.
+// This mutates the board.
+func (b *Board) Playout() Color {
+	moves := b.PossibleMoves()
+	ShuffleSpots(moves)
+
+	for _, move := range moves {
+		if !b.MakeMove(move) {
+			log.Fatal("a playout played an invalid move")
+		}
+	}
+
+	winner := b.Winner()
+	if winner == Empty {
+		log.Fatal("no winner in a playout")
+	}
+
+	return winner
+}
+
 // Black wins if you can get from row 0 to row BoardSize - 1 with just
 // black spots.
 func (b *Board) IsBlackTheWinner() bool {

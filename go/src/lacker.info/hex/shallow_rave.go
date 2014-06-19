@@ -35,6 +35,8 @@ func (s ShallowRave) Play(b *Board) Spot {
 
 	for i := 0; i < s.NumPlayouts; i++ {
 		// To playout, first shuffle all possible moves
+		// This could be based on Board.Playout - that would probably be a
+		// better design.
 		moves := b.PossibleMoves()
 		if len(moves) == 0 {
 			log.Fatal("no possible moves")

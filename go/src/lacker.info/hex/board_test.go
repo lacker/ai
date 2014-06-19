@@ -40,3 +40,10 @@ func TestWhiteWin(t *testing.T) {
 		t.Fatalf("something wacky happened with encoding")
 	}
 }
+
+func TestPlayout(t *testing.T) {
+	for i := 0; i < 10; i++ {
+		b := NewBoard()
+		b.Playout()
+	}
+}
