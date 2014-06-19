@@ -64,9 +64,7 @@ func TestMCTS(t *testing.T) {
 	board := NewBoard()
 	root := NewRoot(board)
 	for i := 0; i < 5; i++ {
-		leaf := root.SelectLeaf().Expand()
-		winner := leaf.Board.Copy().Playout()
-		leaf.Backprop(winner)
+		root.RunOneRoundOfMCTS()
 	}
 	if root.BlackWins + root.WhiteWins != 5 {
 		t.Fatalf("five mcts loops should lead to 5 win counts in the root")

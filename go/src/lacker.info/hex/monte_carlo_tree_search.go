@@ -167,6 +167,12 @@ func (n *TreeNode) Backprop(c Color) {
 	}
 }
 
+func (n *TreeNode) RunOneRoundOfMCTS() {
+	leaf := n.SelectLeaf().Expand()
+	winner := leaf.Board.Copy().Playout()
+	leaf.Backprop(winner)
+}
+
 type MonteCarloTreeSearch struct {
 	Root *TreeNode
 }
