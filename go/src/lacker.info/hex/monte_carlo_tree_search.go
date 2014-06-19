@@ -74,7 +74,28 @@ func (n *TreeNode) UCT() float64 {
 	return (wins / sims) + 1.4 * math.Sqrt(math.Log(total) / sims)
 }
 
-// Selects a leaf node recursively from the provided tree.
+// Finds the move from this node with the most MCTS simulations.
+// Panics if it can't find any move.
+func (n *TreeNode) MostSimulatedMove() Spot {
+	var bestMove Spot
+	numSims := -1
+
+	for move, child := range n.Children {
+		childSims := child.BlackWins + child.WhiteWins
+		if childSims > numSims {
+			bestMove = move
+			numSims = childSims
+		}
+	}
+
+	if numSims == -1 {
+		panic("could not find any move")
+	}
+
+	return bestMove
+}
+
+// Selects a leaf node recursively from the provided tree according to UCT.
 // A leaf node is defined as a node where either a new child could be added,
 // or there are no possible children and the game is over.
 func (n *TreeNode) SelectLeaf() *TreeNode {
