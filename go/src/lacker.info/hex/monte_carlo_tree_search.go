@@ -103,7 +103,7 @@ func (n *TreeNode) SelectLeaf() *TreeNode {
 }
 
 // Expands from the given leaf node if possible by choosing a new
-// possible child and creating it.
+// possible child randomly and creating it.
 // Returns the child if expansion was possible, or nil if it was not
 // possible.
 func (n *TreeNode) Expand() *TreeNode {
@@ -111,6 +111,7 @@ func (n *TreeNode) Expand() *TreeNode {
 		return nil
 	}
 	possibleMoves := n.Board.PossibleMoves()
+	ShuffleSpots(possibleMoves)
 	for _, move := range possibleMoves {
 		_, ok := n.Children[move]
 		if !ok {
