@@ -132,6 +132,20 @@ func (n *TreeNode) Depth() int {
 	return answer
 }
 
+// Backpropagate a win, starting at this node and continuing through
+// parents until we hit the root.
+func (n *TreeNode) Backprop(c Color) {
+	switch c {
+	case Black:
+		n.BlackWins++
+	case White:
+		n.WhiteWins++
+	}
+	if n.Parent != nil {
+		n.Parent.Backprop(c)
+	}
+}
+
 type MonteCarloTreeSearch struct {
 	Root *TreeNode
 }
