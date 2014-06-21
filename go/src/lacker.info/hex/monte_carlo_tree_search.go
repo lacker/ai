@@ -6,6 +6,7 @@ Monte Carlo Tree Search.
 
 import (
 	"math"
+	"time"
 )
 
 type TreeNode struct {
@@ -174,10 +175,18 @@ func (n *TreeNode) RunOneRoundOfMCTS() {
 }
 
 type MonteCarloTreeSearch struct {
+	Seconds time.Duration
 	Root *TreeNode
 }
 
 func (mcts MonteCarloTreeSearch) Play(b *Board) Spot {
+	start := time.Now()
 	mcts.Root = NewRoot(b)
-	panic("TODO: implement mcts algorithm")
+
+	// Do playouts for a set amount of time
+	for time.Since(start) < mcts.Seconds * time.Second {
+		mcts.Root.RunOneRoundOfMCTS()
+	}
+
+	return mcts.Root.MostSimulatedMove()
 }
