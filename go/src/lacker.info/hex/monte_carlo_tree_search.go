@@ -77,7 +77,7 @@ func (n *TreeNode) UCT() float64 {
 		return math.Inf(1)
 	}
 	total := float64(n.Parent.NumPlayouts())
-	return (wins / sims) + 1.4 * math.Sqrt(math.Log(total) / sims)
+	return (wins / sims) + 0.5 * math.Sqrt(math.Log(total) / sims)
 }
 
 // Finds the move from this node with the most MCTS simulations.

@@ -205,4 +205,4 @@ if __name__ == "__main__":
   make_player_by_type(v, board.BLACK, b, players[0])
   make_player_by_type(v, board.WHITE, b, players[1])
 
-  v.root.after_idle(lambda: b.move((3, 3)))
+  v.root.after_idle(lambda: b.move((1, 1)))
