@@ -22,6 +22,8 @@ func GetPlayer(s string) Player {
 		return ShallowRave{2000}
 	case "sr10k":
 		return ShallowRave{10000}
+	case "sr25k":
+		return ShallowRave{25000}
 	case "mcts":
 		return MonteCarloTreeSearch{Seconds:5}
 	default:

@@ -52,11 +52,15 @@ func AllSpots() [NumSpots]Spot {
 	return answer
 }
 
-func (s *Spot) Transpose() Spot {
+func (s Spot) String() string {
+	return fmt.Sprintf("(%d, %d)", s.Row, s.Col)
+}
+
+func (s Spot) Transpose() Spot {
 	return Spot{Row:s.Col, Col:s.Row}
 }
 
-func (s *Spot) Neighbors() []Spot {
+func (s Spot) Neighbors() []Spot {
 	answer := make([]Spot, 0)
 	possible := []Spot{
 		Spot{s.Row - 1, s.Col},

@@ -5,6 +5,8 @@ Monte Carlo Tree Search.
 */
 
 import (
+	"fmt"
+	"log"
 	"math"
 	"time"
 )
@@ -52,7 +54,10 @@ func (n *TreeNode) NumPlayouts() int {
 	return n.BlackWins + n.WhiteWins
 }
 
-// The UCT formula for how promising this node is to investigate
+// The UCT formula for how promising this node is to investigate.
+// The formula for a node should answer the question of, how good is
+// it to make the move that *gets* to this node.
+// Thus, it is optimizing for the player that is *not* to move.
 func (n *TreeNode) UCT() float64 {
 	if n.Parent == nil {
 		// With no parent there are no alternative choices so this node
@@ -61,9 +66,9 @@ func (n *TreeNode) UCT() float64 {
 	}
 	var wins float64
 	switch n.Board.ToMove {
-	case White:
-		wins = float64(n.WhiteWins)
 	case Black:
+		wins = float64(n.WhiteWins)
+	case White:
 		wins = float64(n.BlackWins)
 	}
 	sims := float64(n.NumPlayouts())
@@ -168,6 +173,11 @@ func (n *TreeNode) Backprop(c Color) {
 	}
 }
 
+func (n *TreeNode) String() string {
+	return fmt.Sprintf("(B:%d, W:%d, UCT:%.2f)",
+		n.BlackWins, n.WhiteWins, n.UCT())
+}
+
 func (n *TreeNode) RunOneRoundOfMCTS() {
 	leaf := n.SelectLeaf().Expand()
 	winner := leaf.Board.Copy().Playout()
@@ -187,6 +197,15 @@ func (mcts MonteCarloTreeSearch) Play(b *Board) Spot {
 	for time.Since(start) < mcts.Seconds * time.Second {
 		mcts.Root.RunOneRoundOfMCTS()
 	}
+
+	for _, move := range AllSpots() {
+		child, ok := mcts.Root.Children[move]
+		if ok {
+			log.Printf("%s -- %s", move, child)			
+		}
+	}
+
+	log.Printf("Overall: %s", mcts.Root)
 
 	return mcts.Root.MostSimulatedMove()
 }

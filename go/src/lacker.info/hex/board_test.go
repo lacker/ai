@@ -1,6 +1,7 @@
 package hex
 
 import (
+	"fmt"
 	"testing"
 )
 
@@ -45,5 +46,12 @@ func TestPlayout(t *testing.T) {
 	for i := 0; i < 10; i++ {
 		b := NewBoard()
 		b.Playout()
+	}
+}
+
+func TestStringification(t *testing.T) {
+	s := Spot{2, 3}
+	if fmt.Sprintf("%s", s) != "(2, 3)" {
+		t.Fatalf("problems printf'ing %s", s)
 	}
 }
