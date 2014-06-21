@@ -24,8 +24,12 @@ func GetPlayer(s string) Player {
 		return ShallowRave{10000}
 	case "sr25k":
 		return ShallowRave{25000}
-	case "mcts":
+	case "sr100k":
+		return ShallowRave{100000}
+	case "mcts5":
 		return MonteCarloTreeSearch{Seconds:5}
+	case "mcts20":
+		return MonteCarloTreeSearch{Seconds:20}
 	default:
 		log.Fatalf("unknown player type: %s", s)
 		return nil
