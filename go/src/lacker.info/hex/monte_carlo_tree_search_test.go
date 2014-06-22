@@ -61,44 +61,44 @@ func TestExpansion(t *testing.T) {
 	}
 }
 
-func TestClassic(t *testing.T) {
+func TestPureUCT(t *testing.T) {
 	board := NewBoard()
 	root := NewRoot(board)
 	for i := 0; i < 5; i++ {
-		root.RunOneClassicRound()
+		root.RunOneUCTRound()
 	}
 	if root.BlackWins + root.WhiteWins != 5 {
 		t.Fatalf("five classic mcts loops should lead to 5 win counts in the root")
 	}
 }
 
-func TestModern(t *testing.T) {
+func TestMCTS(t *testing.T) {
 	board := NewBoard()
 	root := NewRoot(board)
 	for i := 0; i < 5; i++ {
-		root.RunOneModernRound()
+		root.RunOneRound()
 	}
 	if root.BlackWins + root.WhiteWins != 5 {
 		t.Fatalf("five modern mcts loops should lead to 5 win counts in the root")
 	}
 }
 
-func BenchmarkClassic(b *testing.B) {
+func BenchmarkUCTRound(b *testing.B) {
 	rand.Seed(1)
 	board := NewBoard()
 	root := NewRoot(board)
 
 	for i := 0; i < b.N; i++ {
-		root.RunOneClassicRound()
+		root.RunOneUCTRound()
 	}
 }
 
-func BenchmarkModern(b *testing.B) {
+func BenchmarkMCTS(b *testing.B) {
 	rand.Seed(1)
 	board := NewBoard()
 	root := NewRoot(board)
 
 	for i := 0; i < b.N; i++ {
-		root.RunOneModernRound()
+		root.RunOneRound()
 	}
 }

@@ -283,22 +283,46 @@ func (n *TreeNode) String() string {
 		n.BlackWins + n.WhiteWins, n.BlackWins, n.WhiteWins, n.UCT())
 }
 
-func (n *TreeNode) RunOneClassicRound() {
+func (n *TreeNode) RunOneUCTRound() {
 	leaf := n.SelectLeafByUCT().Expand()
 	board := leaf.Board.Copy()
 	winner := board.Playout()
 	leaf.Backprop(winner, board)
 }
 
-func (n *TreeNode) RunOneModernRound() {
+func (n *TreeNode) RunOneRound() {
 	leaf := n.SelectLeaf().Expand()
 	board := leaf.Board.Copy()
 	winner := board.Playout()
 	leaf.Backprop(winner, board)
 }
 
+type PureUCT struct {
+	Seconds time.Duration
+}
+
+func (p PureUCT) Play(b *Board) Spot {
+	start := time.Now()
+	root := NewRoot(b)
+
+	// Do playouts for a set amount of time
+	for time.Since(start) < p.Seconds * time.Second {
+		root.RunOneUCTRound()
+	}
+
+	for _, move := range AllSpots() {
+		child, ok := root.Children[move]
+		if ok {
+			log.Printf("%s -- %s", move, child)			
+		}
+	}
+
+	log.Printf("total: %s", root)
+
+	return root.MostSimulatedMove()
+}
+
 type MonteCarloTreeSearch struct {
-	Modern bool
 	Seconds time.Duration
 }
 
@@ -308,11 +332,7 @@ func (mcts MonteCarloTreeSearch) Play(b *Board) Spot {
 
 	// Do playouts for a set amount of time
 	for time.Since(start) < mcts.Seconds * time.Second {
-		if mcts.Modern {
-			root.RunOneModernRound()
-		} else {
-			root.RunOneClassicRound()
-		}
+		root.RunOneRound()
 	}
 
 	for _, move := range AllSpots() {
@@ -324,10 +344,6 @@ func (mcts MonteCarloTreeSearch) Play(b *Board) Spot {
 
 	log.Printf("MCTS: %s", root)
 
-	if mcts.Modern {
-		move, _ := root.ExpectedBestMove()
-		return move
-	} else {
-		return root.MostSimulatedMove()
-	}
+	move, _ := root.ExpectedBestMove()
+	return move
 }
