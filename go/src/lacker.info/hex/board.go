@@ -58,7 +58,7 @@ func AllSpots() [NumSpots]Spot {
 }
 
 func (s Spot) Index() int {
-	return s.Col * BoardSize + s.Row
+	return s.Col + BoardSize * s.Row
 }
 
 func (s Spot) String() string {
@@ -279,4 +279,38 @@ func NewBoardFromJSON(j string) *Board {
 	return b
 }
 
+// The format is, the first three words are
+// "x to move" where x is Black or White
+// After that the non-white-space entries are B, ., or W
+// The move you are supposed to make is a *
+func NewPuzzle(s string) (*Board, Spot) {
+	b := new(Board)
+	words := strings.Fields(s)
+	if len(words) != 124 {
+		log.Fatal("cannot make puzzle from %d words", len(words))
+	}
 
+	switch words[0] {
+	case "Black":
+		b.ToMove = Black
+	case "White":
+		b.ToMove = White
+	default:
+		log.Fatal("bad player name: %s", words[0])
+	}
+
+	var answer Spot
+	for index, spot := range AllSpots() {
+		word := words[index + 3]
+		switch word {
+		case "B":
+			b.Set(spot, Black)
+		case "W":
+			b.Set(spot, White)
+		case "*":
+			answer = spot
+		}
+	}
+
+	return b, answer
+}
