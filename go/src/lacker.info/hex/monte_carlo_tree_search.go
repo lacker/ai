@@ -63,8 +63,6 @@ func (n *TreeNode) NumPlayouts() int {
 }
 
 // The expected win rate of a particular move.
-// Hopefully this formula is more sophicated than UCT and thus
-// superior.
 // This uses a Dirichlet backoff from exact to rave to a constant.
 func (n *TreeNode) ExpectedWinRate(move Spot, child *TreeNode) float64 {
 	// Calculate a rave estimate with weak but win-slanted prior

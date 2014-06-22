@@ -191,18 +191,46 @@ def make_player_by_type(viewer, color, board, player_type):
 
   
 if __name__ == "__main__":
+  # Usage:
+  # ./play.py blackplayer whiteplayer numgames
+  # For example:
+  # ./play.py sr5 human 3
+  
   # Run a game that we watch.
   # Must be run with -i
   b = board.Board()
   v = viewer.Viewer(b)
 
-  players = list(sys.argv[1:])
+  players = list(sys.argv[1:3])
   while len(players) < 2:
     players.append("human")
 
+  num_games = 1
+  if len(sys.argv) >= 4:
+    num_games = int(sys.argv[3])
+
+  wins = {}
+  games_played = 0
+  
   print "playing", players[0], "vs", players[1]
-    
+
+  first_move = (1, 1)
+  
   make_player_by_type(v, board.BLACK, b, players[0])
   make_player_by_type(v, board.WHITE, b, players[1])
 
-  v.root.after_idle(lambda: b.move((1, 1)))
+  # Starts a new game after this one is over
+  def check_for_win():
+    if b.to_move == board.EMPTY:
+      winner = b.winner()
+      wins[winner] = wins.get(winner, 0) + 1
+      print "%s (Black): %d - %s (White): %d" % (
+        players[0], wins.get(board.BLACK, 0),
+        players[1], wins.get(board.WHITE, 0))
+      if num_games > sum(wins.values()):
+        b.reset()
+        v.root.after_idle(lambda: b.move(first_move))
+      
+  b.add_listener(check_for_win)
+  
+  v.root.after_idle(lambda: b.move(first_move))

@@ -15,7 +15,13 @@ def color_name(color):
 class Board(object):
   def __init__(self, size=11):
     self.size = size
+    self.listeners = []
+    self.reset()
 
+  """
+  Doesn't reset listeners, but resets the board state.
+  """
+  def reset(self):
     # The board is a grid. Each value is either BLACK, WHITE, or EMPTY.
     # Cells are typically referred to with a letter plus a number.
     # Display would look like a diamond, e.g. for a 4x4 board:
@@ -41,8 +47,7 @@ class Board(object):
     # Track move history
     self.history = []
     
-    self.listeners = []
-
+    
 
   """
   Converts to json.
