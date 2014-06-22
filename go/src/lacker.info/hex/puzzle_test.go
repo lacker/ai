@@ -10,11 +10,19 @@ type checker struct {
 	Player Player
 }
 
-func (c checker) check(puzzle Puzzle) {
+func (c checker) expectPass(puzzle Puzzle) {
 	playerAnswer := c.Player.Play(puzzle.Board)
 	if puzzle.CorrectAnswer != playerAnswer {
 		c.Tester.Errorf("With puzzle: %s", puzzle.String)
 		c.Tester.Errorf("%s gave incorrect answer: %s", c.Name, playerAnswer)
+	}
+}
+
+func (c checker) expectFail(puzzle Puzzle) {
+	playerAnswer := c.Player.Play(puzzle.Board)
+	if puzzle.CorrectAnswer == playerAnswer {
+		c.Tester.Errorf("With puzzle: %s", puzzle.String)
+		c.Tester.Errorf("%s was supposed to fail but passed.", c.Name)
 	}
 }
 
@@ -27,8 +35,10 @@ func TestPuzzles(t *testing.T) {
 	mcts := checker{
 		Tester: t,
 		Name: "MCTS",
-		Player: MonteCarloTreeSearch{Seconds:0.1, Quiet:true},
+		Player: MonteCarloTreeSearch{Seconds:0.2, Quiet:true},
 	}
+
+	// Any reasonable method should be able to find a killer move.
 
 	onePly := MakePuzzle(`
 Black to move
@@ -45,7 +55,47 @@ B . . . . . . . . . .
           * W W W W W W W W W W
 `)
 
-	sr.check(onePly)
-	mcts.check(onePly)
+	sr.expectPass(onePly)
+	mcts.expectPass(onePly)
+
+	// Tree methods can figure out a block where shallow rave can't,
+	// because they can figure out the bridges.
+	// MCTS can figure this out consistently in 0.2s, but not in 0.1s.
+
+	triangleBlock := MakePuzzle(`
+Black to move
+B . . . . . . . . . .
+ B . . . . . . . . . .
+  B . . . . . . . . . .
+   B . . . . . . . . . .
+    B . . . . . . . . . .
+     B B . . . . . . . . .
+      . . W W W W W W W W W
+       * . . . . . . . . . .
+        . B . . . . . . . . .
+         B . . . . . . . . . .
+          B . . . . . . . . . .
+`)
+	sr.expectFail(triangleBlock)
+	mcts.expectPass(triangleBlock)
+
+	// Tree methods still cannot understand a large amount of bridges.
+
+	manyBridges := MakePuzzle(`
+Black to move
+B . . . . . . B . . .
+ B . . . . . B . . . .
+  B . . . . B . . . . .
+   B . . . B B B B B . .
+    B . . B . . W . B B .
+     B B . . W . . W . B B
+      . . W . B B B . W . .
+       * . B B . . B B . W .
+        . B . . . . . B B B .
+         B . . . . . . . . . .
+          B . . . . . . . . . .
+`)
+	sr.expectFail(manyBridges)
+	mcts.expectFail(manyBridges)
 }
 
