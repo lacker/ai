@@ -1,9 +1,8 @@
 package hex
 
 import (
-	"fmt"
 	"log"
-	"os"
+	"time"
 )
 
 /*
@@ -23,17 +22,22 @@ func (r *WinLossRecord) Score() float64 {
 }
 
 type ShallowRave struct {
-	NumPlayouts int
+	Seconds time.Duration
 }
 
 func (s ShallowRave) Play(b *Board) Spot {
+	start := time.Now()
+
 	records := make(map[Spot]*WinLossRecord)
 	moves := b.PossibleMoves()
 	for _, move := range moves {
 		records[move] = new(WinLossRecord)
 	}
 
-	for i := 0; i < s.NumPlayouts; i++ {
+	playouts := 0
+	for time.Since(start) < s.Seconds * time.Second {
+		playouts++
+
 		// To playout, first shuffle all possible moves
 		// This could be based on Board.Playout - that would probably be a
 		// better design.
@@ -87,8 +91,8 @@ func (s ShallowRave) Play(b *Board) Spot {
 	if bestMove.Row == -1 {
 		log.Fatal("there was no nonnegative score")
 	}
-	fmt.Fprintf(os.Stderr,
-		"%d, %d scores %.2f\n", bestMove.Row, bestMove.Col, bestScore)
+	log.Printf("S-RAVE: %d playouts. (%d, %d) scores %.2f\n",
+		playouts, bestMove.Row, bestMove.Col, bestScore)
 	return bestMove
 }
 

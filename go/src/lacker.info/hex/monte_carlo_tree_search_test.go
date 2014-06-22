@@ -2,6 +2,7 @@ package hex
 
 import (
 	"math"
+	"math/rand"
 	"testing"
 )
 
@@ -68,5 +69,15 @@ func TestMCTS(t *testing.T) {
 	}
 	if root.BlackWins + root.WhiteWins != 5 {
 		t.Fatalf("five mcts loops should lead to 5 win counts in the root")
+	}
+}
+
+func BenchmarkMCTS(b *testing.B) {
+	rand.Seed(1)
+	board := NewBoard()
+	root := NewRoot(board)
+
+	for i := 0; i < b.N; i++ {
+		root.RunOneRoundOfMCTS()
 	}
 }

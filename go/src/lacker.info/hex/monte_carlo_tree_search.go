@@ -174,8 +174,8 @@ func (n *TreeNode) Backprop(c Color) {
 }
 
 func (n *TreeNode) String() string {
-	return fmt.Sprintf("(B:%d, W:%d, UCT:%.2f)",
-		n.BlackWins, n.WhiteWins, n.UCT())
+	return fmt.Sprintf("(P: %d, B:%d, W:%d, UCT:%.2f)",
+		n.BlackWins + n.WhiteWins, n.BlackWins, n.WhiteWins, n.UCT())
 }
 
 func (n *TreeNode) RunOneRoundOfMCTS() {
@@ -186,26 +186,25 @@ func (n *TreeNode) RunOneRoundOfMCTS() {
 
 type MonteCarloTreeSearch struct {
 	Seconds time.Duration
-	Root *TreeNode
 }
 
 func (mcts MonteCarloTreeSearch) Play(b *Board) Spot {
 	start := time.Now()
-	mcts.Root = NewRoot(b)
+	root := NewRoot(b)
 
 	// Do playouts for a set amount of time
 	for time.Since(start) < mcts.Seconds * time.Second {
-		mcts.Root.RunOneRoundOfMCTS()
+		root.RunOneRoundOfMCTS()
 	}
 
 	for _, move := range AllSpots() {
-		child, ok := mcts.Root.Children[move]
+		child, ok := root.Children[move]
 		if ok {
 			log.Printf("%s -- %s", move, child)			
 		}
 	}
 
-	log.Printf("Overall: %s", mcts.Root)
+	log.Printf("MCTS: %s", root)
 
-	return mcts.Root.MostSimulatedMove()
+	return root.MostSimulatedMove()
 }
