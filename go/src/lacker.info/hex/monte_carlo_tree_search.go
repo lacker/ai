@@ -67,7 +67,7 @@ func (n *TreeNode) NumPlayouts() int {
 // superior.
 // This uses a Dirichlet backoff from exact to rave to a constant.
 func (n *TreeNode) ExpectedWinRate(move Spot, child *TreeNode) float64 {
-	// Calculate a rave estimate with 50-50 prior
+	// Calculate a rave estimate with weak but win-slanted prior
 	var raveWins int
 	var raveLosses int
 	switch n.Board.ToMove {
