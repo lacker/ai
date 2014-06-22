@@ -62,49 +62,6 @@ func (n *TreeNode) NumPlayouts() int {
 	return n.BlackWins + n.WhiteWins
 }
 
-// The expected win rate of a particular move.
-// This uses a Dirichlet backoff from exact to rave to a constant.
-func (n *TreeNode) ExpectedWinRate(move Spot, child *TreeNode) float64 {
-	// Calculate a rave estimate with weak but win-slanted prior
-	var raveWins int
-	var raveLosses int
-	switch n.Board.ToMove {
-	case Black:
-		raveWins = n.RaveBlackWins[move.Index()]
-		raveLosses = n.RaveWhiteWins[move.Index()]
-	case White:
-		raveLosses = n.RaveBlackWins[move.Index()]
-		raveWins = n.RaveWhiteWins[move.Index()]
-	}
-	raveWinRate := (1.0 + float64(raveWins)) /
-		(1.0 + float64(raveWins + raveLosses))
-
-	if child == nil {
-		return raveWinRate
-	}
-
-	// Gather the specific win data
-	var wins float64
-	switch n.Board.ToMove {
-	case Black:
-		wins = float64(child.BlackWins)
-	case White:
-		wins = float64(child.WhiteWins)
-	}
-	sims := float64(child.NumPlayouts())
-	if sims <= 0.0 {
-		return raveWinRate
-	}
-	if wins > sims {
-		panic("cannot have more wins than sims")
-	}
-
-	// Use the precise-node data to calculate the win rate, with the
-	// rave-based calculation as a prior
-	raveStrength := 20.0
-	return (raveWinRate * raveStrength + wins) / (raveStrength + sims)
-}
-
 // The UCT formula for how promising this node is to investigate.
 // The formula for a node should answer the question of, how good is
 // it to make the move that *gets* to this node.
@@ -150,44 +107,6 @@ func (n *TreeNode) MostSimulatedMove() Spot {
 	}
 
 	return bestMove
-}
-
-// Uses ExpectedWinRate to figure out which move is expected to be the
-// best.
-func (n *TreeNode) ExpectedBestMove() (Spot, *TreeNode) {
-	bestWinRate := math.Inf(-1)
-	var bestMove Spot
-	var bestChild *TreeNode
-	for move, child := range n.Children {
-		winRate := n.ExpectedWinRate(move, child)
-		if winRate > bestWinRate {
-			bestWinRate = winRate
-			bestChild = child
-			bestMove = move
-		}
-	}
-
-	if bestChild == nil {
-		panic("could not find a child")
-	}
-
-	return bestMove, bestChild
-}
-
-// Selects a leaf node recursively from the provided tree.
-// A leaf node is defined as a node where either a new child could be added,
-// or there are no possible children and the game is over.
-func (n *TreeNode) SelectLeaf() *TreeNode {
-	if n.NumPossibleMoves > len(n.Children) {
-		return n
-	}
-	if n.NumPossibleMoves == 0 {
-		return n
-	}
-
-	_, bestChild := n.ExpectedBestMove()
-
-	return bestChild.SelectLeaf()
 }
 
 // Selects a leaf node recursively using UCT.
@@ -290,13 +209,6 @@ func (n *TreeNode) RunOneUCTRound() {
 	leaf.Backprop(winner, board)
 }
 
-func (n *TreeNode) RunOneRound() {
-	leaf := n.SelectLeaf().Expand()
-	board := leaf.Board.Copy()
-	winner := board.Playout()
-	leaf.Backprop(winner, board)
-}
-
 type PureUCT struct {
 	Seconds time.Duration
 }
@@ -326,13 +238,105 @@ type MonteCarloTreeSearch struct {
 	Seconds time.Duration
 }
 
+// The expected win rate of a particular move.
+// This uses a Dirichlet backoff from exact to rave to a constant.
+func (mcts *MonteCarloTreeSearch) ExpectedWinRate(
+	parent *TreeNode, move Spot, child *TreeNode) float64 {
+
+	// Calculate a rave estimate with weak but win-slanted prior
+	var raveWins int
+	var raveLosses int
+	switch parent.Board.ToMove {
+	case Black:
+		raveWins = parent.RaveBlackWins[move.Index()]
+		raveLosses = parent.RaveWhiteWins[move.Index()]
+	case White:
+		raveLosses = parent.RaveBlackWins[move.Index()]
+		raveWins = parent.RaveWhiteWins[move.Index()]
+	}
+	raveWinRate := (1.0 + float64(raveWins)) /
+		(1.0 + float64(raveWins + raveLosses))
+
+	if child == nil {
+		return raveWinRate
+	}
+
+	// Gather the specific win data
+	var wins float64
+	switch parent.Board.ToMove {
+	case Black:
+		wins = float64(child.BlackWins)
+	case White:
+		wins = float64(child.WhiteWins)
+	}
+	sims := float64(child.NumPlayouts())
+	if sims <= 0.0 {
+		return raveWinRate
+	}
+	if wins > sims {
+		panic("cannot have more wins than sims")
+	}
+
+	// Use the precise-node data to calculate the win rate, with the
+	// rave-based calculation as a prior
+	raveStrength := 20.0
+	return (raveWinRate * raveStrength + wins) / (raveStrength + sims)
+}
+
+// Uses ExpectedWinRate to figure out which move is expected to be the
+// best.
+func (mcts *MonteCarloTreeSearch) ExpectedBestMove(n *TreeNode) (
+	Spot, *TreeNode) {
+
+	bestWinRate := math.Inf(-1)
+	var bestMove Spot
+	var bestChild *TreeNode
+	for move, child := range n.Children {
+		winRate := mcts.ExpectedWinRate(n, move, child)
+		if winRate > bestWinRate {
+			bestWinRate = winRate
+			bestChild = child
+			bestMove = move
+		}
+	}
+
+	if bestChild == nil {
+		panic("could not find a child")
+	}
+
+	return bestMove, bestChild
+}
+
+// Selects a leaf node recursively from the provided tree.
+// A leaf node is defined as a node where either a new child could be added,
+// or there are no possible children and the game is over.
+func (mcts *MonteCarloTreeSearch) SelectLeaf(n *TreeNode) *TreeNode {
+	if n.NumPossibleMoves > len(n.Children) {
+		return n
+	}
+	if n.NumPossibleMoves == 0 {
+		return n
+	}
+
+	_, bestChild := mcts.ExpectedBestMove(n)
+
+	return mcts.SelectLeaf(bestChild)
+}
+
+func (mcts *MonteCarloTreeSearch) RunOneRound(n *TreeNode) {
+	leaf := mcts.SelectLeaf(n).Expand()
+	board := leaf.Board.Copy()
+	winner := board.Playout()
+	leaf.Backprop(winner, board)
+}
+
 func (mcts MonteCarloTreeSearch) Play(b *Board) Spot {
 	start := time.Now()
 	root := NewRoot(b)
 
 	// Do playouts for a set amount of time
 	for time.Since(start) < mcts.Seconds * time.Second {
-		root.RunOneRound()
+		mcts.RunOneRound(root)
 	}
 
 	for _, move := range AllSpots() {
@@ -344,6 +348,6 @@ func (mcts MonteCarloTreeSearch) Play(b *Board) Spot {
 
 	log.Printf("MCTS: %s", root)
 
-	move, _ := root.ExpectedBestMove()
+	move, _ := mcts.ExpectedBestMove(root)
 	return move
 }

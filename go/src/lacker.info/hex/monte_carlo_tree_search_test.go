@@ -29,8 +29,8 @@ func TestSimpleChain(t *testing.T) {
 		t.Fatalf("bad num possible moves")
 	}
 
-	if root.SelectLeaf() != root {
-		t.Fatalf("the root should also be a leaf according to SelectLeaf")
+	if root.SelectLeafByUCT() != root {
+		t.Fatalf("the root should also be a leaf according to SelectLeafByUCT")
 	}
 }
 
@@ -38,8 +38,8 @@ func TestExpansion(t *testing.T) {
 	board := NewBoard()
 	root := NewRoot(board)
 	for i := 0; i < 121; i++ {
-		if root.SelectLeaf() != root {
-			t.Fatalf("root.SelectLeaf() should be root at iteration %d", i)
+		if root.SelectLeafByUCT() != root {
+			t.Fatalf("root.SelectLeafByUCT() should be root at iteration %d", i)
 		}
 		depth := root.Depth()
 		if i > 0 && depth != 2 {
@@ -51,7 +51,7 @@ func TestExpansion(t *testing.T) {
 	}
 	
 	// Finally the root should be full
-	leaf := root.SelectLeaf()
+	leaf := root.SelectLeafByUCT()
 	if leaf == root {
 		t.Fatalf("leaf should not be root when root is full")
 	}
@@ -68,18 +68,19 @@ func TestPureUCT(t *testing.T) {
 		root.RunOneUCTRound()
 	}
 	if root.BlackWins + root.WhiteWins != 5 {
-		t.Fatalf("five classic mcts loops should lead to 5 win counts in the root")
+		t.Fatalf("five uct loops should lead to 5 win counts in the root")
 	}
 }
 
 func TestMCTS(t *testing.T) {
+	var mcts MonteCarloTreeSearch
 	board := NewBoard()
 	root := NewRoot(board)
 	for i := 0; i < 5; i++ {
-		root.RunOneRound()
+		mcts.RunOneRound(root)
 	}
 	if root.BlackWins + root.WhiteWins != 5 {
-		t.Fatalf("five modern mcts loops should lead to 5 win counts in the root")
+		t.Fatalf("five mcts loops should lead to 5 win counts in the root")
 	}
 }
 
@@ -95,10 +96,11 @@ func BenchmarkUCTRound(b *testing.B) {
 
 func BenchmarkMCTS(b *testing.B) {
 	rand.Seed(1)
+	var mcts MonteCarloTreeSearch
 	board := NewBoard()
 	root := NewRoot(board)
 
 	for i := 0; i < b.N; i++ {
-		root.RunOneRound()
+		mcts.RunOneRound(root)
 	}
 }
