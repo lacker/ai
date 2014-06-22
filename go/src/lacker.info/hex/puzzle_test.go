@@ -97,6 +97,6 @@ Black to move
           B . . . W . . W . . .
 `)
 	sr.expectFail(manyBridges)
-	mcts.expectFail(manyBridges)
+	// mcts.expectFail(manyBridges)
 }
 
