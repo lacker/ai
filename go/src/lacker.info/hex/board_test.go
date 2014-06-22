@@ -1,6 +1,7 @@
 package hex
 
 import (
+	"math/rand"
 	"fmt"
 	"testing"
 )
@@ -53,5 +54,14 @@ func TestStringification(t *testing.T) {
 	s := Spot{2, 3}
 	if fmt.Sprintf("%s", s) != "(2, 3)" {
 		t.Fatalf("problems printf'ing %s", s)
+	}
+}
+
+func BenchmarkPlayout(b *testing.B) {
+	rand.Seed(1)
+
+	for i := 0; i < b.N; i++ {
+		board := NewBoard()
+		board.Playout()
 	}
 }

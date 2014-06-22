@@ -42,11 +42,15 @@ type Spot struct {
 	Row, Col int
 }
 
+func MakeSpot(row int, col int) Spot {
+	return Spot{Row: row, Col: col}
+}
+
 func AllSpots() [NumSpots]Spot {
 	var answer [NumSpots]Spot
 	for r := 0; r < BoardSize; r++ {
 		for c := 0; c < BoardSize; c++ {
-			answer[r * BoardSize + c] = Spot{r, c}
+			answer[r * BoardSize + c] = MakeSpot(r, c)
 		}
 	}
 	return answer
@@ -57,7 +61,7 @@ func (s Spot) String() string {
 }
 
 func (s Spot) Transpose() Spot {
-	return Spot{Row:s.Col, Col:s.Row}
+	return MakeSpot(s.Col, s.Row)
 }
 
 func (s Spot) Neighbors() []Spot {
