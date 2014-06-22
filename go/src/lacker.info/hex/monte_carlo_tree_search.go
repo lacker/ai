@@ -18,6 +18,14 @@ type TreeNode struct {
 	NumPossibleMoves int
 	Children map[Spot]*TreeNode
 	Parent *TreeNode
+
+	// A win count for playouts that are descendants of this node and
+	// contain a particular move. The particular move is defined by the
+	// spot that is the index of the array, and the Board.ToMove color
+	// making it. The move particularly does not have to be made
+	// immediately from this position.
+	RaveBlackWins [NumSpots]int
+	RaveWhiteWins [NumSpots]int
 }
 
 func NewRoot(b *Board) *TreeNode {
@@ -76,8 +84,8 @@ func (n *TreeNode) UCT() float64 {
 		// Always prefer an unexplored node
 		return math.Inf(1)
 	}
-	total := float64(n.Parent.NumPlayouts())
-	return (wins / sims) + 0.5 * math.Sqrt(math.Log(total) / sims)
+	total := n.Parent.NumPlayouts()
+	return (wins / sims) + 0.5 * math.Sqrt(Fastlog(total) / sims)
 }
 
 // Finds the move from this node with the most MCTS simulations.
@@ -159,8 +167,8 @@ func (n *TreeNode) Depth() int {
 	return answer
 }
 
-// Backpropagate a win, starting at this node and continuing through
-// parents until we hit the root.
+// Backpropagate a win for c, starting at this node and continuing
+// through parents until we hit the root.
 func (n *TreeNode) Backprop(c Color) {
 	switch c {
 	case Black:

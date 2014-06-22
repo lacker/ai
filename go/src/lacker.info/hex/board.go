@@ -50,10 +50,15 @@ func AllSpots() [NumSpots]Spot {
 	var answer [NumSpots]Spot
 	for r := 0; r < BoardSize; r++ {
 		for c := 0; c < BoardSize; c++ {
-			answer[r * BoardSize + c] = MakeSpot(r, c)
+			spot := MakeSpot(r, c)
+			answer[spot.Index()] = spot
 		}
 	}
 	return answer
+}
+
+func (s Spot) Index() int {
+	return s.Col * BoardSize + s.Row
 }
 
 func (s Spot) String() string {
@@ -62,6 +67,27 @@ func (s Spot) String() string {
 
 func (s Spot) Transpose() Spot {
 	return MakeSpot(s.Col, s.Row)
+}
+
+func (s Spot) ApplyToNeighbors(f func(Spot)) {
+	if s.Row > 0 {
+		f(MakeSpot(s.Row - 1, s.Col))
+	}
+	if s.Row + 1 < BoardSize {
+		f(MakeSpot(s.Row + 1, s.Col))
+		if s.Col > 0 {
+			f(MakeSpot(s.Row + 1, s.Col - 1))
+		}
+	}
+	if s.Col > 0 {
+		f(MakeSpot(s.Row, s.Col - 1))
+	}
+	if s.Col + 1 < BoardSize {
+		f(MakeSpot(s.Row, s.Col + 1))
+		if s.Row > 0 {
+			f(MakeSpot(s.Row - 1, s.Col + 1))
+		}
+	}
 }
 
 func (s Spot) Neighbors() []Spot {
@@ -197,7 +223,7 @@ func (b *Board) IsBlackTheWinner() bool {
 	// Checked is any previously-frontier stone we already processed.
 	// Start off with the frontier of all the row-zero black stones.
 	frontier := make([]Spot, 0)
-	checked := make(map[Spot]bool)
+	var checked [NumSpots]bool
 	for col, color := range(b.Board[0]) {
 		if color == Black {
 			frontier = append(frontier, MakeSpot(0, col))
@@ -208,21 +234,26 @@ func (b *Board) IsBlackTheWinner() bool {
 	for len(frontier) > 0 {
 		spot := frontier[0]
 		frontier = frontier[1:]
-		checked[spot] = true
+		checked[spot.Index()] = true
 
 		// Find all the neighboring black stones
-		for _, neighbor := range spot.Neighbors() {
+		done := false
+		spot.ApplyToNeighbors(func(neighbor Spot) {
 			if b.Get(neighbor) != Black {
-				continue
+				return
 			}
-			if checked[neighbor] {
-				continue
+			if checked[neighbor.Index()] {
+				return
 			}
 			// fmt.Printf("processing %d, %d\n", neighbor.Row, neighbor.Col)
 			if neighbor.Row == BoardSize - 1 {
-				return true
+				done = true
+				return
 			}
 			frontier = append(frontier, neighbor)
+		})
+		if done {
+			return true
 		}
 	}
 	

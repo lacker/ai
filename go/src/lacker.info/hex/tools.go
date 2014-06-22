@@ -26,6 +26,25 @@ func Intmax(x int, y int) int {
 	}
 }
 
+// Just approximate, should be accurate to within 0.3 or so
+func Fastlog(x int) float64 {
+	var answer float64
+	if x <= 0 {
+		panic("cannot Fastlog a negative number")
+	}
+	for x >= 4 {
+		answer += 0.693
+		x = x >> 1
+	}
+	switch x {
+	case 2:
+		answer += 0.693
+	case 3:
+		answer += 1.099
+	}
+	return answer
+}
+
 // Shuffles a list of spots
 func ShuffleSpots(spots []Spot) {
 	for i := range spots {
