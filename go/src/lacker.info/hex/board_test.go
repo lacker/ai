@@ -10,13 +10,13 @@ func TestBlackWin(t *testing.T) {
 	b := NewBoard()
 	for r := 0; r < BoardSize; r++ {
 		if r != 5 {
-			b.Set(Spot{r, 3}, Black)
+			b.Set(MakeSpot(r, 3), Black)
 		}
 	}
 	if b.IsBlackTheWinner() {
 		t.Fatalf("black is not supposed to be the winner because 5, 3 is missing")
 	}
-	b.Set(Spot{5, 3}, Black)
+	b.Set(MakeSpot(5, 3), Black)
 	if !b.IsBlackTheWinner() {
 		t.Fatalf("black is supposed to be the winner because *, 3 is set")
 	}
@@ -26,13 +26,13 @@ func TestWhiteWin(t *testing.T) {
 	b := NewBoard()
 	for c := 0; c < BoardSize; c++ {
 		if c != 8 {
-			b.Set(Spot{7, c}, White)
+			b.Set(MakeSpot(7, c), White)
 		}
 	}
 	if b.Winner() != Empty {
 		t.Fatalf("expected empty")
 	}
-	b.Set(Spot{7, 8}, White)
+	b.Set(MakeSpot(7, 8), White)
 	if b.Winner() != White {
 		t.Fatalf("expected white")
 	}
@@ -51,7 +51,7 @@ func TestPlayout(t *testing.T) {
 }
 
 func TestStringification(t *testing.T) {
-	s := Spot{2, 3}
+	s := MakeSpot(2, 3)
 	if fmt.Sprintf("%s", s) != "(2, 3)" {
 		t.Fatalf("problems printf'ing %s", s)
 	}

@@ -81,7 +81,7 @@ func (s ShallowRave) Play(b *Board) Spot {
 	// We have finished all the playouts. Now we just need to choose
 	// the best-scoring move.
 	bestScore := -1.0
-	bestMove := Spot{-1, -1}
+	bestMove := MakeSpot(-1, -1)
 	for move, record := range records {
 		if record.Score() > bestScore {
 			bestScore = record.Score()
