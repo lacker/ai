@@ -81,6 +81,10 @@ func (n *TreeNode) ExpectedWinRate(move Spot, child *TreeNode) float64 {
 	raveWinRate := (1.0 + float64(raveWins)) /
 		(1.0 + float64(raveWins + raveLosses))
 
+	if child == nil {
+		return raveWinRate
+	}
+
 	// Gather the specific win data
 	var wins float64
 	switch n.Board.ToMove {
@@ -150,6 +154,28 @@ func (n *TreeNode) MostSimulatedMove() Spot {
 	return bestMove
 }
 
+// Uses ExpectedWinRate to figure out which move is expected to be the
+// best.
+func (n *TreeNode) ExpectedBestMove() (Spot, *TreeNode) {
+	bestWinRate := math.Inf(-1)
+	var bestMove Spot
+	var bestChild *TreeNode
+	for move, child := range n.Children {
+		winRate := n.ExpectedWinRate(move, child)
+		if winRate > bestWinRate {
+			bestWinRate = winRate
+			bestChild = child
+			bestMove = move
+		}
+	}
+
+	if bestChild == nil {
+		panic("could not find a child")
+	}
+
+	return bestMove, bestChild
+}
+
 // Selects a leaf node recursively from the provided tree.
 // A leaf node is defined as a node where either a new child could be added,
 // or there are no possible children and the game is over.
@@ -161,19 +187,7 @@ func (n *TreeNode) SelectLeaf() *TreeNode {
 		return n
 	}
 
-	bestWinRate := math.Inf(-1)
-	var bestChild *TreeNode
-	for move, child := range n.Children {
-		winRate := n.ExpectedWinRate(move, child)
-		if winRate > bestWinRate {
-			bestWinRate = winRate
-			bestChild = child
-		}
-	}
-
-	if bestChild == nil {
-		panic("could not find a child")
-	}
+	_, bestChild := n.ExpectedBestMove()
 
 	return bestChild.SelectLeaf()
 }
@@ -312,5 +326,10 @@ func (mcts MonteCarloTreeSearch) Play(b *Board) Spot {
 
 	log.Printf("MCTS: %s", root)
 
-	return root.MostSimulatedMove()
+	if mcts.Modern {
+		move, _ := root.ExpectedBestMove()
+		return move
+	} else {
+		return root.MostSimulatedMove()
+	}
 }
