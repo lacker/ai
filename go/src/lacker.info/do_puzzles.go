@@ -12,7 +12,7 @@ them correctly.
 func main() {
 	hex.Seed()
 
-	board, correctAnswer := hex.NewPuzzle(`
+	puzzle := hex.MakePuzzle(`
 Black to move
 B . . . . . . . . . .
  B . . . . . . . . . .
@@ -28,8 +28,8 @@ B . . . . . . . . . .
 `)
 
 	player := hex.GetPlayer("sr1")
-	playerAnswer := player.Play(board)
-	if correctAnswer != playerAnswer {
+	playerAnswer := player.Play(puzzle.Board)
+	if puzzle.CorrectAnswer != playerAnswer {
 		panic("wrong answer")
 	}
 }
