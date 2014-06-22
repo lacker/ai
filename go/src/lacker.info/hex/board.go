@@ -131,7 +131,7 @@ func (b *Board) PossibleMoves() []Spot {
 	for r, col := range b.Board {
 		for c, color := range col {
 			if color == Empty {
-				answer = append(answer, Spot{r, c})
+				answer = append(answer, MakeSpot(r, c))
 			}
 		}
 	}
@@ -200,7 +200,7 @@ func (b *Board) IsBlackTheWinner() bool {
 	checked := make(map[Spot]bool)
 	for col, color := range(b.Board[0]) {
 		if color == Black {
-			frontier = append(frontier, Spot{Row:0, Col:col})
+			frontier = append(frontier, MakeSpot(0, col))
 		}
 	}
 
