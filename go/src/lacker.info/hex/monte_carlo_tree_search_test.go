@@ -61,23 +61,44 @@ func TestExpansion(t *testing.T) {
 	}
 }
 
-func TestMCTS(t *testing.T) {
+func TestClassic(t *testing.T) {
 	board := NewBoard()
 	root := NewRoot(board)
 	for i := 0; i < 5; i++ {
-		root.RunOneRoundOfMCTS()
+		root.RunOneClassicRound()
 	}
 	if root.BlackWins + root.WhiteWins != 5 {
-		t.Fatalf("five mcts loops should lead to 5 win counts in the root")
+		t.Fatalf("five classic mcts loops should lead to 5 win counts in the root")
 	}
 }
 
-func BenchmarkMCTS(b *testing.B) {
+func TestModern(t *testing.T) {
+	board := NewBoard()
+	root := NewRoot(board)
+	for i := 0; i < 5; i++ {
+		root.RunOneModernRound()
+	}
+	if root.BlackWins + root.WhiteWins != 5 {
+		t.Fatalf("five modern mcts loops should lead to 5 win counts in the root")
+	}
+}
+
+func BenchmarkClassic(b *testing.B) {
 	rand.Seed(1)
 	board := NewBoard()
 	root := NewRoot(board)
 
 	for i := 0; i < b.N; i++ {
-		root.RunOneRoundOfMCTS()
+		root.RunOneClassicRound()
+	}
+}
+
+func BenchmarkModern(b *testing.B) {
+	rand.Seed(1)
+	board := NewBoard()
+	root := NewRoot(board)
+
+	for i := 0; i < b.N; i++ {
+		root.RunOneModernRound()
 	}
 }

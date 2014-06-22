@@ -22,10 +22,14 @@ func GetPlayer(s string) Player {
 		return ShallowRave{5}
 	case "sr20":
 		return ShallowRave{20}
-	case "mcts5":
-		return MonteCarloTreeSearch{5}
-	case "mcts20":
-		return MonteCarloTreeSearch{20}
+	case "classic5":
+		return MonteCarloTreeSearch{false, 5}
+	case "classic20":
+		return MonteCarloTreeSearch{false, 20}
+	case "modern5":
+		return MonteCarloTreeSearch{true, 5}
+	case "modern20":
+		return MonteCarloTreeSearch{true, 20}
 	default:
 		log.Fatalf("unknown player type: %s", s)
 		return nil
