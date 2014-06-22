@@ -80,20 +80,21 @@ B . . . . . . . . . .
 	mcts.expectPass(triangleBlock)
 
 	// Tree methods still cannot understand a large amount of bridges.
+	// MCTS can occasionally pass this but usually can't.
 
 	manyBridges := MakePuzzle(`
 Black to move
-B . . . . . . B . . .
- B . . . . . B . . . .
-  B . . . . B . . . . .
-   B . . . B B B B B . .
-    B . . B . . W . B B .
+. . . . . . . . . . .
+ . . B . . . . . . . .
+  . . . . . . . . . . .
+   . B . . . B B B B . .
+    . . . B . . W . B B .
      B B . . W . . W . B B
       . . W . B B B . W . .
-       * . B B . . B B . W .
-        . B . . . . . B B B .
-         B . . . . . . . . . .
-          B . . . . . . . . . .
+       * . W B . . B B . W .
+        . B W . . . . B B B .
+         . . . W . . W . . W .
+          B . . . W . . W . . .
 `)
 	sr.expectFail(manyBridges)
 	mcts.expectFail(manyBridges)
