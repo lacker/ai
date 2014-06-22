@@ -17,19 +17,19 @@ func GetPlayer(s string) Player {
 	case "random":
 		return Random{}
 	case "sr1":
-		return ShallowRave{1}
+		return ShallowRave{Seconds:1, Quiet:false}
 	case "sr5":
-		return ShallowRave{5}
+		return ShallowRave{Seconds:5, Quiet:false}
 	case "sr20":
-		return ShallowRave{20}
+		return ShallowRave{Seconds:20, Quiet:false}
 	case "uct5":
 		return PureUCT{5}
 	case "uct20":
 		return PureUCT{20}
 	case "mcts5":
-		return MonteCarloTreeSearch{5}
+		return MonteCarloTreeSearch{Seconds:5, Quiet:false}
 	case "mcts20":
-		return MonteCarloTreeSearch{20}
+		return MonteCarloTreeSearch{Seconds:20, Quiet:false}
 	default:
 		log.Fatalf("unknown player type: %s", s)
 		return nil

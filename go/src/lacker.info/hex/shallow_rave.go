@@ -22,7 +22,8 @@ func (r *WinLossRecord) Score() float64 {
 }
 
 type ShallowRave struct {
-	Seconds time.Duration
+	Seconds float64
+	Quiet bool
 }
 
 func (s ShallowRave) Play(b *Board) Spot {
@@ -35,7 +36,7 @@ func (s ShallowRave) Play(b *Board) Spot {
 	}
 
 	playouts := 0
-	for time.Since(start) < s.Seconds * time.Second {
+	for SecondsSince(start) < s.Seconds {
 		playouts++
 
 		// To playout, first shuffle all possible moves
@@ -91,8 +92,10 @@ func (s ShallowRave) Play(b *Board) Spot {
 	if bestMove.Row == -1 {
 		log.Fatal("there was no nonnegative score")
 	}
-	log.Printf("S-RAVE: %d playouts. (%d, %d) scores %.2f\n",
-		playouts, bestMove.Row, bestMove.Col, bestScore)
+	if !s.Quiet {
+		log.Printf("S-RAVE: %d playouts. (%d, %d) scores %.2f\n",
+			playouts, bestMove.Row, bestMove.Col, bestScore)
+	}
 	return bestMove
 }
 

@@ -26,6 +26,10 @@ func Intmax(x int, y int) int {
 	}
 }
 
+func SecondsSince(start time.Time) float64 {
+	return float64(time.Since(start)) / float64(time.Second)
+}
+
 // Just approximate, should be accurate to within 0.3 or so
 func Fastlog(x int) float64 {
 	var answer float64

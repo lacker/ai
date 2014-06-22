@@ -28,8 +28,5 @@ B . . . . . . . . . .
 `)
 
 	player := hex.GetPlayer("sr1")
-	playerAnswer := player.Play(puzzle.Board)
-	if puzzle.CorrectAnswer != playerAnswer {
-		panic("wrong answer")
-	}
+	puzzle.Test(player)
 }

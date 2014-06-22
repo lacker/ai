@@ -210,7 +210,7 @@ func (n *TreeNode) RunOneUCTRound() {
 }
 
 type PureUCT struct {
-	Seconds time.Duration
+	Seconds float64
 }
 
 func (p PureUCT) Play(b *Board) Spot {
@@ -218,7 +218,7 @@ func (p PureUCT) Play(b *Board) Spot {
 	root := NewRoot(b)
 
 	// Do playouts for a set amount of time
-	for time.Since(start) < p.Seconds * time.Second {
+	for SecondsSince(start) < p.Seconds {
 		root.RunOneUCTRound()
 	}
 
@@ -235,7 +235,8 @@ func (p PureUCT) Play(b *Board) Spot {
 }
 
 type MonteCarloTreeSearch struct {
-	Seconds time.Duration
+	Seconds float64
+	Quiet bool
 }
 
 // The expected win rate of a particular move.
@@ -335,18 +336,22 @@ func (mcts MonteCarloTreeSearch) Play(b *Board) Spot {
 	root := NewRoot(b)
 
 	// Do playouts for a set amount of time
-	for time.Since(start) < mcts.Seconds * time.Second {
+	for SecondsSince(start) < mcts.Seconds {
 		mcts.RunOneRound(root)
 	}
 
 	for _, move := range AllSpots() {
 		child, ok := root.Children[move]
 		if ok {
-			log.Printf("%s -- %s", move, child)			
+			if !mcts.Quiet {
+				log.Printf("%s -- %s", move, child)			
+			}
 		}
 	}
 
-	log.Printf("MCTS: %s", root)
+	if !mcts.Quiet {
+		log.Printf("MCTS: %s", root)
+	}
 
 	move, _ := mcts.ExpectedBestMove(root)
 	return move

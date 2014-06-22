@@ -6,6 +6,7 @@ import (
 )
 
 type Puzzle struct {
+	String string
 	Board *Board
 	CorrectAnswer Spot
 }
@@ -15,8 +16,7 @@ type Puzzle struct {
 // After that the non-white-space entries are B, ., or W
 // The move you are supposed to make is a *
 func MakePuzzle(s string) Puzzle {
-	puzzle := Puzzle{}
-	puzzle.Board = new(Board)
+	puzzle := Puzzle{String: s, Board: new(Board)}
 	words := strings.Fields(s)
 	if len(words) != 124 {
 		log.Fatal("cannot make puzzle from %d words", len(words))
@@ -44,4 +44,14 @@ func MakePuzzle(s string) Puzzle {
 	}
 
 	return puzzle
+}
+
+func (puzzle Puzzle) Test(player Player) bool {
+	playerAnswer := player.Play(puzzle.Board)
+	if puzzle.CorrectAnswer != playerAnswer {
+		log.Printf(puzzle.String)
+		log.Printf("got wrong answer: %s", playerAnswer)
+		return false
+	}
+	return true
 }
