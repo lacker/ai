@@ -237,10 +237,23 @@ func (p PureUCT) Play(b *Board) Spot {
 type MonteCarloTreeSearch struct {
 	Seconds float64
 	Quiet bool
+
+	// Parameter controlling rave mixing.
+	V int
+}
+
+func MakeMCTS(seconds float64) MonteCarloTreeSearch {
+	return MonteCarloTreeSearch{
+		Seconds: seconds,
+		Quiet: false,
+		V: 0,
+	}
 }
 
 // The expected win rate of a particular move.
-// This uses a Dirichlet backoff from exact to rave to a constant.
+// If V is greater than 0, it's used as the rave mixing parameter.
+// If V equals 0, this does something hacky, and uses
+// a Dirichlet backoff from exact to rave to a constant.
 func (mcts *MonteCarloTreeSearch) ExpectedWinRate(
 	parent *TreeNode, move Spot, child *TreeNode) float64 {
 
@@ -278,10 +291,19 @@ func (mcts *MonteCarloTreeSearch) ExpectedWinRate(
 		panic("cannot have more wins than sims")
 	}
 
-	// Use the precise-node data to calculate the win rate, with the
-	// rave-based calculation as a prior
-	raveStrength := 20.0
-	return (raveWinRate * raveStrength + wins) / (raveStrength + sims)
+	if mcts.V == 0 {
+		// Use the precise-node data to calculate the win rate, with the
+		// rave-based calculation as a prior
+		raveStrength := 20.0
+		return (raveWinRate * raveStrength + wins) / (raveStrength + sims)
+	}
+
+	// If we have less than V real games, use the rave stats to fill in.
+	v := float64(mcts.V)
+	if sims >= v {
+		return wins / sims
+	}
+	return (wins + (v - sims) * raveWinRate) / v
 }
 
 // Uses ExpectedWinRate to figure out which move is expected to be the

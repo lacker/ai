@@ -14,7 +14,6 @@ class Viewer(object):
     self.root = Tk()
     self.canvas = Canvas(self.root, width=750, height=550)
     self.canvas.pack()
-    self.canvas.create_rectangle(3, 3, 750, 550, fill="#EBCEAC")
 
     self.listeners = []
     
@@ -26,6 +25,9 @@ class Viewer(object):
   
   def redraw(self):
     # print "redrawing"
+    self.canvas.delete(ALL)
+    self.canvas.create_rectangle(3, 3, 750, 550, fill="#EBCEAC")
+    
     col_x = 40
     col_y = 0
     row_x = 20
@@ -39,6 +41,12 @@ class Viewer(object):
         def onclick(event, r=row, c=col):
           self.click(r, c)
         self.canvas.tag_bind(item_id, "<ButtonPress-1>", onclick)
+
+        # Mark to make the center of the board visible
+        if row == 5 and col == 5:
+          self.canvas.create_oval(x + 13, y + 13, x + 17, y + 17,
+                                  fill="white")
+          
     self.root.update_idletasks()
         
   def click(self, r, c):

@@ -35,7 +35,7 @@ func TestPuzzles(t *testing.T) {
 	mcts := checker{
 		Tester: t,
 		Name: "MCTS",
-		Player: MonteCarloTreeSearch{Seconds:0.2, Quiet:true},
+		Player: MonteCarloTreeSearch{Seconds:0.2, Quiet:true, V:0},
 	}
 
 	// Any reasonable method should be able to find a killer move.
