@@ -96,7 +96,7 @@ func BenchmarkUCTRound(b *testing.B) {
 
 func BenchmarkMCTS(b *testing.B) {
 	rand.Seed(1)
-	var mcts MonteCarloTreeSearch
+	mcts := MonteCarloTreeSearch{Seconds: 0, Quiet: false, V: 1000}
 	board := NewBoard()
 	root := NewRoot(board)
 
