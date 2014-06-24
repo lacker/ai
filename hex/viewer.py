@@ -43,7 +43,7 @@ class Viewer(object):
     self.canvas.create_line(a, b, c, d, fill="black")
     a, b = self.spot_center(5, 0)
     c, d = self.spot_center(5, 10)
-    self.canvas.create_line(a, b, c, d, fill="black")
+    self.canvas.create_line(a, b, c, d, fill="white")
     
     for row in range(self.board.size):
       for col in range(self.board.size):
