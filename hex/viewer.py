@@ -22,31 +22,39 @@ class Viewer(object):
 
   def add_listener(self, listener):
     self.listeners.append(listener)
-  
-  def redraw(self):
-    # print "redrawing"
-    self.canvas.delete(ALL)
-    self.canvas.create_rectangle(3, 3, 750, 550, fill="#EBCEAC")
-    
+
+  def spot_center(self, row, col):
     col_x = 40
     col_y = 0
     row_x = 20
     row_y = 40
+
+    x = row * row_x + col * col_x + 65
+    y = row * row_y + col * col_y + 65
+    return x, y
+    
+  def redraw(self):
+    # print "redrawing"
+    self.canvas.delete(ALL)
+    self.canvas.create_rectangle(3, 3, 750, 550, fill="#EBCEAC")
+
+    a, b = self.spot_center(0, 5)
+    c, d = self.spot_center(10, 5)
+    self.canvas.create_line(a, b, c, d, fill="black")
+    a, b = self.spot_center(5, 0)
+    c, d = self.spot_center(5, 10)
+    self.canvas.create_line(a, b, c, d, fill="black")
+    
     for row in range(self.board.size):
       for col in range(self.board.size):
-        x = row * row_x + col * col_x + 50
-        y = row * row_y + col * col_y + 50
+        x, y = self.spot_center(row, col)
         color = ["black", "#EBCEAC", "white"][self.board.board[row][col] + 1]
-        item_id = self.canvas.create_oval(x, y, x + 30, y + 30, fill=color)
+        item_id = self.canvas.create_oval(x - 15, y - 15,
+                                          x + 15, y + 15, fill=color)
         def onclick(event, r=row, c=col):
           self.click(r, c)
         self.canvas.tag_bind(item_id, "<ButtonPress-1>", onclick)
 
-        # Mark to make the center of the board visible
-        if row == 5 and col == 5:
-          self.canvas.create_oval(x + 13, y + 13, x + 17, y + 17,
-                                  fill="white")
-          
     self.root.update_idletasks()
         
   def click(self, r, c):
