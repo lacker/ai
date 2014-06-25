@@ -62,6 +62,18 @@ func (n *TreeNode) NumPlayouts() int {
 	return n.BlackWins + n.WhiteWins
 }
 
+// The win rate just purely based on what this node has done before.
+func (n *TreeNode) SimpleExpectedWinRate() float64 {
+	var wins float64
+	switch n.Board.ToMove {
+	case Black:
+		wins = float64(n.BlackWins)
+	case White:
+		wins = float64(n.WhiteWins)
+	}
+	return (1.0 + wins) / (2.0 + float64(n.BlackWins) + float64(n.WhiteWins))
+}
+
 // The UCT formula for how promising this node is to investigate.
 // The formula for a node should answer the question of, how good is
 // it to make the move that *gets* to this node.
@@ -86,6 +98,16 @@ func (n *TreeNode) UCT() float64 {
 	}
 	total := n.Parent.NumPlayouts()
 	return (wins / sims) + 0.5 * math.Sqrt(Fastlog(total) / sims)
+}
+
+func (n *TreeNode) ToMoveLetter() string {
+	switch n.Board.ToMove {
+	case Black:
+		return "B"
+	case White:
+		return "W"
+	}
+	panic("bad tomove")
 }
 
 // Finds the move from this node with the most MCTS simulations.
@@ -198,8 +220,9 @@ func (n *TreeNode) Backprop(winner Color, finalBoard *Board) {
 }
 
 func (n *TreeNode) String() string {
-	return fmt.Sprintf("(P: %d, B:%d, W:%d, UCT:%.2f)",
-		n.BlackWins + n.WhiteWins, n.BlackWins, n.WhiteWins, n.UCT())
+	return fmt.Sprintf("(P: %d, B:%d, W:%d, %sEV:%.2f)",
+		n.BlackWins + n.WhiteWins, n.BlackWins, n.WhiteWins,
+		n.ToMoveLetter(), n.SimpleExpectedWinRate())
 }
 
 func (n *TreeNode) RunOneUCTRound() {
@@ -364,10 +387,8 @@ func (mcts MonteCarloTreeSearch) Play(b *Board) Spot {
 
 	for _, move := range AllSpots() {
 		child, ok := root.Children[move]
-		if ok {
-			if !mcts.Quiet {
-				log.Printf("%s -- %s", move, child)			
-			}
+		if ok && !mcts.Quiet && (child.WhiteWins + child.BlackWins >= 500) {
+			log.Printf("%s -- %s", move, child)			
 		}
 	}
 

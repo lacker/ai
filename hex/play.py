@@ -230,6 +230,8 @@ if __name__ == "__main__":
       if num_games > sum(wins.values()):
         b.reset()
         v.root.after_idle(lambda: b.move(first_move))
+      else:
+        sys.exit(0)
       
   b.add_listener(check_for_win)
   
