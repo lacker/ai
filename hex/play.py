@@ -34,6 +34,7 @@ def go_player(player_type):
 Shells out to go to play a move.
 """
 def go_shell(player_type, b):
+  print player_type, "is thinking"
   fname = board.__file__ + "/../../go/src/lacker.info/play_hex.go"
   fname = os.path.abspath(fname)
   output = subprocess.check_output([

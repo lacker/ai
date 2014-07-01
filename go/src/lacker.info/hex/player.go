@@ -26,10 +26,12 @@ func GetPlayer(s string) Player {
 		return PureUCT{5}
 	case "uct20":
 		return PureUCT{20}
+	case "mcts1":
+		return MonteCarloTreeSearch{Seconds: 1, Quiet: false, V: 1000}
 	case "mcts5":
 		return MonteCarloTreeSearch{Seconds: 5, Quiet: false, V: 1000}
 	case "mcts20":
-		return MonteCarloTreeSearch{Seconds: 5, Quiet: false, V: 1000}
+		return MonteCarloTreeSearch{Seconds: 20, Quiet: false, V: 1000}
 	case "bleeding":
 		return MonteCarloTreeSearch{Seconds: 5, Quiet: false, V: 10000}
 	default:
