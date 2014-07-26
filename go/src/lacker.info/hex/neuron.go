@@ -47,5 +47,23 @@ This update rule only really makes sense for single-layer neural
 networks.
 */
 func NeuronBackprop(color Color, neurons ...Neuron) {
-	
+	p := NeuronPredict(White, neurons...)
+	var target float64
+	switch color {
+	case White:
+		target = 1.0
+	case Black:
+		target = 0.0
+	default:
+		panic("color should be black or white")
+	}
+	gradient := (target - p) * p * (1.0 - p)
+
+	// This controls the rate of learning.
+	// I have no real rationale for what this should be.
+	learning := 0.1
+
+	for i := range neurons {
+		neurons[i].Logit += learning * gradient
+	}
 }
