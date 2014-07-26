@@ -4,6 +4,10 @@ import (
 	"math"
 )
 
+// This controls the rate of learning.
+// I have no real rationale for what this should be.
+var NeuronLearningRate float64 = 0.1
+
 /*
 This Neuron is a simple predictor of a color: black or white.
 This implementation is a logistic neuron.
@@ -59,11 +63,7 @@ func NeuronBackprop(color Color, neurons ...Neuron) {
 	}
 	gradient := (target - p) * p * (1.0 - p)
 
-	// This controls the rate of learning.
-	// I have no real rationale for what this should be.
-	learning := 0.1
-
 	for i := range neurons {
-		neurons[i].Logit += learning * gradient
+		neurons[i].Logit += NeuronLearningRate * gradient
 	}
 }
