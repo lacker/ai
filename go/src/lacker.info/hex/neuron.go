@@ -50,8 +50,13 @@ right answer was, with the same args we used on NeuronPredict.
 This update rule only really makes sense for single-layer neural
 networks.
 */
-func NeuronBackprop(color Color, neurons ...Neuron) {
-	p := NeuronPredict(White, neurons...)
+func NeuronBackprop(color Color, neurons ...*Neuron) {
+	neuronSlice := make([]Neuron, len(neurons))
+	for i, n := range neurons {
+		neuronSlice[i] = *n
+	}
+
+	p := NeuronPredict(White, neuronSlice...)
 	var target float64
 	switch color {
 	case White:
