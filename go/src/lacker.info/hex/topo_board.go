@@ -38,15 +38,17 @@ type TopoBoard struct {
 	// Contents of the board, indexed by TopoSpot
 	Board [NumTopoSpots]Color
 
-	// NextSpot maps each spot to the next spot in its same group.
-	// This should create a singly linked loop for each group.
-	// A group is a set of spots that are all connected.
-	// For empty spots, it doesn't matter what these point to.
-	NextSpot [NumTopoSpots]TopoSpot
+	// GroupId gives the index in GroupSpots and GroupSize for the group
+	// that a particular spot is in.
+	// The GroupId can be a TopoSpot because there are at most that many
+	// groups.
+	GroupId [NumTopoSpots]TopoSpot
 
-	// GroupSize maps each spot to the size of its group.
-	// An empty spot is defined to be a group of size zero.
-	GroupSize [NumTopoSpots]uint8
+	// Each group is a list of TopoSpots in that group.
+	GroupSpots [][]TopoSpot
+
+	// The size for the group
+	GroupSize []TopoSpot
 
 	// Whose move it is
 	ToMove Color
@@ -55,29 +57,31 @@ type TopoBoard struct {
 	Winner Color
 }
 
+// Adds a group of a single spot. Does not merge with any neighbors.
+func (b *TopoBoard) addNewGroup(s TopoSpot, color Color) {
+	if b.Board[s] != Empty {
+		panic("TopoBoard cannot change a spot once it has something on it")
+	}
+	if color == Empty {
+		panic("TopoBoard cannot set a spot to Empty")
+	}
+
+	newGroupId := TopoSpot(len(b.GroupSpots))
+	b.Board[s] = color
+	b.GroupId[s] = newGroupId
+	newGroup := []TopoSpot{s}
+	b.GroupSpots = append(b.GroupSpots, newGroup)
+	b.GroupSize = append(b.GroupSize, 1)
+}
+
 func NewTopoBoard() *TopoBoard {
 	b := &TopoBoard{ToMove: Black}
 
-	// Board starts off with zeros which are Empty so only the special
-	// spots need to be set
-	b.Board[TopSide] = Black
-	b.Board[BottomSide] = Black
-	b.Board[LeftSide] = White
-	b.Board[RightSide] = White
-
-	// For empty spots, it doesn't matter where NextSpot points. But for
-	// the special spots, they should be groups of size 1 and NextSpot
-	// should point to themselves.
-	b.NextSpot[TopSide] = TopSide
-	b.NextSpot[BottomSide] = BottomSide
-	b.NextSpot[LeftSide] = LeftSide
-	b.NextSpot[RightSide] = RightSide
-
-	// Set GroupSize for special spots
-	b.GroupSize[TopSide] = 1
-	b.GroupSize[BottomSide] = 1
-	b.GroupSize[LeftSide] = 1
-	b.GroupSize[RightSide] = 1
+	// Set up the initial groups for special spots
+	b.addNewGroup(TopSide, Black)
+	b.addNewGroup(BottomSide, Black)
+	b.addNewGroup(LeftSide, White)
+	b.addNewGroup(RightSide, White)
 
 	return b
 }
@@ -87,5 +91,9 @@ func TopoSpotFromRowCol(row int, col int) TopoSpot {
 }
 
 func (b *TopoBoard) Set(row int, col int, color Color) {
+	s := TopoSpotFromRowCol(row, col)
+	b.addNewGroup(s, color)
 
+	// Update connectivity with neighbors
+	// TODO.
 }
