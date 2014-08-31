@@ -38,3 +38,19 @@ func TestTopoBoardBlackWin(t *testing.T) {
 		t.Fatalf("black is supposed to be the winner because *, 3 is set")
 	}
 }
+
+func TestTopoBoardWhiteWin(t *testing.T) {
+	b := NewTopoBoard()
+	for c := 0; c < BoardSize; c++ {
+		if c != 8 {
+			b.Set(7, c, White)
+		}
+	}
+	if b.Winner != Empty {
+		t.Fatalf("expected empty")
+	}
+	b.Set(7, 8, White)
+	if b.Winner != White {
+		t.Fatalf("expected white")
+	}
+}
