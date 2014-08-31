@@ -6,7 +6,7 @@ import (
 	"testing"
 )
 
-func TestBlackWin(t *testing.T) {
+func TestBoardBlackWin(t *testing.T) {
 	b := NewBoard()
 	for r := 0; r < BoardSize; r++ {
 		if r != 5 {
@@ -22,7 +22,7 @@ func TestBlackWin(t *testing.T) {
 	}
 }
 
-func TestWhiteWin(t *testing.T) {
+func TestBoardWhiteWin(t *testing.T) {
 	b := NewBoard()
 	for c := 0; c < BoardSize; c++ {
 		if c != 8 {
@@ -43,21 +43,21 @@ func TestWhiteWin(t *testing.T) {
 	}
 }
 
-func TestPlayout(t *testing.T) {
+func TestBoardPlayout(t *testing.T) {
 	for i := 0; i < 10; i++ {
 		b := NewBoard()
 		b.Playout()
 	}
 }
 
-func TestStringification(t *testing.T) {
+func TestBoardStringification(t *testing.T) {
 	s := MakeSpot(2, 3)
 	if fmt.Sprintf("%s", s) != "(2, 3)" {
 		t.Fatalf("problems printf'ing %s", s)
 	}
 }
 
-func BenchmarkPlayout(b *testing.B) {
+func BenchmarkBoardPlayout(b *testing.B) {
 	rand.Seed(1)
 
 	for i := 0; i < b.N; i++ {
