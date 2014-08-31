@@ -28,7 +28,7 @@ type TreeNode struct {
 	RaveWhiteWins [NumSpots]int
 }
 
-func NewRoot(b *NaiveBoard) *TreeNode {
+func NewRoot(b Board) *TreeNode {
 	node := new(TreeNode)
 	node.Board = b.ToNaiveBoard()
 	node.Children = make(map[Spot]*TreeNode)
