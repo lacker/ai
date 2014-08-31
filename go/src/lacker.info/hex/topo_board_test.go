@@ -2,6 +2,7 @@ package hex
 
 import (
 	"fmt"
+	"math/rand"
 	"testing"
 )
 
@@ -59,5 +60,14 @@ func TestTopoBoardPlayout(t *testing.T) {
 	for i := 0; i < 10; i++ {
 		b := NewTopoBoard()
 		b.Playout()
+	}
+}
+
+func BenchmarkTopoBoardPlayout(b *testing.B) {
+	rand.Seed(1)
+
+	for i := 0; i < b.N; i++ {
+		board := NewTopoBoard()
+		board.Playout()
 	}
 }

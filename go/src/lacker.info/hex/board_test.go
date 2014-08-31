@@ -1,8 +1,8 @@
 package hex
 
 import (
-	"math/rand"
 	"fmt"
+	"math/rand"
 	"testing"
 )
 
