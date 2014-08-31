@@ -10,30 +10,33 @@ includes four special spots: the top, bottom, left, and right of the
 board.
 
 The meaning of a particular TopoSpot goes like:
-0 1 2
- 3 4 5
-  6 7 8
+4  5  6
+ 7  8  9
+  10 11 12
 
-except it's BoardSize by BoardSize. Indexes less than zero are the
-special spots.
+It starts at 4 because 0, 1, 2, 3 are taken up by the special spots.
 */
 
 // This is going to bite us one day for larger boards. But since
 // 11 * 11 < 128 it works.
 type TopoSpot int8
 
+const NumTopoSpots int = BoardSize * BoardSize + 4
+
 // Black goes TopSide to BottomSide
-const TopSide TopoSpot = -1
-const BottomSide TopoSpot = -2
+const TopSide TopoSpot = 0
+const BottomSide TopoSpot = 1
 
 // White goes LeftSide to RightSide
-const LeftSide TopoSpot = -3
-const RightSide TopoSpot = -4
+const LeftSide TopoSpot = 2
+const RightSide TopoSpot = 3
+
+const NotASpot TopoSpot = -1
 
 
 type TopoBoard struct {
 	// Contents of the board, indexed by TopoSpot
-	Board [BoardSize * BoardSize]Color
+	Board [NumTopoSpots]Color
 
 	// Whose move it is
 	ToMove Color
