@@ -173,6 +173,10 @@ func TopoSpotFromRowCol(row int, col int) TopoSpot {
 	return TopoSpot(4 + col + BoardSize * row)
 }
 
+func TopoSpotFromSpot(s Spot) TopoSpot {
+	return TopoSpotFromRowCol(s.Row, s.Col)
+}
+
 func (b *TopoBoard) Get(row int, col int) Color {
 	s := TopoSpotFromRowCol(row, col)
 	return b.Board[s]
@@ -272,20 +276,23 @@ func (b *TopoBoard) PossibleMoves() []Spot {
 	return answer
 }
 
-func (b *TopoBoard) MakeMove(s TopoSpot) {
+// Returns whether it was a possible move
+// This one actually crashes if it wasn't.
+func (b *TopoBoard) MakeMove(s Spot) bool {
 	if b.ToMove == Empty {
 		log.Fatal("this isn't a valid topo board, there is nobody to move")
 	}
-	b.SetTopoSpot(s, b.ToMove)
+	b.SetTopoSpot(TopoSpotFromSpot(s), b.ToMove)
 	b.ToMove = -b.ToMove
+	return true
 }
 
 // Makes moves repeatedly. When this stops the game is over.
 // Returns the winner.
 // This mutates the board.
 func (b *TopoBoard) Playout() Color {
-	moves := b.PossibleTopoSpotMoves()
-	ShuffleTopoSpots(moves)
+	moves := b.PossibleMoves()
+	ShuffleSpots(moves)
 
 	for _, move := range moves {
 		b.MakeMove(move)

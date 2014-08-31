@@ -114,4 +114,5 @@ func (s Spot) Neighbors() []Spot {
 type Board interface {
 	ToNaiveBoard() *NaiveBoard
 	PossibleMoves() []Spot
+	MakeMove(s Spot) bool
 }
