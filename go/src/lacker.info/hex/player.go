@@ -9,7 +9,7 @@ import (
 )
 
 type Player interface {
-	Play(b *Board) Spot
+	Play(b *NaiveBoard) Spot
 }
 
 func GetPlayer(s string) Player {

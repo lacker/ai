@@ -26,7 +26,7 @@ type ShallowRave struct {
 	Quiet bool
 }
 
-func (s ShallowRave) Play(b *Board) Spot {
+func (s ShallowRave) Play(b *NaiveBoard) Spot {
 	start := time.Now()
 
 	records := make(map[Spot]*WinLossRecord)

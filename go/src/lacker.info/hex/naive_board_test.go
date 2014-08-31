@@ -7,7 +7,7 @@ import (
 )
 
 func TestBoardBlackWin(t *testing.T) {
-	b := NewBoard()
+	b := NewNaiveBoard()
 	for r := 0; r < BoardSize; r++ {
 		if r != 5 {
 			b.Set(MakeSpot(r, 3), Black)
@@ -23,7 +23,7 @@ func TestBoardBlackWin(t *testing.T) {
 }
 
 func TestBoardWhiteWin(t *testing.T) {
-	b := NewBoard()
+	b := NewNaiveBoard()
 	for c := 0; c < BoardSize; c++ {
 		if c != 8 {
 			b.Set(MakeSpot(7, c), White)
@@ -37,7 +37,7 @@ func TestBoardWhiteWin(t *testing.T) {
 		t.Fatalf("expected white")
 	}
 	encoded := ToJSON(b)
-	b2 := NewBoardFromJSON(encoded)
+	b2 := NewNaiveBoardFromJSON(encoded)
 	if b2.Winner() != White {
 		t.Fatalf("something wacky happened with encoding")
 	}
@@ -45,7 +45,7 @@ func TestBoardWhiteWin(t *testing.T) {
 
 func TestBoardPlayout(t *testing.T) {
 	for i := 0; i < 10; i++ {
-		b := NewBoard()
+		b := NewNaiveBoard()
 		b.Playout()
 	}
 }
@@ -61,7 +61,7 @@ func BenchmarkBoardPlayout(b *testing.B) {
 	rand.Seed(1)
 
 	for i := 0; i < b.N; i++ {
-		board := NewBoard()
+		board := NewNaiveBoard()
 		board.Playout()
 	}
 }

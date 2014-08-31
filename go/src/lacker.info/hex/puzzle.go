@@ -7,7 +7,7 @@ import (
 
 type Puzzle struct {
 	String string
-	Board *Board
+	Board *NaiveBoard
 	CorrectAnswer Spot
 }
 
@@ -16,7 +16,7 @@ type Puzzle struct {
 // After that the non-white-space entries are B, ., or W
 // The move you are supposed to make is a *
 func MakePuzzle(s string) Puzzle {
-	puzzle := Puzzle{String: s, Board: new(Board)}
+	puzzle := Puzzle{String: s, Board: new(NaiveBoard)}
 	words := strings.Fields(s)
 	if len(words) != 124 {
 		log.Fatal("cannot make puzzle from %d words", len(words))

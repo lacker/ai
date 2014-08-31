@@ -14,7 +14,7 @@ import (
 type TreeNode struct {
 	BlackWins int
 	WhiteWins int
-	Board *Board
+	Board *NaiveBoard
 	NumPossibleMoves int
 	Children map[Spot]*TreeNode
 	Parent *TreeNode
@@ -28,7 +28,7 @@ type TreeNode struct {
 	RaveWhiteWins [NumSpots]int
 }
 
-func NewRoot(b *Board) *TreeNode {
+func NewRoot(b *NaiveBoard) *TreeNode {
 	node := new(TreeNode)
 	node.Board = b.Copy()
 	node.Children = make(map[Spot]*TreeNode)
@@ -189,7 +189,7 @@ func (n *TreeNode) Depth() int {
 
 // Backpropagate a win, starting at this node and continuing
 // through parents until we hit the root.
-func (n *TreeNode) Backprop(winner Color, finalBoard *Board) {
+func (n *TreeNode) Backprop(winner Color, finalBoard *NaiveBoard) {
 	// Update regular win/loss stats
 	switch winner {
 	case Black:
@@ -236,7 +236,7 @@ type PureUCT struct {
 	Seconds float64
 }
 
-func (p PureUCT) Play(b *Board) Spot {
+func (p PureUCT) Play(b *NaiveBoard) Spot {
 	start := time.Now()
 	root := NewRoot(b)
 
@@ -376,7 +376,7 @@ func (mcts *MonteCarloTreeSearch) RunOneRound(n *TreeNode) {
 	leaf.Backprop(winner, board)
 }
 
-func (mcts MonteCarloTreeSearch) Play(b *Board) Spot {
+func (mcts MonteCarloTreeSearch) Play(b *NaiveBoard) Spot {
 	start := time.Now()
 	root := NewRoot(b)
 

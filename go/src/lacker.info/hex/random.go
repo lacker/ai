@@ -11,7 +11,7 @@ The random player plays a random legal move.
 type Random struct {
 }
 
-func (r Random) Play(b *Board) Spot {
+func (r Random) Play(b *NaiveBoard) Spot {
 	moves := b.PossibleMoves()
 	return moves[rand.Intn(len(moves))]
 }

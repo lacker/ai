@@ -11,7 +11,7 @@ In the NaiveBoard, to represent a spot, we do row and column like it's
 a matrix.
 */
 
-type Board struct {
+type NaiveBoard struct {
 	// Contents of the board
 	// indices are Row, Col
 	Board [BoardSize][BoardSize]Color
@@ -20,19 +20,19 @@ type Board struct {
 	ToMove Color
 }
 
-func NewBoard() *Board {
-	return &Board{ToMove: Black}
+func NewNaiveBoard() *NaiveBoard {
+	return &NaiveBoard{ToMove: Black}
 }
 
-func (b *Board) Get(spot Spot) Color {
+func (b *NaiveBoard) Get(spot Spot) Color {
 	return b.Board[spot.Row][spot.Col]
 }
 
-func (b *Board) Set(spot Spot, color Color) {
+func (b *NaiveBoard) Set(spot Spot, color Color) {
 	b.Board[spot.Row][spot.Col] = color
 }
 
-func (b *Board) Eprint() {
+func (b *NaiveBoard) Eprint() {
 	Eprint("Board:\n")
 	for r, col := range b.Board {
 		Eprint(strings.Repeat(" ", r))
@@ -53,7 +53,7 @@ func (b *Board) Eprint() {
 	}
 }
 
-func (b *Board) PossibleMoves() []Spot {
+func (b *NaiveBoard) PossibleMoves() []Spot {
 	answer := make([]Spot, 0)
 	for r, col := range b.Board {
 		for c, color := range col {
@@ -66,7 +66,7 @@ func (b *Board) PossibleMoves() []Spot {
 }
 
 // Returns whether it was a possible move
-func (b *Board) MakeMove(s Spot) bool {
+func (b *NaiveBoard) MakeMove(s Spot) bool {
 	if b.ToMove == Empty {
 		log.Fatal("this isn't a valid board, there is nobody to move")
 	}
@@ -78,8 +78,8 @@ func (b *Board) MakeMove(s Spot) bool {
 	return true
 }
 
-func (b *Board) Transpose() *Board {
-	t := NewBoard()
+func (b *NaiveBoard) Transpose() *NaiveBoard {
+	t := NewNaiveBoard()
 	t.ToMove = -b.ToMove
 	for _, spot := range AllSpots() {
 		t.Set(spot, -b.Get(spot.Transpose()))
@@ -87,8 +87,8 @@ func (b *Board) Transpose() *Board {
 	return t
 }
 
-func (b *Board) Copy() *Board {
-	c := NewBoard()
+func (b *NaiveBoard) Copy() *NaiveBoard {
+	c := NewNaiveBoard()
 	c.ToMove = b.ToMove
 	for _, spot := range AllSpots() {
 		c.Set(spot, b.Get(spot))
@@ -99,7 +99,7 @@ func (b *Board) Copy() *Board {
 // Makes moves repeatedly. When this stops the game is over.
 // Returns the winner.
 // This mutates the board.
-func (b *Board) Playout() Color {
+func (b *NaiveBoard) Playout() Color {
 	moves := b.PossibleMoves()
 	ShuffleSpots(moves)
 
@@ -119,7 +119,7 @@ func (b *Board) Playout() Color {
 
 // Black wins if you can get from row 0 to row BoardSize - 1 with just
 // black spots.
-func (b *Board) IsBlackTheWinner() bool {
+func (b *NaiveBoard) IsBlackTheWinner() bool {
 	// Frontier is black stones we haven't investigated yet.
 	// Checked is any previously-frontier stone we already processed.
 	// Start off with the frontier of all the row-zero black stones.
@@ -161,7 +161,7 @@ func (b *Board) IsBlackTheWinner() bool {
 	return false
 }
 
-func (b *Board) Winner() Color {
+func (b *NaiveBoard) Winner() Color {
 	if b.IsBlackTheWinner() {
 		return Black
 	}
@@ -171,11 +171,11 @@ func (b *Board) Winner() Color {
 	return Empty
 }
 
-func NewBoardFromJSON(j string) *Board {
-	b := new(Board)
+func NewNaiveBoardFromJSON(j string) *NaiveBoard {
+	b := new(NaiveBoard)
 	err := json.Unmarshal([]byte(j[:]), &b)
 	if err != nil {
-		log.Fatal("NewBoardFromJSON failed: ", err)
+		log.Fatal("NewNaiveBoardFromJSON failed: ", err)
 	}
 	return b
 }

@@ -168,8 +168,8 @@ func (b *TopoBoard) Get(row int, col int) Color {
 	return b.Board[s]
 }
 
-func (b *TopoBoard) CopyAsBoard() *Board {
-	c := NewBoard()
+func (b *TopoBoard) ToNaiveBoard() *NaiveBoard {
+	c := NewNaiveBoard()
 	c.ToMove = b.ToMove
 	for _, spot := range AllSpots() {
 		c.Set(spot, b.Get(spot.Row, spot.Col))
@@ -178,7 +178,7 @@ func (b *TopoBoard) CopyAsBoard() *Board {
 }
 
 func (b *TopoBoard) Eprint() {
-	b.CopyAsBoard().Eprint()
+	b.ToNaiveBoard().Eprint()
 }
 
 // The number of non-empty groups.

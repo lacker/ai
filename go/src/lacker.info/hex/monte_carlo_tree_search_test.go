@@ -7,7 +7,7 @@ import (
 )
 
 func TestSimpleChain(t *testing.T) {
-	board := NewBoard()
+	board := NewNaiveBoard()
 	root := NewRoot(board)
 	if root.UCT() != math.Inf(1) {
 		t.Fatalf("root.UCT() was not Inf")
@@ -35,7 +35,7 @@ func TestSimpleChain(t *testing.T) {
 }
 
 func TestExpansion(t *testing.T) {
-	board := NewBoard()
+	board := NewNaiveBoard()
 	root := NewRoot(board)
 	for i := 0; i < 121; i++ {
 		if root.SelectLeafByUCT() != root {
@@ -62,7 +62,7 @@ func TestExpansion(t *testing.T) {
 }
 
 func TestPureUCT(t *testing.T) {
-	board := NewBoard()
+	board := NewNaiveBoard()
 	root := NewRoot(board)
 	for i := 0; i < 5; i++ {
 		root.RunOneUCTRound()
@@ -74,7 +74,7 @@ func TestPureUCT(t *testing.T) {
 
 func TestMCTS(t *testing.T) {
 	var mcts MonteCarloTreeSearch
-	board := NewBoard()
+	board := NewNaiveBoard()
 	root := NewRoot(board)
 	for i := 0; i < 5; i++ {
 		mcts.RunOneRound(root)
@@ -86,7 +86,7 @@ func TestMCTS(t *testing.T) {
 
 func BenchmarkUCTRound(b *testing.B) {
 	rand.Seed(1)
-	board := NewBoard()
+	board := NewNaiveBoard()
 	root := NewRoot(board)
 
 	for i := 0; i < b.N; i++ {
@@ -97,7 +97,7 @@ func BenchmarkUCTRound(b *testing.B) {
 func BenchmarkMCTS(b *testing.B) {
 	rand.Seed(1)
 	mcts := MonteCarloTreeSearch{Seconds: 0, Quiet: false, V: 1000}
-	board := NewBoard()
+	board := NewNaiveBoard()
 	root := NewRoot(board)
 
 	for i := 0; i < b.N; i++ {
