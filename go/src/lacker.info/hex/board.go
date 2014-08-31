@@ -116,4 +116,5 @@ type Board interface {
 	PossibleMoves() []Spot
 	MakeMove(s Spot) bool
 	GetToMove() Color
+	Get(s Spot) Color
 }

@@ -177,7 +177,11 @@ func TopoSpotFromSpot(s Spot) TopoSpot {
 	return TopoSpotFromRowCol(s.Row, s.Col)
 }
 
-func (b *TopoBoard) Get(row int, col int) Color {
+func (b *TopoBoard) Get(s Spot) Color {
+	return b.GetByRowCol(s.Row, s.Col)
+}
+
+func (b *TopoBoard) GetByRowCol(row int, col int) Color {
 	s := TopoSpotFromRowCol(row, col)
 	return b.Board[s]
 }
@@ -186,7 +190,7 @@ func (b *TopoBoard) ToNaiveBoard() *NaiveBoard {
 	c := NewNaiveBoard()
 	c.ToMove = b.ToMove
 	for _, spot := range AllSpots() {
-		c.Set(spot, b.Get(spot.Row, spot.Col))
+		c.Set(spot, b.Get(spot))
 	}
 	return c
 }
