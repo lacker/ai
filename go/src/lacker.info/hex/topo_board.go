@@ -57,6 +57,16 @@ func (s TopoSpot) isOnRightSide() bool {
 	return s % BoardSize == TopLeftCorner - 1
 }
 
+func (s TopoSpot) ToSpot() Spot {
+	if s < TopLeftCorner {
+		panic("special spots cannot be converted to Spot")
+	}
+	x := int(s - TopLeftCorner)
+	col := x % BoardSize
+	row := (x - col) / BoardSize
+	return Spot{Row: row, Col: col}
+}
+
 type TopoBoard struct {
 	// Contents of the board, indexed by TopoSpot
 	Board [NumTopoSpots]Color
@@ -241,7 +251,7 @@ func (b *TopoBoard) SetTopoSpot(s TopoSpot, color Color) {
 	}
 }
 
-func (b *TopoBoard) PossibleMoves() []TopoSpot {
+func (b *TopoBoard) PossibleTopoSpotMoves() []TopoSpot {
 	answer := make([]TopoSpot, 0)
 	var spot TopoSpot
 	for spot = 0; spot < NumTopoSpots; spot++ {
@@ -249,6 +259,15 @@ func (b *TopoBoard) PossibleMoves() []TopoSpot {
 		if color == Empty {
 			answer = append(answer, spot)
 		}
+	}
+	return answer
+}
+
+func (b *TopoBoard) PossibleMoves() []Spot {
+	topo := b.PossibleTopoSpotMoves()
+	answer := make([]Spot, len(topo))
+	for i, s := range topo {
+		answer[i] = s.ToSpot()
 	}
 	return answer
 }
@@ -265,7 +284,7 @@ func (b *TopoBoard) MakeMove(s TopoSpot) {
 // Returns the winner.
 // This mutates the board.
 func (b *TopoBoard) Playout() Color {
-	moves := b.PossibleMoves()
+	moves := b.PossibleTopoSpotMoves()
 	ShuffleTopoSpots(moves)
 
 	for _, move := range moves {

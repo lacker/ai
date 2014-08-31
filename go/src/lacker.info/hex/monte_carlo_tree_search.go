@@ -14,7 +14,11 @@ import (
 type TreeNode struct {
 	BlackWins int
 	WhiteWins int
+
+	// Toggle this for testing during migration
 	Board *NaiveBoard
+	// Board Board
+
 	NumPossibleMoves int
 	Children map[Spot]*TreeNode
 	Parent *TreeNode
