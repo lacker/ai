@@ -1,5 +1,10 @@
 package hex
 
+import (
+	"fmt"
+	"log"
+)
+
 /*
 TopoBoard is a Board implementation that constantly tracks which
 groups of spots are connected. This makes it quick to determine when a
@@ -75,6 +80,8 @@ type TopoBoard struct {
 // Adds a group of a single spot. Does not merge with any neighbors.
 func (b *TopoBoard) addNewGroup(s TopoSpot, color Color) {
 	if b.Board[s] != Empty {
+		b.Eprint()
+		fmt.Printf("TopoSpot to set: %d\n", s)
 		panic("TopoBoard cannot change a spot once it has something on it")
 	}
 	if color == Empty {
@@ -187,6 +194,10 @@ func (b *TopoBoard) NumGroups() int {
 
 func (b *TopoBoard) Set(row int, col int, color Color) {
 	s := TopoSpotFromRowCol(row, col)
+	b.SetTopoSpot(s, color)
+}
+
+func (b *TopoBoard) SetTopoSpot(s TopoSpot, color Color) {
 	b.addNewGroup(s, color)
 
 	// Update connectivity with neighbors
@@ -230,3 +241,39 @@ func (b *TopoBoard) Set(row int, col int, color Color) {
 	}
 }
 
+func (b *TopoBoard) PossibleMoves() []TopoSpot {
+	answer := make([]TopoSpot, 0)
+	var spot TopoSpot
+	for spot = 0; spot < NumTopoSpots; spot++ {
+		color := b.Board[spot]
+		if color == Empty {
+			answer = append(answer, spot)
+		}
+	}
+	return answer
+}
+
+func (b *TopoBoard) MakeMove(s TopoSpot) {
+	if b.ToMove == Empty {
+		log.Fatal("this isn't a valid topo board, there is nobody to move")
+	}
+	b.SetTopoSpot(s, b.ToMove)
+	b.ToMove = -b.ToMove
+}
+
+// Makes moves repeatedly. When this stops the game is over.
+// Returns the winner.
+// This mutates the board.
+func (b *TopoBoard) Playout() Color {
+	moves := b.PossibleMoves()
+	ShuffleTopoSpots(moves)
+
+	for _, move := range moves {
+		b.MakeMove(move)
+		if b.Winner != Empty {
+			return b.Winner
+		}
+	}
+
+	panic("played all moves and still no winner")
+}

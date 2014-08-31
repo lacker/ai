@@ -54,3 +54,10 @@ func TestTopoBoardWhiteWin(t *testing.T) {
 		t.Fatalf("expected white")
 	}
 }
+
+func TestTopoBoardPlayout(t *testing.T) {
+	for i := 0; i < 10; i++ {
+		b := NewTopoBoard()
+		b.Playout()
+	}
+}

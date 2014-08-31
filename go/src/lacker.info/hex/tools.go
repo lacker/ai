@@ -57,6 +57,14 @@ func ShuffleSpots(spots []Spot) {
 	}
 }
 
+// Shuffles a list of topo spots
+func ShuffleTopoSpots(spots []TopoSpot) {
+	for i := range spots {
+    j := rand.Intn(i + 1)
+    spots[i], spots[j] = spots[j], spots[i]
+	}
+}
+
 // Prints a string to stderr
 func Eprint(s string) {
 	fmt.Fprintf(os.Stderr, s)
