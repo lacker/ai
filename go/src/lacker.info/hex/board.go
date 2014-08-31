@@ -7,6 +7,7 @@ import (
 	"strings"
 )
 
+// If we raise BoardSize we also need to change the type of TopoSpot
 const BoardSize = 11
 const NumSpots = BoardSize * BoardSize
 
