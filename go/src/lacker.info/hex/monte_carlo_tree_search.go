@@ -14,11 +14,7 @@ import (
 type TreeNode struct {
 	BlackWins int
 	WhiteWins int
-
-	// Toggle this for testing during migration
-	Board *NaiveBoard
-	// Board Board
-
+	Board Board
 	NumPossibleMoves int
 	Children map[Spot]*TreeNode
 	Parent *TreeNode
@@ -267,13 +263,17 @@ type MonteCarloTreeSearch struct {
 
 	// Parameter controlling rave mixing.
 	V int
+
+	// Whether to use topo boards
+	UseTopoBoards bool
 }
 
 func MakeMCTS(seconds float64) MonteCarloTreeSearch {
 	return MonteCarloTreeSearch{
 		Seconds: seconds,
 		Quiet: false,
-		V: 0,
+		V: 1000,
+		UseTopoBoards: false,
 	}
 }
 

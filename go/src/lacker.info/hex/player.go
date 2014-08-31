@@ -27,13 +27,15 @@ func GetPlayer(s string) Player {
 	case "uct20":
 		return PureUCT{20}
 	case "mcts1":
-		return MonteCarloTreeSearch{Seconds: 1, Quiet: false, V: 1000}
+		return MakeMCTS(1)
 	case "mcts5":
-		return MonteCarloTreeSearch{Seconds: 5, Quiet: false, V: 1000}
+		return MakeMCTS(5)
 	case "mcts20":
-		return MonteCarloTreeSearch{Seconds: 20, Quiet: false, V: 1000}
+		return MakeMCTS(20)
 	case "bleeding":
-		return MonteCarloTreeSearch{Seconds: 5, Quiet: false, V: 10000}
+		mcts := MakeMCTS(5)
+		mcts.UseTopoBoards = true
+		return mcts
 	default:
 		log.Fatalf("unknown player type: %s", s)
 		return nil
