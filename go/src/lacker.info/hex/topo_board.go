@@ -93,7 +93,7 @@ func (b *TopoBoard) mergeSmallGroupIntoBigGroup(
 	bigGroupId TopoSpot) {
 
 	// Fix the id mapping
-	for s := range b.GroupSpots[smallGroupId] {
+	for _, s := range b.GroupSpots[smallGroupId] {
 		b.GroupId[s] = bigGroupId
 	}
 
@@ -104,9 +104,10 @@ func (b *TopoBoard) mergeSmallGroupIntoBigGroup(
 	b.GroupSpots[smallGroupId] = nil
 }
 
-// Looks at two spots, assuming they are adjacent, and merges their
-// groups if they should be merged.
-func (b *TopoBoard) maybeMergeAdjacentSpots(spot1 TopoSpot, spot2 TopoSpot) {
+// Looks at two spots, assuming they are connected in reality but that
+// may not be reflected in the groups, and merges their groups if they
+// should be merged.
+func (b *TopoBoard) maybeMergeSpots(spot1 TopoSpot, spot2 TopoSpot) {
 	color1 := b.Board[spot1]
 	color2 := b.Board[spot2]
 	if color1 == Empty {
@@ -140,19 +141,48 @@ func (b *TopoBoard) maybeMergeAdjacentSpots(spot1 TopoSpot, spot2 TopoSpot) {
 func NewTopoBoard() *TopoBoard {
 	b := &TopoBoard{ToMove: Black}
 
+	b.GroupSpots = [][]TopoSpot{}
+
 	// Set up the initial groups for special spots
 	b.addNewGroup(TopSide, Black)
 	b.addNewGroup(BottomSide, Black)
 	b.addNewGroup(LeftSide, White)
 	b.addNewGroup(RightSide, White)
 
-	b.GroupSpots = [][]TopoSpot{}
-
 	return b
 }
 
 func TopoSpotFromRowCol(row int, col int) TopoSpot {
 	return TopoSpot(4 + col + BoardSize * row)
+}
+
+func (b *TopoBoard) Get(row int, col int) Color {
+	s := TopoSpotFromRowCol(row, col)
+	return b.Board[s]
+}
+
+func (b *TopoBoard) CopyAsBoard() *Board {
+	c := NewBoard()
+	c.ToMove = b.ToMove
+	for _, spot := range AllSpots() {
+		c.Set(spot, b.Get(spot.Row, spot.Col))
+	}
+	return c
+}
+
+func (b *TopoBoard) Eprint() {
+	b.CopyAsBoard().Eprint()
+}
+
+// The number of non-empty groups.
+func (b *TopoBoard) NumGroups() int {
+	answer := 0
+	for _, group := range b.GroupSpots {
+		if group != nil {
+			answer++
+		}
+	}
+	return answer
 }
 
 func (b *TopoBoard) Set(row int, col int, color Color) {
@@ -163,39 +193,40 @@ func (b *TopoBoard) Set(row int, col int, color Color) {
 
 	// Up-left neighbor
 	if s.isOnTopSide() {
-		b.maybeMergeAdjacentSpots(s, TopSide)
+		b.maybeMergeSpots(s, TopSide)
 	} else {
-		b.maybeMergeAdjacentSpots(s, s - BoardSize)
+		b.maybeMergeSpots(s, s - BoardSize)
 
 		// Up-right neighbor
 		if !s.isOnRightSide() {
-			b.maybeMergeAdjacentSpots(s, s - BoardSize + 1)
+			b.maybeMergeSpots(s, s - BoardSize + 1)
 		}
 	}
 
 	// Left neighbor
 	if s.isOnLeftSide() {
-		b.maybeMergeAdjacentSpots(s, LeftSide)
+		b.maybeMergeSpots(s, LeftSide)
 	} else {
-		b.maybeMergeAdjacentSpots(s, s - 1)
+		b.maybeMergeSpots(s, s - 1)
 	}
 
 	// Right neighbor
 	if s.isOnRightSide() {
-		b.maybeMergeAdjacentSpots(s, RightSide)
+		b.maybeMergeSpots(s, RightSide)
 	} else {
-		b.maybeMergeAdjacentSpots(s, s + 1)
+		b.maybeMergeSpots(s, s + 1)
 	}
 
 	// Bottom-right neighbor
 	if s.isOnBottomSide() {
-		b.maybeMergeAdjacentSpots(s, BottomSide)
+		b.maybeMergeSpots(s, BottomSide)
 	} else {
-		b.maybeMergeAdjacentSpots(s, s + BoardSize)
+		b.maybeMergeSpots(s, s + BoardSize)
 
 		// Bottom-left neighbor
 		if !s.isOnLeftSide() {
-			b.maybeMergeAdjacentSpots(s, s + BoardSize - 1)
+			b.maybeMergeSpots(s, s + BoardSize - 1)
 		}
 	}
 }
+
