@@ -78,6 +78,10 @@ func (b *NaiveBoard) MakeMove(s Spot) bool {
 	return true
 }
 
+func (b *NaiveBoard) GetToMove() Color {
+	return b.ToMove
+}
+
 func (b *NaiveBoard) Transpose() *NaiveBoard {
 	t := NewNaiveBoard()
 	t.ToMove = -b.ToMove

@@ -303,3 +303,8 @@ func (b *TopoBoard) Playout() Color {
 
 	panic("played all moves and still no winner")
 }
+
+func (b *TopoBoard) GetToMove() Color {
+	return b.ToMove
+}
+

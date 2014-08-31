@@ -69,7 +69,7 @@ func (n *TreeNode) NumPlayouts() int {
 // The win rate just purely based on what this node has done before.
 func (n *TreeNode) SimpleExpectedWinRate() float64 {
 	var wins float64
-	switch n.Board.ToMove {
+	switch n.Board.GetToMove() {
 	case Black:
 		wins = float64(n.BlackWins)
 	case White:
@@ -89,7 +89,7 @@ func (n *TreeNode) UCT() float64 {
 		return math.Inf(1)
 	}
 	var wins float64
-	switch n.Board.ToMove {
+	switch n.Board.GetToMove() {
 	case Black:
 		wins = float64(n.WhiteWins)
 	case White:
@@ -105,7 +105,7 @@ func (n *TreeNode) UCT() float64 {
 }
 
 func (n *TreeNode) ToMoveLetter() string {
-	switch n.Board.ToMove {
+	switch n.Board.GetToMove() {
 	case Black:
 		return "B"
 	case White:
@@ -204,7 +204,7 @@ func (n *TreeNode) Backprop(winner Color, finalBoard *NaiveBoard) {
 
 	// Update rave stats
 	for index, move := range AllSpots() {
-		if finalBoard.Get(move) != n.Board.ToMove {
+		if finalBoard.Get(move) != n.Board.GetToMove() {
 			continue
 		}
 		if n.Board.Get(move) != Empty {
@@ -287,7 +287,7 @@ func (mcts *MonteCarloTreeSearch) ExpectedWinRate(
 	// Calculate a rave estimate with weak but win-slanted prior
 	var raveWins int
 	var raveLosses int
-	switch parent.Board.ToMove {
+	switch parent.Board.GetToMove() {
 	case Black:
 		raveWins = parent.RaveBlackWins[move.Index()]
 		raveLosses = parent.RaveWhiteWins[move.Index()]
@@ -304,7 +304,7 @@ func (mcts *MonteCarloTreeSearch) ExpectedWinRate(
 
 	// Gather the specific win data
 	var wins float64
-	switch parent.Board.ToMove {
+	switch parent.Board.GetToMove() {
 	case Black:
 		wins = float64(child.BlackWins)
 	case White:

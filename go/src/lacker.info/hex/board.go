@@ -115,4 +115,5 @@ type Board interface {
 	ToNaiveBoard() *NaiveBoard
 	PossibleMoves() []Spot
 	MakeMove(s Spot) bool
+	GetToMove() Color
 }
