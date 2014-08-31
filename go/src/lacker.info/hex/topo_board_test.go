@@ -6,6 +6,13 @@ import (
 	"testing"
 )
 
+func TestTopoBoardImplementsBoard(t *testing.T) {
+	var b Board
+	tb := NewTopoBoard()
+	b = tb
+	b.ToNaiveBoard()
+}
+
 func TestTopoBoardNumGroups(t *testing.T) {
 	b := NewTopoBoard()
 

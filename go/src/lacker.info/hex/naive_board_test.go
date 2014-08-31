@@ -6,7 +6,14 @@ import (
 	"testing"
 )
 
-func TestBoardBlackWin(t *testing.T) {
+func TestNaiveBoardImplementsBoard(t *testing.T) {
+	var b Board
+	nb := NewNaiveBoard()
+	b = nb
+	b.ToNaiveBoard()
+}
+
+func TestNaiveBoardBlackWin(t *testing.T) {
 	b := NewNaiveBoard()
 	for r := 0; r < BoardSize; r++ {
 		if r != 5 {
@@ -22,7 +29,7 @@ func TestBoardBlackWin(t *testing.T) {
 	}
 }
 
-func TestBoardWhiteWin(t *testing.T) {
+func TestNaiveBoardWhiteWin(t *testing.T) {
 	b := NewNaiveBoard()
 	for c := 0; c < BoardSize; c++ {
 		if c != 8 {
@@ -43,14 +50,14 @@ func TestBoardWhiteWin(t *testing.T) {
 	}
 }
 
-func TestBoardPlayout(t *testing.T) {
+func TestNaiveBoardPlayout(t *testing.T) {
 	for i := 0; i < 10; i++ {
 		b := NewNaiveBoard()
 		b.Playout()
 	}
 }
 
-func TestBoardStringification(t *testing.T) {
+func TestNaiveBoardStringification(t *testing.T) {
 	s := MakeSpot(2, 3)
 	if fmt.Sprintf("%s", s) != "(2, 3)" {
 		t.Fatalf("problems printf'ing %s", s)

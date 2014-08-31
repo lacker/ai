@@ -111,3 +111,6 @@ func (s Spot) Neighbors() []Spot {
 	return answer
 }
 
+type Board interface {
+	ToNaiveBoard() *NaiveBoard
+}

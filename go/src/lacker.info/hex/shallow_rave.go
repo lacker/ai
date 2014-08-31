@@ -50,7 +50,7 @@ func (s ShallowRave) Play(b *NaiveBoard) Spot {
 
 		// Then play moves in that order on a copy of the board.
 		// Track the moves that "we" played, i.e. the player to move on b
-		playout := b.Copy()
+		playout := b.ToNaiveBoard()
 		ourMoves := make([]Spot, 0)
 		for _, move := range moves {
 			if playout.ToMove == b.ToMove {

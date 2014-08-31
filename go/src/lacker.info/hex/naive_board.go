@@ -87,7 +87,7 @@ func (b *NaiveBoard) Transpose() *NaiveBoard {
 	return t
 }
 
-func (b *NaiveBoard) Copy() *NaiveBoard {
+func (b *NaiveBoard) ToNaiveBoard() *NaiveBoard {
 	c := NewNaiveBoard()
 	c.ToMove = b.ToMove
 	for _, spot := range AllSpots() {

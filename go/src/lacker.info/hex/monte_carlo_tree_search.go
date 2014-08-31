@@ -30,7 +30,7 @@ type TreeNode struct {
 
 func NewRoot(b *NaiveBoard) *TreeNode {
 	node := new(TreeNode)
-	node.Board = b.Copy()
+	node.Board = b.ToNaiveBoard()
 	node.Children = make(map[Spot]*TreeNode)
 	node.NumPossibleMoves = len(node.Board.PossibleMoves())
 	return node
@@ -47,7 +47,7 @@ func NewChild(parent *TreeNode, move Spot) *TreeNode {
 	if parent.Board == nil {
 		panic("bad parent - board should not be nil")
 	}
-	node.Board = parent.Board.Copy()
+	node.Board = parent.Board.ToNaiveBoard()
 	if !node.Board.MakeMove(move) {
 		panic("cannot create new child with invalid move")
 	}
@@ -227,7 +227,7 @@ func (n *TreeNode) String() string {
 
 func (n *TreeNode) RunOneUCTRound() {
 	leaf := n.SelectLeafByUCT().Expand()
-	board := leaf.Board.Copy()
+	board := leaf.Board.ToNaiveBoard()
 	winner := board.Playout()
 	leaf.Backprop(winner, board)
 }
@@ -371,7 +371,7 @@ func (mcts *MonteCarloTreeSearch) SelectLeaf(n *TreeNode) *TreeNode {
 
 func (mcts *MonteCarloTreeSearch) RunOneRound(n *TreeNode) {
 	leaf := mcts.SelectLeaf(n).Expand()
-	board := leaf.Board.Copy()
+	board := leaf.Board.ToNaiveBoard()
 	winner := board.Playout()
 	leaf.Backprop(winner, board)
 }
