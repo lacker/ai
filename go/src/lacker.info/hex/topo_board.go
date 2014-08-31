@@ -21,8 +21,6 @@ It starts at 4 because 0-3 are taken up by the special spots.
 // 11 * 11 < 128 it works.
 type TopoSpot int8
 
-const NumTopoSpots int = BoardSize * BoardSize + 4
-
 // Black goes TopSide to BottomSide
 const TopSide TopoSpot = 0
 const BottomSide TopoSpot = 1
@@ -33,12 +31,32 @@ const RightSide TopoSpot = 3
 
 const NotASpot TopoSpot = -1
 
+const TopLeftCorner TopoSpot = 4
+const NumTopoSpots TopoSpot = TopoSpot(BoardSize * BoardSize) + TopLeftCorner
+const BottomRightCorner TopoSpot = NumTopoSpots - 1
+
+
+func (s TopoSpot) isOnLeftSide() bool {
+	return s % BoardSize == TopLeftCorner
+}
+
+func (s TopoSpot) isOnTopSide() bool {
+	return s >= TopLeftCorner && s < TopLeftCorner + BoardSize
+}
+
+func (s TopoSpot) isOnBottomSide() bool {
+	return s <= BottomRightCorner && s > BottomRightCorner - BoardSize
+}
+
+func (s TopoSpot) isOnRightSide() bool {
+	return s % BoardSize == TopLeftCorner - 1
+}
 
 type TopoBoard struct {
 	// Contents of the board, indexed by TopoSpot
 	Board [NumTopoSpots]Color
 
-	// GroupId gives the index in GroupSpots and GroupSize for the group
+	// GroupId gives the index in GroupSpots for the group
 	// that a particular spot is in.
 	// The GroupId can be a TopoSpot because there are at most that many
 	// groups.
@@ -46,9 +64,6 @@ type TopoBoard struct {
 
 	// Each group is a list of TopoSpots in that group.
 	GroupSpots [][]TopoSpot
-
-	// The size for the group
-	GroupSize []TopoSpot
 
 	// Whose move it is
 	ToMove Color
@@ -71,7 +86,55 @@ func (b *TopoBoard) addNewGroup(s TopoSpot, color Color) {
 	b.GroupId[s] = newGroupId
 	newGroup := []TopoSpot{s}
 	b.GroupSpots = append(b.GroupSpots, newGroup)
-	b.GroupSize = append(b.GroupSize, 1)
+}
+
+func (b *TopoBoard) mergeSmallGroupIntoBigGroup(
+	smallGroupId TopoSpot,
+	bigGroupId TopoSpot) {
+
+	// Fix the id mapping
+	for s := range b.GroupSpots[smallGroupId] {
+		b.GroupId[s] = bigGroupId
+	}
+
+	// Fix the spots lists
+	b.GroupSpots[bigGroupId] = append(
+		b.GroupSpots[bigGroupId],
+		(b.GroupSpots[smallGroupId])...)
+	b.GroupSpots[smallGroupId] = nil
+}
+
+// Looks at two spots, assuming they are adjacent, and merges their
+// groups if they should be merged.
+func (b *TopoBoard) maybeMergeAdjacentSpots(spot1 TopoSpot, spot2 TopoSpot) {
+	color1 := b.Board[spot1]
+	color2 := b.Board[spot2]
+	if color1 == Empty {
+		return
+	}
+	if color1 != color2 {
+		return
+	}
+
+	group1 := b.GroupId[spot1]
+	group2 := b.GroupId[spot2]
+	if group1 == group2 {
+		return
+	}
+
+	if len(b.GroupSpots[group1]) > len(b.GroupSpots[group2]) {
+		b.mergeSmallGroupIntoBigGroup(group2, group1)
+	} else {
+		b.mergeSmallGroupIntoBigGroup(group1, group2)
+	}
+
+	// Check win conditions
+	if b.GroupId[TopSide] == b.GroupId[BottomSide] {
+		b.Winner = Black
+	}
+	if b.GroupId[LeftSide] == b.GroupId[RightSide] {
+		b.Winner = White
+	}
 }
 
 func NewTopoBoard() *TopoBoard {
@@ -82,6 +145,8 @@ func NewTopoBoard() *TopoBoard {
 	b.addNewGroup(BottomSide, Black)
 	b.addNewGroup(LeftSide, White)
 	b.addNewGroup(RightSide, White)
+
+	b.GroupSpots = [][]TopoSpot{}
 
 	return b
 }
@@ -95,5 +160,42 @@ func (b *TopoBoard) Set(row int, col int, color Color) {
 	b.addNewGroup(s, color)
 
 	// Update connectivity with neighbors
-	// TODO.
+
+	// Up-left neighbor
+	if s.isOnTopSide() {
+		b.maybeMergeAdjacentSpots(s, TopSide)
+	} else {
+		b.maybeMergeAdjacentSpots(s, s - BoardSize)
+
+		// Up-right neighbor
+		if !s.isOnRightSide() {
+			b.maybeMergeAdjacentSpots(s, s - BoardSize + 1)
+		}
+	}
+
+	// Left neighbor
+	if s.isOnLeftSide() {
+		b.maybeMergeAdjacentSpots(s, LeftSide)
+	} else {
+		b.maybeMergeAdjacentSpots(s, s - 1)
+	}
+
+	// Right neighbor
+	if s.isOnRightSide() {
+		b.maybeMergeAdjacentSpots(s, RightSide)
+	} else {
+		b.maybeMergeAdjacentSpots(s, s + 1)
+	}
+
+	// Bottom-right neighbor
+	if s.isOnBottomSide() {
+		b.maybeMergeAdjacentSpots(s, BottomSide)
+	} else {
+		b.maybeMergeAdjacentSpots(s, s + BoardSize)
+
+		// Bottom-left neighbor
+		if !s.isOnLeftSide() {
+			b.maybeMergeAdjacentSpots(s, s + BoardSize - 1)
+		}
+	}
 }
