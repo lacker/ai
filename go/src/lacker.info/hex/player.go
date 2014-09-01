@@ -22,10 +22,6 @@ func GetPlayer(s string) Player {
 		return ShallowRave{Seconds:5, Quiet:false}
 	case "sr20":
 		return ShallowRave{Seconds:20, Quiet:false}
-	case "uct5":
-		return PureUCT{5}
-	case "uct20":
-		return PureUCT{20}
 	case "mcts1":
 		return MakeMCTS(1)
 	case "mcts5":

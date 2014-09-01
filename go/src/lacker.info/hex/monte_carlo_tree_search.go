@@ -232,31 +232,6 @@ func (n *TreeNode) RunOneUCTRound() {
 	leaf.Backprop(winner, board)
 }
 
-type PureUCT struct {
-	Seconds float64
-}
-
-func (p PureUCT) Play(b *NaiveBoard) Spot {
-	start := time.Now()
-	root := NewRoot(b)
-
-	// Do playouts for a set amount of time
-	for SecondsSince(start) < p.Seconds {
-		root.RunOneUCTRound()
-	}
-
-	for _, move := range AllSpots() {
-		child, ok := root.Children[move]
-		if ok {
-			log.Printf("%s -- %s", move, child)			
-		}
-	}
-
-	log.Printf("total: %s", root)
-
-	return root.MostSimulatedMove()
-}
-
 type MonteCarloTreeSearch struct {
 	Seconds float64
 	Quiet bool
