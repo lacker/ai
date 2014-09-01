@@ -225,13 +225,6 @@ func (n *TreeNode) String() string {
 		n.ToMoveLetter(), n.SimpleExpectedWinRate())
 }
 
-func (n *TreeNode) RunOneUCTRound() {
-	leaf := n.SelectLeafByUCT().Expand()
-	board := leaf.Board.ToNaiveBoard()
-	winner := board.Playout()
-	leaf.Backprop(winner, board)
-}
-
 type MonteCarloTreeSearch struct {
 	Seconds float64
 	Quiet bool

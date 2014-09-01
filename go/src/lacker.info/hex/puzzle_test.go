@@ -1,6 +1,7 @@
 package hex
 
 import (
+	"math/rand"
 	"testing"
 )
 
@@ -27,6 +28,8 @@ func (c checker) expectFail(puzzle Puzzle) {
 }
 
 func TestPuzzles(t *testing.T) {
+	rand.Seed(1)
+	
 	sr := checker{
 		Tester: t,
 		Name: "SR",
