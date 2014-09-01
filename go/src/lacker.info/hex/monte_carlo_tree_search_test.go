@@ -61,17 +61,6 @@ func TestExpansion(t *testing.T) {
 	}
 }
 
-func TestPureUCT(t *testing.T) {
-	board := NewNaiveBoard()
-	root := NewRoot(board)
-	for i := 0; i < 5; i++ {
-		root.RunOneUCTRound()
-	}
-	if root.BlackWins + root.WhiteWins != 5 {
-		t.Fatalf("five uct loops should lead to 5 win counts in the root")
-	}
-}
-
 func TestMCTS(t *testing.T) {
 	var mcts MonteCarloTreeSearch
 	board := NewNaiveBoard()
@@ -81,16 +70,6 @@ func TestMCTS(t *testing.T) {
 	}
 	if root.BlackWins + root.WhiteWins != 5 {
 		t.Fatalf("five mcts loops should lead to 5 win counts in the root")
-	}
-}
-
-func BenchmarkUCTRound(b *testing.B) {
-	rand.Seed(1)
-	board := NewNaiveBoard()
-	root := NewRoot(board)
-
-	for i := 0; i < b.N; i++ {
-		root.RunOneUCTRound()
 	}
 }
 
