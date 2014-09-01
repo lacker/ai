@@ -20,7 +20,7 @@ func main() {
 		log.Fatal("expected exactly 2 args to play_hex")
 	}
 	playerType := args[0]
-	board := hex.NewBoardFromJSON(args[1])
+	board := hex.NewNaiveBoardFromJSON(args[1])
 
 	// Have a player figure out what move to make on this board.
 	player := hex.GetPlayer(playerType)
