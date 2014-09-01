@@ -189,7 +189,7 @@ func (n *TreeNode) Depth() int {
 
 // Backpropagate a win, starting at this node and continuing
 // through parents until we hit the root.
-func (n *TreeNode) Backprop(winner Color, finalBoard *NaiveBoard) {
+func (n *TreeNode) Backprop(winner Color, finalBoard Board) {
 	// Update regular win/loss stats
 	switch winner {
 	case Black:
