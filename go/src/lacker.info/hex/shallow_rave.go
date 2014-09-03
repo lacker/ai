@@ -26,7 +26,7 @@ type ShallowRave struct {
 	Quiet bool
 }
 
-func (s ShallowRave) Play(b *NaiveBoard) Spot {
+func (s ShallowRave) Play(b Board) Spot {
 	start := time.Now()
 
 	records := make(map[Spot]*WinLossRecord)
@@ -53,7 +53,7 @@ func (s ShallowRave) Play(b *NaiveBoard) Spot {
 		playout := b.ToNaiveBoard()
 		ourMoves := make([]Spot, 0)
 		for _, move := range moves {
-			if playout.ToMove == b.ToMove {
+			if playout.ToMove == b.GetToMove() {
 				ourMoves = append(ourMoves, move)
 			}
 			if !playout.MakeMove(move) {
@@ -66,7 +66,7 @@ func (s ShallowRave) Play(b *NaiveBoard) Spot {
 			playout.Eprint()
 			log.Fatal("there was no winner after a full playout")
 		}
-		if winner == b.ToMove {
+		if winner == b.GetToMove() {
 			// We won.
 			for _, move := range ourMoves {
 				records[move].Wins++

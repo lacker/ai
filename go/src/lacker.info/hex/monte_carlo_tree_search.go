@@ -348,7 +348,7 @@ func (mcts *MonteCarloTreeSearch) RunOneRound(n *TreeNode) {
 	leaf.Backprop(winner, board)
 }
 
-func (mcts MonteCarloTreeSearch) Play(b *NaiveBoard) Spot {
+func (mcts MonteCarloTreeSearch) Play(b Board) Spot {
 	start := time.Now()
 	root := NewRoot(b)
 
