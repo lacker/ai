@@ -195,6 +195,10 @@ func (b *TopoBoard) ToNaiveBoard() *NaiveBoard {
 	return c
 }
 
+func (b *TopoBoard) ToTopoBoard() *TopoBoard {
+	return b.ToNaiveBoard().ToTopoBoard()
+}
+
 func (b *TopoBoard) Eprint() {
 	b.ToNaiveBoard().Eprint()
 }
@@ -215,6 +219,7 @@ func (b *TopoBoard) Set(row int, col int, color Color) {
 	b.SetTopoSpot(s, color)
 }
 
+// Cannot set things to empty or change the color of stones
 func (b *TopoBoard) SetTopoSpot(s TopoSpot, color Color) {
 	b.addNewGroup(s, color)
 

@@ -28,14 +28,6 @@ type TreeNode struct {
 	RaveWhiteWins [NumSpots]int
 }
 
-func NewRoot(b Board) *TreeNode {
-	node := new(TreeNode)
-	node.Board = b.ToNaiveBoard()
-	node.Children = make(map[Spot]*TreeNode)
-	node.NumPossibleMoves = len(node.Board.PossibleMoves())
-	return node
-}
-
 func NewChild(parent *TreeNode, move Spot) *TreeNode {
 	if parent == nil {
 		panic("cannot create a child of nil")
@@ -245,6 +237,19 @@ func MakeMCTS(seconds float64) MonteCarloTreeSearch {
 	}
 }
 
+
+func (mcts *MonteCarloTreeSearch) NewRoot(b Board) *TreeNode {
+	node := new(TreeNode)
+	if mcts.UseTopoBoards {
+		node.Board = b.ToTopoBoard()
+	} else {
+		node.Board = b.ToNaiveBoard()
+	}
+	node.Children = make(map[Spot]*TreeNode)
+	node.NumPossibleMoves = len(node.Board.PossibleMoves())
+	return node
+}
+
 // The expected win rate of a particular move.
 // If V is greater than 0, it's used as the rave mixing parameter.
 // If V equals 0, this does something hacky, and uses
@@ -350,7 +355,7 @@ func (mcts *MonteCarloTreeSearch) RunOneRound(n *TreeNode) {
 
 func (mcts MonteCarloTreeSearch) Play(b Board) Spot {
 	start := time.Now()
-	root := NewRoot(b)
+	root := mcts.NewRoot(b)
 
 	// Do playouts for a set amount of time
 	for SecondsSince(start) < mcts.Seconds {

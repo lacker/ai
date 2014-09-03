@@ -100,6 +100,18 @@ func (b *NaiveBoard) ToNaiveBoard() *NaiveBoard {
 	return c
 }
 
+func (b *NaiveBoard) ToTopoBoard() *TopoBoard {
+	c := NewTopoBoard()
+	c.ToMove = b.ToMove
+	for _, spot := range AllSpots() {
+		color := b.Get(spot)
+		if color != Empty {
+			c.Set(spot.Row, spot.Col, color)
+		}
+	}
+	return c
+}
+
 // Makes moves repeatedly. When this stops the game is over.
 // Returns the winner.
 // This mutates the board.

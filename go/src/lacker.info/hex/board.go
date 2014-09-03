@@ -113,6 +113,7 @@ func (s Spot) Neighbors() []Spot {
 
 type Board interface {
 	ToNaiveBoard() *NaiveBoard
+	ToTopoBoard() *TopoBoard
 	PossibleMoves() []Spot
 	MakeMove(s Spot) bool
 	GetToMove() Color
