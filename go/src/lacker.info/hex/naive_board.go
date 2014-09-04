@@ -112,6 +112,10 @@ func (b *NaiveBoard) ToTopoBoard() *TopoBoard {
 	return c
 }
 
+func (b *NaiveBoard) Copy() Board {
+	return b.ToNaiveBoard()
+}
+
 // Makes moves repeatedly. When this stops the game is over.
 // Returns the winner.
 // This mutates the board.

@@ -22,11 +22,12 @@ type TreeNode struct {
 	// Holds parameters that may affect the search
 	Strategy *MonteCarloTreeSearch
 
-	// A win count for playouts that are descendants of this node and
-	// contain a particular move. The particular move is defined by the
-	// spot that is the index of the array, and the Board.ToMove color
-	// making it. The move particularly does not have to be made
-	// immediately from this position.
+	// With classic MCTS, the rave counters track a win count for
+	// playouts that are descendants of this node where the
+	// Board.GetToMove() player moved at this particular spot at
+	// some point in the playout.
+	// With "topo" logic, this counts the number of times that this spot
+	// was part of a winning path for each player.
 	RaveBlackWins [NumSpots]int
 	RaveWhiteWins [NumSpots]int
 }
@@ -198,13 +199,26 @@ func (n *TreeNode) Backprop(winner Color, finalBoard Board) {
 		n.WhiteWins++
 	}
 
-	if n.Strategy.UseTopoBoards && false { // TODO: add real logic here
-		// Update rave stats. Any spot that was in the set of connected
-		// spots that led to the game ending counts as a winner.
-		panic("not implemented yet")
+	// Update rave stats.
+	if n.Strategy.UseTopoBoards {
+		// "Topo" scoring.
+		// A spot counts towards rave if it was part of the winning path,
+		// regardless of whose move it currently is.
+		for _, move := range finalBoard.GetWinningPathSpots() {
+			if n.Board.Get(move) != Empty {
+				continue
+			}
+			switch winner {
+			case Black:
+				n.RaveBlackWins[move.Index()]++
+			case White:
+				n.RaveWhiteWins[move.Index()]++
+			}
+		}
 	} else {
-		// Update rave stats. Any spot that was played in the winning game
-		// counts as a winner.
+		// "Classic" scoring.
+		// A spot counts towards rave if it was played on by the current
+		// active player. Then, whatever side it won for gets counted.
 		for index, move := range AllSpots() {
 			if finalBoard.Get(move) != n.Board.GetToMove() {
 				continue
@@ -364,7 +378,7 @@ func (mcts *MonteCarloTreeSearch) SelectLeaf(n *TreeNode) *TreeNode {
 
 func (mcts *MonteCarloTreeSearch) RunOneRound(n *TreeNode) {
 	leaf := mcts.SelectLeaf(n).Expand()
-	board := leaf.Board.ToNaiveBoard()
+	board := leaf.Board.Copy()
 	winner := board.Playout()
 	leaf.Backprop(winner, board)
 }

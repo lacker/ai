@@ -114,6 +114,7 @@ func (s Spot) Neighbors() []Spot {
 type Board interface {
 	ToNaiveBoard() *NaiveBoard
 	ToTopoBoard() *TopoBoard
+	Copy() Board
 	PossibleMoves() []Spot
 	MakeMove(s Spot) bool
 	GetToMove() Color
@@ -122,4 +123,7 @@ type Board interface {
 	// Returns a list of spots to count that contributed towards the
 	// winner winning.
 	GetWinningPathSpots() []Spot
+
+	// Plays out the game randomly and tells you who won.
+	Playout() Color
 }

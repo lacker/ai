@@ -75,6 +75,19 @@ func TestMCTS(t *testing.T) {
 	}
 }
 
+func TestTopoMCTS(t *testing.T) {
+	board := NewNaiveBoard()
+	mcts := MakeMCTS(0)
+	mcts.UseTopoBoards = true
+	root := mcts.NewRoot(board)
+	for i := 0; i < 5; i++ {
+		mcts.RunOneRound(root)
+	}
+	if root.BlackWins + root.WhiteWins != 5 {
+		t.Fatalf("five mcts loops should lead to 5 win counts in the root")
+	}
+}
+
 func BenchmarkMCTS(b *testing.B) {
 	rand.Seed(1)
 	mcts := MonteCarloTreeSearch{Seconds: 0, Quiet: false, V: 1000}

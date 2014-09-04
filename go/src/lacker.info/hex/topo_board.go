@@ -208,6 +208,10 @@ func (b *TopoBoard) ToTopoBoard() *TopoBoard {
 	return b.ToNaiveBoard().ToTopoBoard()
 }
 
+func (b *TopoBoard) Copy() Board {
+	return b.ToTopoBoard()
+}
+
 func (b *TopoBoard) Eprint() {
 	b.ToNaiveBoard().Eprint()
 }
