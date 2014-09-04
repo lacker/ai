@@ -85,3 +85,17 @@ func BenchmarkMCTS(b *testing.B) {
 		mcts.RunOneRound(root)
 	}
 }
+
+func BenchmarkTopoMCTS(b *testing.B) {
+	rand.Seed(1)
+	mcts := MonteCarloTreeSearch{
+		Seconds: 0, Quiet: false, V: 1000, UseTopoBoards: true,
+	}
+	board := NewNaiveBoard()
+	root := mcts.NewRoot(board)
+
+	for i := 0; i < b.N; i++ {
+		mcts.RunOneRound(root)
+	}
+
+}
