@@ -19,6 +19,9 @@ type TreeNode struct {
 	Children map[Spot]*TreeNode
 	Parent *TreeNode
 
+	// Holds parameters that may affect the search
+	Strategy *MonteCarloTreeSearch
+
 	// A win count for playouts that are descendants of this node and
 	// contain a particular move. The particular move is defined by the
 	// spot that is the index of the array, and the Board.ToMove color
@@ -39,7 +42,12 @@ func NewChild(parent *TreeNode, move Spot) *TreeNode {
 	if parent.Board == nil {
 		panic("bad parent - board should not be nil")
 	}
-	node.Board = parent.Board.ToNaiveBoard()
+	node.Strategy = parent.Strategy
+	if node.Strategy.UseTopoBoards {
+		node.Board = parent.Board.ToTopoBoard()
+	} else {
+		node.Board = parent.Board.ToNaiveBoard()
+	}
 	if !node.Board.MakeMove(move) {
 		panic("cannot create new child with invalid move")
 	}
@@ -247,6 +255,7 @@ func (mcts *MonteCarloTreeSearch) NewRoot(b Board) *TreeNode {
 	}
 	node.Children = make(map[Spot]*TreeNode)
 	node.NumPossibleMoves = len(node.Board.PossibleMoves())
+	node.Strategy = mcts
 	return node
 }
 
