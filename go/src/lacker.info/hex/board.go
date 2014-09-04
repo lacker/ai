@@ -118,4 +118,8 @@ type Board interface {
 	MakeMove(s Spot) bool
 	GetToMove() Color
 	Get(s Spot) Color
+
+	// Returns a list of spots to count that contributed towards the
+	// winner winning.
+	GetWinningPathSpots() []Spot
 }

@@ -198,19 +198,26 @@ func (n *TreeNode) Backprop(winner Color, finalBoard Board) {
 		n.WhiteWins++
 	}
 
-	// Update rave stats
-	for index, move := range AllSpots() {
-		if finalBoard.Get(move) != n.Board.GetToMove() {
-			continue
-		}
-		if n.Board.Get(move) != Empty {
-			continue
-		}
-		switch winner {
-		case Black:
-			n.RaveBlackWins[index]++
-		case White:
-			n.RaveWhiteWins[index]++
+	if n.Strategy.UseTopoBoards && false { // TODO: add real logic here
+		// Update rave stats. Any spot that was in the set of connected
+		// spots that led to the game ending counts as a winner.
+		panic("not implemented yet")
+	} else {
+		// Update rave stats. Any spot that was played in the winning game
+		// counts as a winner.
+		for index, move := range AllSpots() {
+			if finalBoard.Get(move) != n.Board.GetToMove() {
+				continue
+			}
+			if n.Board.Get(move) != Empty {
+				continue
+			}
+			switch winner {
+			case Black:
+				n.RaveBlackWins[index]++
+			case White:
+				n.RaveWhiteWins[index]++
+			}
 		}
 	}
 

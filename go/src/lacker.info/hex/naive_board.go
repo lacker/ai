@@ -196,4 +196,6 @@ func NewNaiveBoardFromJSON(j string) *NaiveBoard {
 	return b
 }
 
-
+func (b *NaiveBoard) GetWinningPathSpots() []Spot {
+	panic("not implemented")
+}

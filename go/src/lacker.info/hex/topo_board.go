@@ -57,6 +57,10 @@ func (s TopoSpot) isOnRightSide() bool {
 	return s % BoardSize == TopLeftCorner - 1
 }
 
+func (s TopoSpot) isSpecialSpot() bool {
+	return s < TopLeftCorner
+}
+
 func (s TopoSpot) ToSpot() Spot {
 	if s < TopLeftCorner {
 		panic("special spots cannot be converted to Spot")
@@ -85,6 +89,9 @@ type TopoBoard struct {
 
 	// Who has won the game
 	Winner Color
+
+	// The spots that led the winner to win
+	WinningPathSpots []TopoSpot
 }
 
 // Adds a group of a single spot. Does not merge with any neighbors.
@@ -149,9 +156,11 @@ func (b *TopoBoard) maybeMergeSpots(spot1 TopoSpot, spot2 TopoSpot) {
 	// Check win conditions
 	if b.GroupId[TopSide] == b.GroupId[BottomSide] {
 		b.Winner = Black
+		b.WinningPathSpots = b.GroupSpots[b.GroupId[TopSide]]
 	}
 	if b.GroupId[LeftSide] == b.GroupId[RightSide] {
 		b.Winner = White
+		b.WinningPathSpots = b.GroupSpots[b.GroupId[LeftSide]]
 	}
 }
 
@@ -317,3 +326,16 @@ func (b *TopoBoard) GetToMove() Color {
 	return b.ToMove
 }
 
+func (b *TopoBoard) GetWinningPathSpots() []Spot {
+	if b.Winner == Empty {
+		panic("cannot GetWinningPathSpots with no winner")
+	}
+	answer := make([]Spot, 0)
+	for _, spot := range b.WinningPathSpots {
+		if spot.isSpecialSpot() {
+			continue
+		}
+		answer = append(answer, spot.ToSpot())
+	}
+	return answer
+}
