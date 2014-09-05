@@ -281,13 +281,16 @@ func (mcts *MonteCarloTreeSearch) NewRoot(b Board) *TreeNode {
 }
 
 // The expected win rate of a particular move.
-// If V is greater than 0, it's used as the rave mixing parameter.
+//
+// If V is greater than 0, V used as the rave mixing parameter.
+// That means rave stats are used to fill in until we have V real
+// games.
+//
 // If V equals 0, this does something hacky, and uses
 // a Dirichlet backoff from exact to rave to a constant.
+// In general this is not as good as a V around 1000.
 func (mcts *MonteCarloTreeSearch) ExpectedWinRate(
 	parent *TreeNode, move Spot, child *TreeNode) float64 {
-
-	// Calculate a rave estimate with weak but win-slanted prior
 	var raveWins int
 	var raveLosses int
 	switch parent.Board.GetToMove() {
@@ -298,8 +301,86 @@ func (mcts *MonteCarloTreeSearch) ExpectedWinRate(
 		raveLosses = parent.RaveBlackWins[move.Index()]
 		raveWins = parent.RaveWhiteWins[move.Index()]
 	}
-	raveWinRate := (1.0 + float64(raveWins)) /
-		(1.0 + float64(raveWins + raveLosses))
+
+	var raveWinRate float64
+	if mcts.UseTopoBoards {
+		// The win rate estimation method here is, as far as I know, not
+		// reflected in any published papers and is totally me making
+		// things up.
+		// First, we need a prior for win rate that predates the rave
+		// data. Use the overall win rate for the parent.
+		var parentWins int
+		var parentLosses int
+		switch parent.Board.GetToMove() {
+		case Black:
+			parentWins = parent.BlackWins
+			parentLosses = parent.WhiteWins
+		case White:
+			parentLosses = parent.BlackWins
+			parentWins = parent.WhiteWins
+		}
+
+		// There are three types of topo playout:
+		// "neutral" playouts, where this spot isn't played
+		// "win" playouts, where this spot is played by the current player
+		// "loss" playouts, where this spot is played by the opponent. 
+		parentPlayouts := parentWins + parentLosses
+		if parentPlayouts <= 0 {
+			panic("parentPlayouts <= 0")
+		}
+		neutralPlayouts := parentPlayouts - raveWins - raveLosses
+		if neutralPlayouts < 0 {
+			panic("neutralPlayouts < 0")
+		}
+
+		// Imagine that each topo playout reflects an infinite number of
+		// playouts, each with the same winning path, but with spots other
+		// than the winning path chosen randomly.
+		// In this case, the topo playouts are just a representation of an
+		// infinite number of theoretical playouts.
+		// We want raveWinRate to be an estimate of what the real rave win
+		// rate would be if we had all of these infinite playouts.
+		//
+		// There is a hidden variable, the neutralWinRate which is how
+		// often does the player win for games where this spot is not
+		// played.
+		//
+		// We can calculate neutralWinRate by observing that
+		// parentWins = neutralWinRate * neutralPlayouts + raveWins
+		// Thus:
+		neutralWinRate := (
+			float64(parentWins - raveWins) /
+				float64(neutralPlayouts))
+
+		if neutralWinRate < 0 {
+			panic("neutralWinRate < 0")
+		}
+
+		// Let's say each topo playout reflects a very large number of
+		// games with cardinality 2X.
+		//
+		// In games corresponding to the "neutral" topo playouts, about half
+		// of the time this spot will be played.
+		// That will be neutralPlayouts * X games.
+		//
+		// In games corresponding to the "win" topo playouts, all of the
+		// time this spot will be played.
+		// That will be 2X * raveWins games.
+		//
+		// We can use this plus the win rates for each type of playout to
+		// get the rave win rate on these very large number of games.
+		// We can also drop the X, it's just a mental convenience.
+		numGames := neutralPlayouts + 2 * raveWins
+		numWins := float64(neutralPlayouts) * neutralWinRate + float64(raveWins)
+		raveWinRate = (0.1 + numWins) / (0.1 + float64(numGames))
+	} else {
+		// Calculate a rave estimate with weak but win-slanted prior.
+		// The rave wins and losses account for all playouts, so we can
+		// just use the win rate among them as an estimate for the real
+		// win rate.
+		raveWinRate = (1.0 + float64(raveWins)) /
+			(1.0 + float64(raveWins + raveLosses))
+	}
 
 	if child == nil {
 		return raveWinRate
