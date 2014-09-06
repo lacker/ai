@@ -47,7 +47,7 @@ func MakePuzzle(s string) Puzzle {
 }
 
 func (puzzle Puzzle) Test(player Player) bool {
-	playerAnswer := player.Play(puzzle.Board)
+	playerAnswer, _ := player.Play(puzzle.Board)
 	if puzzle.CorrectAnswer != playerAnswer {
 		log.Printf(puzzle.String)
 		log.Printf("got wrong answer: %s", playerAnswer)

@@ -12,7 +12,7 @@ type checker struct {
 }
 
 func (c checker) expectPass(puzzle Puzzle) {
-	playerAnswer := c.Player.Play(puzzle.Board)
+	playerAnswer, _ := c.Player.Play(puzzle.Board)
 	if puzzle.CorrectAnswer != playerAnswer {
 		c.Tester.Errorf("With puzzle: %s", puzzle.String)
 		c.Tester.Errorf("%s gave incorrect answer: %s", c.Name, playerAnswer)
@@ -20,7 +20,7 @@ func (c checker) expectPass(puzzle Puzzle) {
 }
 
 func (c checker) expectFail(puzzle Puzzle) {
-	playerAnswer := c.Player.Play(puzzle.Board)
+	playerAnswer, _ := c.Player.Play(puzzle.Board)
 	if puzzle.CorrectAnswer == playerAnswer {
 		c.Tester.Errorf("With puzzle: %s", puzzle.String)
 		c.Tester.Errorf("%s was supposed to fail but passed.", c.Name)

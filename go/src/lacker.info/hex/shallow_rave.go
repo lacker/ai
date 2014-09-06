@@ -26,7 +26,7 @@ type ShallowRave struct {
 	Quiet bool
 }
 
-func (s ShallowRave) Play(b Board) Spot {
+func (s ShallowRave) Play(b Board) (Spot, float64) {
 	start := time.Now()
 
 	records := make(map[Spot]*WinLossRecord)
@@ -96,6 +96,6 @@ func (s ShallowRave) Play(b Board) Spot {
 		log.Printf("S-RAVE: %d playouts. (%d, %d) scores %.2f\n",
 			playouts, bestMove.Row, bestMove.Col, bestScore)
 	}
-	return bestMove
+	return bestMove, bestScore
 }
 

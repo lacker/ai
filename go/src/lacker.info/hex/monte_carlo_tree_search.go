@@ -420,7 +420,7 @@ func (mcts *MonteCarloTreeSearch) ExpectedWinRate(
 // Uses ExpectedWinRate to figure out which move is expected to be the
 // best.
 func (mcts *MonteCarloTreeSearch) ExpectedBestMove(n *TreeNode) (
-	Spot, *TreeNode) {
+	Spot, *TreeNode, float64) {
 
 	bestWinRate := math.Inf(-1)
 	var bestMove Spot
@@ -438,7 +438,7 @@ func (mcts *MonteCarloTreeSearch) ExpectedBestMove(n *TreeNode) (
 		panic("could not find a child")
 	}
 
-	return bestMove, bestChild
+	return bestMove, bestChild, bestWinRate
 }
 
 // Selects a leaf node recursively from the provided tree.
@@ -452,7 +452,7 @@ func (mcts *MonteCarloTreeSearch) SelectLeaf(n *TreeNode) *TreeNode {
 		return n
 	}
 
-	_, bestChild := mcts.ExpectedBestMove(n)
+	_, bestChild, _ := mcts.ExpectedBestMove(n)
 
 	return mcts.SelectLeaf(bestChild)
 }
@@ -464,7 +464,7 @@ func (mcts *MonteCarloTreeSearch) RunOneRound(n *TreeNode) {
 	leaf.Backprop(winner, board)
 }
 
-func (mcts MonteCarloTreeSearch) Play(b Board) Spot {
+func (mcts MonteCarloTreeSearch) Play(b Board) (Spot, float64) {
 	start := time.Now()
 	root := mcts.NewRoot(b)
 
@@ -484,6 +484,6 @@ func (mcts MonteCarloTreeSearch) Play(b Board) Spot {
 		log.Printf("MCTS: %s", root)
 	}
 
-	move, _ := mcts.ExpectedBestMove(root)
-	return move
+	move, _, score := mcts.ExpectedBestMove(root)
+	return move, score
 }
