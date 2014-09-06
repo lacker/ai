@@ -24,7 +24,7 @@ func main() {
 
 	// Have a player figure out what move to make on this board.
 	player := hex.GetPlayer(playerType)
-	spot := player.Play(board)
+	spot, _ := player.Play(board)
 
 	// Print out the move to make.
 	fmt.Printf("%s\n", hex.ToJSON(spot))
