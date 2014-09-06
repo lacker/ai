@@ -72,6 +72,14 @@ Black to move
 	return puzzleMap
 }
 
+func GetPuzzle(name string) Puzzle {
+	answer, ok := PuzzleMap[name]
+	if !ok {
+		log.Fatal("no puzzle with name: %s", name)
+	}
+	return answer
+}
+
 // The format is, the first three words are
 // "x to move" where x is Black or White
 // After that the non-white-space entries are B, ., or W

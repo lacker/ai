@@ -41,15 +41,15 @@ func TestPuzzles(t *testing.T) {
 		Player: MonteCarloTreeSearch{Seconds:0.2, Quiet:true, V:0},
 	}
 
-	onePly := PuzzleMap["onePly"]
+	onePly := GetPuzzle("onePly")
 	sr.expectPass(onePly)
 	mcts.expectPass(onePly)
 
-	triangleBlock := PuzzleMap["triangleBlock"]
+	triangleBlock := GetPuzzle("triangleBlock")
 	sr.expectFail(triangleBlock)
 	mcts.expectPass(triangleBlock)
 
-	manyBridges := PuzzleMap["manyBridges"]
+	manyBridges := GetPuzzle("manyBridges")
 	sr.expectFail(manyBridges)
 
 	// This mostly fails but not always
