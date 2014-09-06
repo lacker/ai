@@ -23,16 +23,16 @@ func GetPlayer(s string) Player {
 		return ShallowRave{Seconds:5, Quiet:false}
 	case "sr20":
 		return ShallowRave{Seconds:20, Quiet:false}
+	case "topo5":
+		mcts := MakeMCTS(5)
+		mcts.UseTopoBoards = true
+		return mcts
 	case "mcts1":
 		return MakeMCTS(1)
 	case "mcts5":
 		return MakeMCTS(5)
 	case "mcts20":
 		return MakeMCTS(20)
-	case "bleeding":
-		mcts := MakeMCTS(5)
-		mcts.UseTopoBoards = true
-		return mcts
 	default:
 		log.Fatalf("unknown player type: %s", s)
 		return nil

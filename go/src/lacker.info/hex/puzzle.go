@@ -11,6 +11,14 @@ type Puzzle struct {
 	CorrectAnswer Spot
 }
 
+var PuzzleMap map[string]*Puzzle = MakePuzzleMap()
+
+// Create the library of interesting puzzles.
+func MakePuzzleMap() map[string]*Puzzle {
+	puzzleMap := make(map[string]*Puzzle)
+	return puzzleMap
+}
+
 // The format is, the first three words are
 // "x to move" where x is Black or White
 // After that the non-white-space entries are B, ., or W
