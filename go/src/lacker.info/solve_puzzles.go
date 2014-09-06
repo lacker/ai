@@ -12,7 +12,10 @@ func main() {
 	hex.Seed()
 
 	// Usage:
-	//   go run solve_puzzles.go puzzlename playername
+	//   go run solve_puzzles.go puzzlename playername [--debug]
+
+	var debugp = flag.Bool("debug", false, "show debugging info")
+
 	flag.Parse()
 	args := flag.Args()
 	if len(args) != 2 {
@@ -23,6 +26,11 @@ func main() {
 
 	player := hex.GetPlayer(playerName)
 	puzzle := hex.GetPuzzle(puzzleName)
+
+	if (*debugp) {
+		hex.Debug = true
+	}
+
 	spot, odds := player.Play(puzzle.Board)
 
 	// Print out the puzzle

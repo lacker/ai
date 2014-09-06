@@ -475,7 +475,7 @@ func (mcts MonteCarloTreeSearch) Play(b Board) (Spot, float64) {
 
 	for _, move := range AllSpots() {
 		child, ok := root.Children[move]
-		if ok && !mcts.Quiet && (child.WhiteWins + child.BlackWins >= 500) {
+		if ok && !mcts.Quiet && (child.WhiteWins + child.BlackWins >= 0) {
 			log.Printf("%s -- %s", move, child)			
 		}
 	}
@@ -485,5 +485,10 @@ func (mcts MonteCarloTreeSearch) Play(b Board) (Spot, float64) {
 	}
 
 	move, _, score := mcts.ExpectedBestMove(root)
+
+	if Debug {
+		fmt.Printf("\ndebugging:\n")
+	}
+
 	return move, score
 }

@@ -35,6 +35,8 @@ const Black Color = -1
 const White Color = 1
 const Empty Color = 0
 
+var Debug bool = false
+
 func PrintInfo() {
 	fmt.Printf("Playing hex on a size-%d board.\n", BoardSize)
 }
