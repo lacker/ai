@@ -11,11 +11,64 @@ type Puzzle struct {
 	CorrectAnswer Spot
 }
 
-var PuzzleMap map[string]*Puzzle = MakePuzzleMap()
+var PuzzleMap map[string]Puzzle = MakePuzzleMap()
 
 // Create the library of interesting puzzles.
-func MakePuzzleMap() map[string]*Puzzle {
-	puzzleMap := make(map[string]*Puzzle)
+func MakePuzzleMap() map[string]Puzzle {
+	puzzleMap := make(map[string]Puzzle)
+
+	// Any reasonable method should be able to find a killer move.
+	puzzleMap["onePly"] = MakePuzzle(`
+Black to move
+B . . . . . . . . . .
+ B . . . . . . . . . .
+  B . . . . . . . . . .
+   B . . . . . . . . . .
+    B . . . . . . . . . .
+     B . . . . . . . . . .
+      B . . . . . . . . . .
+       B . . . . . . . . . .
+        B . . . . . . . . . .
+         B . . . . . . . . . .
+          * W W W W W W W W W W
+`)
+
+	// Tree methods can figure out a block where shallow rave can't,
+	// because they can figure out the bridges.
+	// MCTS can figure this out consistently in 0.2s, but not in 0.1s.
+	// Ideally this would be fast enough for a playouter to get it.
+	puzzleMap["triangleBlock"] = MakePuzzle(`
+Black to move
+B . . . . . . . . . .
+ B . . . . . . . . . .
+  B . . . . . . . . . .
+   B . . . . . . . . . .
+    B . . . . . . . . . .
+     B B . . . . . . . . .
+      . . W W W W W W W W W
+       * . . . . . . . . . .
+        . B . . . . . . . . .
+         B . . . . . . . . . .
+          B . . . . . . . . . .
+`)
+
+	// Tree methods still cannot understand a large amount of bridges.
+	// MCTS with 0.2s can occasionally pass this but usually can't.
+	puzzleMap["manyBridges"] = MakePuzzle(`
+Black to move
+. . . . . . . . . . .
+ . . B . . . . . . . .
+  . . . . . . . . . . .
+   . B . . . B B B B . .
+    . . . B . . W . B B .
+     B B . . W . . W . B B
+      . . W . B B B . W . .
+       * . W B . . B B . W .
+        . B W . . . . B B B .
+         . . . W . . W . . W .
+          B . . . W . . W . . .
+`)
+
 	return puzzleMap
 }
 

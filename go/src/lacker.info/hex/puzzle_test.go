@@ -41,65 +41,18 @@ func TestPuzzles(t *testing.T) {
 		Player: MonteCarloTreeSearch{Seconds:0.2, Quiet:true, V:0},
 	}
 
-	// Any reasonable method should be able to find a killer move.
-
-	onePly := MakePuzzle(`
-Black to move
-B . . . . . . . . . .
- B . . . . . . . . . .
-  B . . . . . . . . . .
-   B . . . . . . . . . .
-    B . . . . . . . . . .
-     B . . . . . . . . . .
-      B . . . . . . . . . .
-       B . . . . . . . . . .
-        B . . . . . . . . . .
-         B . . . . . . . . . .
-          * W W W W W W W W W W
-`)
-
+	onePly := PuzzleMap["onePly"]
 	sr.expectPass(onePly)
 	mcts.expectPass(onePly)
 
-	// Tree methods can figure out a block where shallow rave can't,
-	// because they can figure out the bridges.
-	// MCTS can figure this out consistently in 0.2s, but not in 0.1s.
-
-	triangleBlock := MakePuzzle(`
-Black to move
-B . . . . . . . . . .
- B . . . . . . . . . .
-  B . . . . . . . . . .
-   B . . . . . . . . . .
-    B . . . . . . . . . .
-     B B . . . . . . . . .
-      . . W W W W W W W W W
-       * . . . . . . . . . .
-        . B . . . . . . . . .
-         B . . . . . . . . . .
-          B . . . . . . . . . .
-`)
+	triangleBlock := PuzzleMap["triangleBlock"]
 	sr.expectFail(triangleBlock)
 	mcts.expectPass(triangleBlock)
 
-	// Tree methods still cannot understand a large amount of bridges.
-	// MCTS can occasionally pass this but usually can't.
-
-	manyBridges := MakePuzzle(`
-Black to move
-. . . . . . . . . . .
- . . B . . . . . . . .
-  . . . . . . . . . . .
-   . B . . . B B B B . .
-    . . . B . . W . B B .
-     B B . . W . . W . B B
-      . . W . B B B . W . .
-       * . W B . . B B . W .
-        . B W . . . . B B B .
-         . . . W . . W . . W .
-          B . . . W . . W . . .
-`)
+	manyBridges := PuzzleMap["manyBridges"]
 	sr.expectFail(manyBridges)
+
+	// This mostly fails but not always
 	// mcts.expectFail(manyBridges)
 }
 
