@@ -290,7 +290,7 @@ func (mcts *MonteCarloTreeSearch) NewRoot(b Board) *TreeNode {
 // a Dirichlet backoff from exact to rave to a constant.
 // In general this is not as good as a V around 1000.
 func (mcts *MonteCarloTreeSearch) ExpectedWinRate(
-	parent *TreeNode, move Spot, child *TreeNode) float64 {
+	parent *TreeNode, move Spot, child *TreeNode, debug bool) float64 {
 	var raveWins int
 	var raveLosses int
 	switch parent.Board.GetToMove() {
@@ -347,10 +347,20 @@ func (mcts *MonteCarloTreeSearch) ExpectedWinRate(
 		//
 		// We can calculate neutralWinRate by observing that
 		// parentWins = neutralWinRate * neutralPlayouts + raveWins
+		// If we don't have any neutral games we just assume it's 50-50.
 		// Thus:
-		neutralWinRate := (
-			float64(parentWins - raveWins) /
-				float64(neutralPlayouts))
+		var neutralWinRate float64
+		if neutralPlayouts == 0 {
+			neutralWinRate = 0.5
+		} else {
+			neutralWinRate = (
+				float64(parentWins - raveWins) /
+					float64(neutralPlayouts))
+		}
+		if debug {
+			fmt.Printf("neutralWinRate: %.4f\n", neutralWinRate)
+		}
+		
 
 		if neutralWinRate < 0 {
 			panic("neutralWinRate < 0")
@@ -371,8 +381,14 @@ func (mcts *MonteCarloTreeSearch) ExpectedWinRate(
 		// get the rave win rate on these very large number of games.
 		// We can also drop the X, it's just a mental convenience.
 		numGames := neutralPlayouts + 2 * raveWins
-		numWins := float64(neutralPlayouts) * neutralWinRate + float64(raveWins)
+		numWins := (float64(neutralPlayouts) * neutralWinRate +
+			float64(2 * raveWins))
 		raveWinRate = (0.1 + numWins) / (0.1 + float64(numGames))
+
+		if debug {
+			fmt.Printf("in virtual playout: %d games, %.1f wins\n",
+				numGames, numWins)
+		}
 	} else {
 		// Calculate a rave estimate with weak but win-slanted prior.
 		// The rave wins and losses account for all playouts, so we can
@@ -426,7 +442,7 @@ func (mcts *MonteCarloTreeSearch) ExpectedBestMove(n *TreeNode) (
 	var bestMove Spot
 	var bestChild *TreeNode
 	for move, child := range n.Children {
-		winRate := mcts.ExpectedWinRate(n, move, child)
+		winRate := mcts.ExpectedWinRate(n, move, child, false)
 		if winRate > bestWinRate {
 			bestWinRate = winRate
 			bestChild = child
@@ -493,9 +509,14 @@ func (mcts MonteCarloTreeSearch) Play(b Board) (Spot, float64) {
 		debugMove := Spot{Row: 10, Col: 0}
 
 		fmt.Printf("debugging move %s\n", ToJSON(debugMove))
+		fmt.Printf("parent record: %s\n", root.String())
+		rbw := root.RaveBlackWins[debugMove.Index()]
+		rww := root.RaveWhiteWins[debugMove.Index()]
+		fmt.Printf("rave wins: B:%d W:%d total:%d\n", rbw, rww, rbw + rww)
+			
 		debugChild := root.Children[debugMove]
 		fmt.Printf("child: %s\n", debugChild.String())
-		debugWinRate := mcts.ExpectedWinRate(root, debugMove, debugChild)
+		debugWinRate := mcts.ExpectedWinRate(root, debugMove, debugChild, true)
 		fmt.Printf("expected win rate: %.4f\n", debugWinRate)
 	}
 
