@@ -487,7 +487,16 @@ func (mcts MonteCarloTreeSearch) Play(b Board) (Spot, float64) {
 	move, _, score := mcts.ExpectedBestMove(root)
 
 	if Debug {
-		fmt.Printf("\ndebugging:\n")
+		fmt.Printf("\n")
+
+		// The move to debug why we didn't make it. TODO: make this a flag
+		debugMove := Spot{Row: 10, Col: 0}
+
+		fmt.Printf("debugging move %s\n", ToJSON(debugMove))
+		debugChild := root.Children[debugMove]
+		fmt.Printf("child: %s\n", debugChild.String())
+		debugWinRate := mcts.ExpectedWinRate(root, debugMove, debugChild)
+		fmt.Printf("expected win rate: %.4f\n", debugWinRate)
 	}
 
 	return move, score
