@@ -506,7 +506,7 @@ func (mcts MonteCarloTreeSearch) Play(b Board) (Spot, float64) {
 		fmt.Printf("\n")
 
 		// The move to debug why we didn't make it. TODO: make this a flag
-		debugMove := Spot{Row: 10, Col: 0}
+		debugMove := Spot{Row: 7, Col: 0}
 
 		fmt.Printf("debugging move %s\n", ToJSON(debugMove))
 		fmt.Printf("parent record: %s\n", root.String())
