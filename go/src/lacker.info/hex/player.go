@@ -27,6 +27,10 @@ func GetPlayer(s string) Player {
 		mcts := MakeMCTS(5)
 		mcts.UseTopoBoards = true
 		return mcts
+	case "topo20":
+		mcts := MakeMCTS(20)
+		mcts.UseTopoBoards = true
+		return mcts
 	case "mcts1":
 		return MakeMCTS(1)
 	case "mcts5":
