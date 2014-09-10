@@ -27,16 +27,17 @@ func GetPlayer(s string) Player {
 		mcts := MakeMCTS(5)
 		mcts.UseTopoBoards = true
 		return mcts
-	case "topo20":
-		mcts := MakeMCTS(20)
-		mcts.UseTopoBoards = true
-		return mcts
 	case "mcts1":
 		return MakeMCTS(1)
 	case "mcts5":
 		return MakeMCTS(5)
 	case "mcts20":
 		return MakeMCTS(20)
+	case "bleeding":
+		mcts := MakeMCTS(5)
+		mcts.V = 10000
+		mcts.UseTopoBoards = true
+		return mcts
 	default:
 		log.Fatalf("unknown player type: %s", s)
 		return nil
