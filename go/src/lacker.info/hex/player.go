@@ -34,6 +34,7 @@ func GetPlayer(s string) Player {
 	case "mcts20":
 		return MakeMCTS(20)
 	case "bleeding":
+		// This algorithm is terrible.
 		mcts := MakeMCTS(5)
 		mcts.V = 10000
 		mcts.UseTopoBoards = true
