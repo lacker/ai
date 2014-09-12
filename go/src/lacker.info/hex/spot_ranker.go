@@ -1,6 +1,7 @@
 package hex
 
 import (
+	"sort"
 	"time"
 )
 
@@ -51,7 +52,7 @@ func (s SpotRanker) Play(b Board) (Spot, float64) {
 	scores := make(map[TopoSpot]*ScoredSpot)
 
 	// ranked keeps the spots in sorted order.
-	ranked := make([]*ScoredSpot, 0)
+	ranked := make(ScoredSpotSlice, 0)
 
 	// Populate
 	moves := b.ToTopoBoard().PossibleTopoSpotMoves()
@@ -66,7 +67,7 @@ func (s SpotRanker) Play(b Board) (Spot, float64) {
 	playouts := 0
 	for {
 		// First, sort the possible moves by score.
-		// TODO
+		sort.Stable(ranked)
 
 		// Check if we are out of time
 		playouts++
