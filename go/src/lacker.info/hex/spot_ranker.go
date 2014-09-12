@@ -1,6 +1,7 @@
 package hex
 
 import (
+	"log"
 	"sort"
 	"time"
 )
@@ -64,6 +65,8 @@ func (s SpotRanker) Play(b Board) (Spot, float64) {
 
 
 	// Run playouts in a loop until we run out of time
+	wins := 0
+	losses := 0
 	playouts := 0
 	for {
 		// First, sort the possible moves by score.
@@ -76,13 +79,32 @@ func (s SpotRanker) Play(b Board) (Spot, float64) {
 		}
 
 		// Run the playout by moving in rank order.
-		// TODO
+		playout := b.ToTopoBoard()
+		for _, move := range ranked {
+			if !playout.MakeMove(move.Spot) {
+				log.Fatal("a playout played an invalid move")
+			}
+		}
 
 		// Next, update the scores for all winning spots.
-		// TODO
+		winner := playout.Winner()
+		if winner == b.GetToMove() {
+			wins++
+		} else {
+			losses++
+		}
+		for _, spot := playout.GetWinningPathSpots() {
+			scoredSpot, ok := scores[spot]
+			if ok {
+				scoredSpot.Score += 2.0
+			}
+		}
 
 		// Finally, update the scores for all spots.
-		// TODO
+		for _, scoredSpot := range ranked {
+			scoredSpot.Score -= 1.0
+			scoredSpot.Score /= 1.01
+		}
 	}
 
 	// Return the best move
