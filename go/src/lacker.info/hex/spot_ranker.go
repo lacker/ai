@@ -50,7 +50,7 @@ func (s SpotRanker) Play(b Board) (Spot, float64) {
 	// scores maps each spot to a ScoredSpot for it.
 	// The scores start at zero. Spots that lose or aren't useful go
 	// negative; spots that win go positive.
-	scores := make(map[TopoSpot]*ScoredSpot)
+	scores := make(map[Spot]*ScoredSpot)
 
 	// ranked keeps the spots in sorted order.
 	ranked := make(ScoredSpotSlice, 0)
@@ -59,7 +59,7 @@ func (s SpotRanker) Play(b Board) (Spot, float64) {
 	moves := b.ToTopoBoard().PossibleTopoSpotMoves()
 	for _, move := range moves {
 		scoredSpot := &ScoredSpot{Spot: move, Score: 0.0}
-		scores[move] = scoredSpot
+		scores[move.ToSpot()] = scoredSpot
 		ranked = append(ranked, scoredSpot)
 	}
 
@@ -81,19 +81,19 @@ func (s SpotRanker) Play(b Board) (Spot, float64) {
 		// Run the playout by moving in rank order.
 		playout := b.ToTopoBoard()
 		for _, move := range ranked {
-			if !playout.MakeMove(move.Spot) {
+			if !playout.MakeMove(move.Spot.ToSpot()) {
 				log.Fatal("a playout played an invalid move")
 			}
 		}
 
 		// Next, update the scores for all winning spots.
-		winner := playout.Winner()
+		winner := playout.Winner
 		if winner == b.GetToMove() {
 			wins++
 		} else {
 			losses++
 		}
-		for _, spot := playout.GetWinningPathSpots() {
+		for _, spot := range playout.GetWinningPathSpots() {
 			scoredSpot, ok := scores[spot]
 			if ok {
 				scoredSpot.Score += 2.0
