@@ -7,7 +7,7 @@ import (
 )
 
 /*
-The spot ranker algorithm is that you have a score for each spot. You then
+The spot sorter algorithm is that you have a score for each spot. You then
 do playouts ranking the spots in the given order, and you update the
 scores according to which spots are winning so that spots that win get
 higher scores.
@@ -39,12 +39,12 @@ func (slice ScoredSpotSlice) Swap(i, j int) {
 }
 
 // The player
-type SpotRanker struct {
+type SpotSorter struct {
 	Seconds float64
 	Quiet bool
 }
 
-func (s SpotRanker) Play(b Board) (Spot, float64) {
+func (s SpotSorter) Play(b Board) (Spot, float64) {
 	start := time.Now()
 	
 	// scores maps each spot to a ScoredSpot for it.

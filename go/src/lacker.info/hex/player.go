@@ -33,12 +33,8 @@ func GetPlayer(s string) Player {
 		return MakeMCTS(5)
 	case "mcts20":
 		return MakeMCTS(20)
-	case "bleeding":
-		// This algorithm is terrible.
-		mcts := MakeMCTS(5)
-		mcts.V = 10000
-		mcts.UseTopoBoards = true
-		return mcts
+	case "ss5":
+		return SpotSorter{Seconds:5, Quiet:false}
 	default:
 		log.Fatalf("unknown player type: %s", s)
 		return nil
