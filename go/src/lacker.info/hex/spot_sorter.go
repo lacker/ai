@@ -107,6 +107,21 @@ func (s SpotSorter) Play(b Board) (Spot, float64) {
 		}
 	}
 
+	winRate := float64(wins) / float64(losses)
+
+	if !s.Quiet {
+		log.Printf("spot sorter ran %d playouts with win rate %.2f\n",
+			playouts, winRate)
+		for index, scoredSpot := range ranked {
+			if index >= 10 {
+				break
+			}
+			log.Printf("(%d, %d) scores %.1f\n",
+				scoredSpot.Spot.ToSpot().Row, scoredSpot.Spot.ToSpot().Col,
+				scoredSpot.Score)
+		}
+	}
+
 	// Return the best move
-	return ranked[0].Spot.ToSpot(), ranked[0].Score
+	return ranked[0].Spot.ToSpot(), winRate
 }
