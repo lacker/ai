@@ -343,3 +343,4 @@ func (b *TopoBoard) GetWinningPathSpots() []Spot {
 	}
 	return answer
 }
+

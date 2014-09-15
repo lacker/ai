@@ -96,16 +96,24 @@ func (s SpotSorter) Play(b Board) (Spot, float64) {
 		} else {
 			losses++
 		}
+
+		/* If we only want to count spots on the winning path, we would do this
 		for _, spot := range playout.GetWinningPathSpots() {
 			scoredSpot, ok := scores[spot]
 			if ok {
 				scoredSpot.Score += 2.0
 			}
 		}
+    */
 
 		// Finally, update the scores for all spots.
 		for _, scoredSpot := range ranked {
-			scoredSpot.Score -= 1.0
+			if playout.Get(scoredSpot.Spot.ToSpot()) == playout.Winner {
+				// This counts all spots played by the winner as a win
+				scoredSpot.Score += 1.0
+			} else {
+				scoredSpot.Score -= 1.0
+			}
 			scoredSpot.Score /= 1.01
 		}
 	}
