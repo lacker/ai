@@ -84,6 +84,9 @@ func (s SpotSorter) Play(b Board) (Spot, float64) {
 			if !playout.MakeMove(move.Spot.ToSpot()) {
 				log.Fatal("a playout played an invalid move")
 			}
+			if playout.Winner != Empty {
+				break
+			}
 		}
 
 		// Next, update the scores for all winning spots.
