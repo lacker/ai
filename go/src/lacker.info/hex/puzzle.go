@@ -52,6 +52,23 @@ B . . . . . . . . . .
           B . . . . . . . . . .
 `)
 
+	// This ladder should be a win for the first player.
+	// It requires looking 21 plies deep though.
+	puzzleMap["ladder"] = MakePuzzle(`
+Black to move
+B . . . . . . . . . .
+ B . . . . . . . . . .
+  B . . . . . . . . . .
+   B . . . . . . . . . .
+    B . . . . . . . . . .
+     B . . . . . . . . . .
+      B . . . . . . . . . .
+       B . . . . . . . . . .
+        B W W W W W W W W W W
+         * . . . . . . . . . .
+          . . . . . . . . . . B
+`)
+
 	// Tree methods still cannot understand a large amount of bridges.
 	// MCTS with 0.2s can occasionally pass this but usually can't.
 	puzzleMap["manyBridges"] = MakePuzzle(`

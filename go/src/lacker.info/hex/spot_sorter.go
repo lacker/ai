@@ -2,6 +2,7 @@ package hex
 
 import (
 	"log"
+	"math/rand"
 	"sort"
 	"time"
 )
@@ -68,7 +69,7 @@ func (s SpotSorter) Play(b Board) (Spot, float64) {
 	wins := 0
 	losses := 0
 	playouts := 0
-	for {
+	for i := 0; true; i++ {
 		// First, sort the possible moves by score.
 		sort.Stable(ranked)
 
@@ -81,6 +82,12 @@ func (s SpotSorter) Play(b Board) (Spot, float64) {
 		// Run the playout by moving in rank order.
 		playout := b.ToTopoBoard()
 		for _, move := range ranked {
+			// On odd runs, sometimes pass, kind of just to introduce some
+			// randomness and thus make our learning more robust.
+			if i % 2 == 1 && rand.Float64() < 0.1 {
+				playout.Pass()
+			}
+
 			if !playout.MakeMove(move.Spot.ToSpot()) {
 				log.Fatal("a playout played an invalid move")
 			}
@@ -89,22 +96,17 @@ func (s SpotSorter) Play(b Board) (Spot, float64) {
 			}
 		}
 
-		// Next, update the scores for all winning spots.
+		// Next, update the overall win/loss score.
+		// Only do this on even runs, so that we don't count the ones with
+		// random fuzzing.
 		winner := playout.Winner
-		if winner == b.GetToMove() {
-			wins++
-		} else {
-			losses++
-		}
-
-		/* If we only want to count spots on the winning path, we would do this
-		for _, spot := range playout.GetWinningPathSpots() {
-			scoredSpot, ok := scores[spot]
-			if ok {
-				scoredSpot.Score += 2.0
+		if i % 2 == 0 {
+			if winner == b.GetToMove() {
+				wins++
+			} else {
+				losses++
 			}
 		}
-    */
 
 		// Finally, update the scores for all spots.
 		for _, scoredSpot := range ranked {
@@ -118,7 +120,7 @@ func (s SpotSorter) Play(b Board) (Spot, float64) {
 		}
 	}
 
-	winRate := float64(wins) / float64(losses)
+	winRate := float64(wins) / float64(wins + losses)
 
 	if !s.Quiet {
 		log.Printf("spot sorter ran %d playouts with win rate %.2f\n",

@@ -309,6 +309,11 @@ func (b *TopoBoard) MakeMove(s Spot) bool {
 	return true
 }
 
+// Just passes the turn to the other player.
+func (b *TopoBoard) Pass() {
+	b.ToMove = -b.ToMove
+}
+
 // Makes moves repeatedly. When this stops the game is over.
 // Returns the winner.
 // This mutates the board.
