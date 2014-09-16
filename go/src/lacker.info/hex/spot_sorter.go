@@ -116,7 +116,7 @@ func (s SpotSorter) Play(b Board) (Spot, float64) {
 			} else {
 				scoredSpot.Score -= 1.0
 			}
-			scoredSpot.Score /= 1.01
+			scoredSpot.Score /= 1.0001
 		}
 	}
 
@@ -126,7 +126,7 @@ func (s SpotSorter) Play(b Board) (Spot, float64) {
 		log.Printf("spot sorter ran %d playouts with win rate %.2f\n",
 			playouts, winRate)
 		for index, scoredSpot := range ranked {
-			if index >= 10 {
+			if index >= 25 {
 				break
 			}
 			log.Printf("(%d, %d) scores %.1f\n",
