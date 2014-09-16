@@ -84,7 +84,7 @@ func (s SpotSorter) Play(b Board) (Spot, float64) {
 		for _, move := range ranked {
 			// On odd runs, sometimes pass, kind of just to introduce some
 			// randomness and thus make our learning more robust.
-			if i % 2 == 1 && rand.Float64() < 0.1 {
+			if i % 2 == 1 && rand.Float64() < 0.05 {
 				playout.Pass()
 			}
 
