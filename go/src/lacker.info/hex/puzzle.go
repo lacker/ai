@@ -86,6 +86,35 @@ Black to move
           B . . . W . . W . . .
 `)
 
+	// The right move should be obvious - there's one spot that will
+	// make a critical connection for either side.
+	//
+	// "Thread the needle."
+	//
+	// The interesting thing with spot sorter is that adding a single
+	// black stone to connect the bottom group to the bottom makes it
+	// obvious what the correct answer is. So, the spot sorter is indeed
+	// getting confused by an open bridge.
+	//
+	// The puzzle is reasonable for either black or white to move. With
+	// black to move it should also be obvious that it's close to 100%
+	// winning after moving (5, 6).
+
+	puzzleMap["needle"] = MakePuzzle(`
+Black to move
+. . . . . . . . . W B
+ . B . . . . . . W B .
+  . . . . . . . W B . .
+   . . . . . . W B . . .
+    . . . . . W B . . . .
+     . . . . . B * W . . .
+      . . . . . W B . . . .
+       . . . . W B W . . . .
+        . . . . B B B . . . .
+         . . W B W W W . . . .
+          . . . . . . . . . . .
+`)
+
 	return puzzleMap
 }
 
