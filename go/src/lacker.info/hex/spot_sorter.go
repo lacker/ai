@@ -66,13 +66,11 @@ func (s SpotSorter) Play(b Board) (Spot, float64) {
 	// Run playouts in a loop until we run out of time
 	wins := 0
 	losses := 0
-	playouts := 0
 	for i := 0; true; i++ {
 		// First, sort the possible moves by score.
 		sort.Stable(s.ranked)
 
 		// Check if we are out of time
-		playouts++
 		if SecondsSince(start) > s.Seconds {
 			break
 		}
@@ -122,7 +120,7 @@ func (s SpotSorter) Play(b Board) (Spot, float64) {
 
 	if !s.Quiet {
 		log.Printf("spot sorter ran %d playouts with win rate %.2f\n",
-			playouts, winRate)
+			wins + losses, winRate)
 		for index, scoredSpot := range s.ranked {
 			if index >= 25 {
 				break
