@@ -43,25 +43,23 @@ func (slice ScoredSpotSlice) Swap(i, j int) {
 type SpotSorter struct {
 	Seconds float64
 	Quiet bool
+
+	// ranked keeps the spots in sorted order.
+	// The scores start at zero. Spots that lose or aren't useful go
+	// negative; spots that win go positive.
+	ranked ScoredSpotSlice
 }
 
 func (s SpotSorter) Play(b Board) (Spot, float64) {
 	start := time.Now()
 	
-	// scores maps each spot to a ScoredSpot for it.
-	// The scores start at zero. Spots that lose or aren't useful go
-	// negative; spots that win go positive.
-	scores := make(map[Spot]*ScoredSpot)
-
-	// ranked keeps the spots in sorted order.
-	ranked := make(ScoredSpotSlice, 0)
+	s.ranked = make(ScoredSpotSlice, 0)
 
 	// Populate
 	moves := b.ToTopoBoard().PossibleTopoSpotMoves()
 	for _, move := range moves {
 		scoredSpot := &ScoredSpot{Spot: move, Score: 0.0}
-		scores[move.ToSpot()] = scoredSpot
-		ranked = append(ranked, scoredSpot)
+		s.ranked = append(s.ranked, scoredSpot)
 	}
 
 
@@ -71,7 +69,7 @@ func (s SpotSorter) Play(b Board) (Spot, float64) {
 	playouts := 0
 	for i := 0; true; i++ {
 		// First, sort the possible moves by score.
-		sort.Stable(ranked)
+		sort.Stable(s.ranked)
 
 		// Check if we are out of time
 		playouts++
@@ -81,7 +79,7 @@ func (s SpotSorter) Play(b Board) (Spot, float64) {
 
 		// Run the playout by moving in rank order.
 		playout := b.ToTopoBoard()
-		for _, move := range ranked {
+		for _, move := range s.ranked {
 			// On odd runs, sometimes pass, kind of just to introduce some
 			// randomness and thus make our learning more robust.
 			if i % 2 == 1 && rand.Float64() < 0.05 {
@@ -109,7 +107,7 @@ func (s SpotSorter) Play(b Board) (Spot, float64) {
 		}
 
 		// Finally, update the scores for all spots.
-		for _, scoredSpot := range ranked {
+		for _, scoredSpot := range s.ranked {
 			if playout.Get(scoredSpot.Spot.ToSpot()) == playout.Winner {
 				// This counts all spots played by the winner as a win
 				scoredSpot.Score += 1.0
@@ -125,7 +123,7 @@ func (s SpotSorter) Play(b Board) (Spot, float64) {
 	if !s.Quiet {
 		log.Printf("spot sorter ran %d playouts with win rate %.2f\n",
 			playouts, winRate)
-		for index, scoredSpot := range ranked {
+		for index, scoredSpot := range s.ranked {
 			if index >= 25 {
 				break
 			}
@@ -136,5 +134,5 @@ func (s SpotSorter) Play(b Board) (Spot, float64) {
 	}
 
 	// Return the best move
-	return ranked[0].Spot.ToSpot(), winRate
+	return s.ranked[0].Spot.ToSpot(), winRate
 }
