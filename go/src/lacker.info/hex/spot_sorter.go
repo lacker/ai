@@ -83,12 +83,6 @@ func (s SpotSorter) Play(b Board) (Spot, float64) {
 		// Run the playout by moving in rank order.
 		playout := b.ToTopoBoard()
 		for _, move := range s.ranked {
-			// On odd runs, sometimes pass, kind of just to introduce some
-			// randomness and thus make our learning more robust.
-			if i % 2 == 1 && rand.Float64() < 0.05 {
-				playout.Pass()
-			}
-
 			if !playout.MakeMove(move.Spot.ToSpot()) {
 				log.Fatal("a playout played an invalid move")
 			}
@@ -98,15 +92,11 @@ func (s SpotSorter) Play(b Board) (Spot, float64) {
 		}
 
 		// Next, update the overall win/loss score.
-		// Only do this on even runs, so that we don't count the ones with
-		// random fuzzing.
 		winner := playout.Winner
-		if i % 2 == 0 {
-			if winner == b.GetToMove() {
-				s.wins++
-			} else {
-				s.losses++
-			}
+		if winner == b.GetToMove() {
+			s.wins++
+		} else {
+			s.losses++
 		}
 
 		// Update the scores for all spots.
