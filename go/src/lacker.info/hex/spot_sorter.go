@@ -2,7 +2,6 @@ package hex
 
 import (
 	"log"
-	"math/rand"
 	"sort"
 	"time"
 )

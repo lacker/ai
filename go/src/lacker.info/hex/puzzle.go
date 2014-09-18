@@ -101,7 +101,7 @@ Black to move
 	// winning after moving (5, 6).
 
 	puzzleMap["needle"] = MakePuzzle(`
-Black to move
+White to move
 . . . . . . . . . W B
  . B . . . . . . W B .
   . . . . . . . W B . .
