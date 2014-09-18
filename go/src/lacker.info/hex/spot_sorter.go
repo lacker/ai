@@ -48,24 +48,32 @@ type SpotSorter struct {
 	// The scores start at zero. Spots that lose or aren't useful go
 	// negative; spots that win go positive.
 	ranked ScoredSpotSlice
+
+	wins int
+	losses int
 }
 
-func (s SpotSorter) Play(b Board) (Spot, float64) {
-	start := time.Now()
-	
+// Initialize from a particular board position.
+func (s SpotSorter) Init(b Board) {
+	// Populate ranked
 	s.ranked = make(ScoredSpotSlice, 0)
 
-	// Populate
 	moves := b.ToTopoBoard().PossibleTopoSpotMoves()
 	for _, move := range moves {
 		scoredSpot := &ScoredSpot{Spot: move, Score: 0.0}
 		s.ranked = append(s.ranked, scoredSpot)
 	}
 
+	s.wins = 0
+	s.losses = 0
+}
 
+func (s SpotSorter) Play(b Board) (Spot, float64) {
+	start := time.Now()
+
+	s.Init(b)
+	
 	// Run playouts in a loop until we run out of time
-	wins := 0
-	losses := 0
 	for i := 0; true; i++ {
 		// First, sort the possible moves by score.
 		sort.Stable(s.ranked)
@@ -98,9 +106,9 @@ func (s SpotSorter) Play(b Board) (Spot, float64) {
 		winner := playout.Winner
 		if i % 2 == 0 {
 			if winner == b.GetToMove() {
-				wins++
+				s.wins++
 			} else {
-				losses++
+				s.losses++
 			}
 		}
 
@@ -116,11 +124,11 @@ func (s SpotSorter) Play(b Board) (Spot, float64) {
 		}
 	}
 
-	winRate := float64(wins) / float64(wins + losses)
+	winRate := float64(s.wins) / float64(s.wins + s.losses)
 
 	if !s.Quiet {
 		log.Printf("spot sorter ran %d playouts with win rate %.2f\n",
-			wins + losses, winRate)
+			s.wins + s.losses, winRate)
 		for index, scoredSpot := range s.ranked {
 			if index >= 25 {
 				break

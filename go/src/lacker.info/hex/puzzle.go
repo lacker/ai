@@ -115,6 +115,53 @@ Black to move
           . . . . . . . . . . .
 `)
 
+	// In the "doomedX" series, the player to move should realize that
+	// we are doomed.
+	puzzleMap["doomed1"] = MakePuzzle(`
+Black to move
+. . . . . . . . . . B
+ . B . . . . . . . B .
+  . . . . . . . . B . W
+   . . . . . . . B . W .
+    . . . . . . B . W . .
+     . . . . . . . W . . .
+      W W W W W W . . . . .
+       . . . . . B . . . . .
+        . . . . B . . . . . .
+         . . . B . . . . . . .
+          . . B . . . . . . . .
+`)
+
+	puzzleMap["doomed2"] = MakePuzzle(`
+Black to move
+. . . . . . . . . . B
+ . B . . . . . . . B .
+  . . . . . . . . B . W
+   . . . . . . . B . W .
+    . . . B B B B . W . .
+     . . B . . . . W . . .
+      . . . W W W . . . . .
+       W W . . . B . . . . .
+        . . B . B . . . . . .
+         . . B B . . . . . . .
+          . . B . . . . . . . .
+`)
+
+	puzzleMap["doomed3"] = MakePuzzle(`
+Black to move
+. . . . . . . . . . B
+ . B . . . . . . . B .
+  . . . . . . . . B . W
+   . . . . . . . B . W .
+    . . . B B B B . W . .
+     . . B . . . . W . . .
+      . B . W W W . . . . .
+       . W . . . B . . . . .
+        . B B . B . . . . . .
+         . . B B . . . . . . .
+          . . B . . . . . . . .
+`)
+
 	return puzzleMap
 }
 
@@ -134,7 +181,7 @@ func MakePuzzle(s string) Puzzle {
 	puzzle := Puzzle{String: s, Board: new(NaiveBoard)}
 	words := strings.Fields(s)
 	if len(words) != 124 {
-		log.Fatal("cannot make puzzle from %d words", len(words))
+		log.Fatalf("cannot make puzzle from %d words", len(words))
 	}
 
 	switch words[0] {
