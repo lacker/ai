@@ -54,7 +54,7 @@ type SpotSorter struct {
 }
 
 // Initialize from a particular board position.
-func (s SpotSorter) Init(b Board) {
+func (s *SpotSorter) Init(b Board) {
 	// Populate ranked
 	s.ranked = make(ScoredSpotSlice, 0)
 
@@ -72,12 +72,9 @@ func (s SpotSorter) Play(b Board) (Spot, float64) {
 	start := time.Now()
 
 	s.Init(b)
-	
+
 	// Run playouts in a loop until we run out of time
 	for i := 0; true; i++ {
-		// First, sort the possible moves by score.
-		sort.Stable(s.ranked)
-
 		// Check if we are out of time
 		if SecondsSince(start) > s.Seconds {
 			break
@@ -112,7 +109,7 @@ func (s SpotSorter) Play(b Board) (Spot, float64) {
 			}
 		}
 
-		// Finally, update the scores for all spots.
+		// Update the scores for all spots.
 		for _, scoredSpot := range s.ranked {
 			if playout.Get(scoredSpot.Spot.ToSpot()) == playout.Winner {
 				// This counts all spots played by the winner as a win
@@ -122,6 +119,9 @@ func (s SpotSorter) Play(b Board) (Spot, float64) {
 			}
 			scoredSpot.Score /= 1.0001
 		}
+
+		// Sort the possible moves by score.
+		sort.Stable(s.ranked)
 	}
 
 	winRate := float64(s.wins) / float64(s.wins + s.losses)
