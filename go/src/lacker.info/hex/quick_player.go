@@ -57,6 +57,11 @@ func (player *QuickPlayer) MakeMove(board *TopoBoard) {
 	log.Fatal("TODO")
 }
 
+// Learns from a playouted game
+func (player *QuickPlayer) Learn(board *TopoBoard) {
+	log.Fatal("TODO")
+}
+
 // Plays out a game and returns the final board state.
 func (player *QuickPlayer) Playout(opponent *QuickPlayer) *TopoBoard {
 	if player.color == opponent.color {
