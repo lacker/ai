@@ -54,7 +54,15 @@ func (player *QuickPlayer) Reset() {
 
 // Make one move
 func (player *QuickPlayer) MakeMove(board *TopoBoard) {
-	log.Fatal("TODO")
+	for player.index < len(player.ranking) {
+		spot := player.ranking[player.index].Spot
+		player.index++
+		if board.GetTopoSpot(spot) == Empty {
+			board.SetTopoSpot(spot, player.color)
+			return
+		}
+	}
+	log.Fatal("ran out of ranking spots to play")
 }
 
 // Learns from a playouted game

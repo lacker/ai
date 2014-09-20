@@ -190,6 +190,10 @@ func (b *TopoBoard) Get(s Spot) Color {
 	return b.GetByRowCol(s.Row, s.Col)
 }
 
+func (b *TopoBoard) GetTopoSpot(s TopoSpot) Color {
+	return b.Board[s]
+}
+
 func (b *TopoBoard) GetByRowCol(row int, col int) Color {
 	s := TopoSpotFromRowCol(row, col)
 	return b.Board[s]
