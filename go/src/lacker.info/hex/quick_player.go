@@ -65,9 +65,22 @@ func (player *QuickPlayer) MakeMove(board *TopoBoard) {
 	log.Fatal("ran out of ranking spots to play")
 }
 
-// Learns from a playouted game
+// Learns from a playouted game.
 func (player *QuickPlayer) Learn(board *TopoBoard) {
-	log.Fatal("TODO")
+	if board.Winner == Empty {
+		log.Fatal("cannot learn from a board with no winner")
+	}
+	for _, scoredSpot := range player.ranking {
+		// Count all spots played by the winner as a win.
+		// Spots not played by either side would also have lost for the
+		// loser, so they count as a loss.
+		if board.GetTopoSpot(scoredSpot.Spot) == board.Winner {
+			scoredSpot.Score += 1.0
+		} else {
+			scoredSpot.Score -= 1.0
+		}
+		scoredSpot.Score /= 1.0001
+	}
 }
 
 // Plays out a game and returns the final board state.
