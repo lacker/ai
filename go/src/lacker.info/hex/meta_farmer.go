@@ -46,34 +46,39 @@ func (mf *MetaFarmer) updateWinRate(winner Color) {
 }
 
 
+func (mf *MetaFarmer) PlayOneGame() {
+	// Play a game
+	ending := mf.whitePlayer.Playout(mf.blackPlayer)
+	mf.updateWinRate(ending.Winner)
+
+	// Have the loser learn
+	if ending.Winner == White {
+		mf.whitePlayer.Learn(ending)
+	} else {
+		mf.blackPlayer.Learn(ending)
+	}
+}
+
+
 func (mf MetaFarmer) Play(b Board) (Spot, float64) {
 	start := time.Now()
 	mf.init(b.ToTopoBoard())
 
-	for i := 0; true; i++ {
-		if Debug {
+	if Debug {
+		for {
 			// Read a debugger command
 			fmt.Printf("> ")
 			bio := bufio.NewReader(os.Stdin)
 			line, _, _ := bio.ReadLine()
 			command := string(line)
 			log.Printf("read command: [%s]\n", command)
-		} else {
-			// Check if we are out of time
-			if SecondsSince(start) > mf.Seconds {
-				break
-			}
+
+			// Handle the command
+			// TODO
 		}
-
-		// Play a game
-		ending := mf.whitePlayer.Playout(mf.blackPlayer)
-		mf.updateWinRate(ending.Winner)
-
-		// Have the loser learn
-		if ending.Winner == White {
-			mf.whitePlayer.Learn(ending)
-		} else {
-			mf.blackPlayer.Learn(ending)
+	} else {
+		for SecondsSince(start) < mf.Seconds {
+			mf.PlayOneGame()
 		}
 	}
 
