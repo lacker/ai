@@ -1,7 +1,9 @@
 package hex
 
 import (
+	"bufio"
 	"log"
+	"os"
 	"time"
 )
 
@@ -47,7 +49,20 @@ func (mf MetaFarmer) Play(b Board) (Spot, float64) {
 	start := time.Now()
 	mf.init(b.ToTopoBoard())
 
-	for SecondsSince(start) < mf.Seconds {
+	for i := 0; true; i++ {
+		if Debug {
+			// Read a debugger command
+			bio := bufio.NewReader(os.Stdin)
+			line, _, _ := bio.ReadLine()
+			command := string(line)
+			log.Printf("read command: [%s]\n", command)
+		} else {
+			// Check if we are out of time
+			if SecondsSince(start) > mf.Seconds {
+				break
+			}
+		}
+
 		// Play a game
 		ending := mf.whitePlayer.Playout(mf.blackPlayer)
 		mf.updateWinRate(ending.Winner)
