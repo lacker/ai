@@ -37,6 +37,18 @@ const Empty Color = 0
 
 var Debug bool = false
 
+func (c Color) Name() string {
+	switch c {
+	case Black:
+		return "Black"
+	case White:
+		return "White"
+	case Empty:
+		return "Empty"
+	}
+	panic("bad color")
+}
+
 func PrintInfo() {
 	fmt.Printf("Playing hex on a size-%d board.\n", BoardSize)
 }

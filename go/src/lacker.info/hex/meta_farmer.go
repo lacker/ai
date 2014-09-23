@@ -63,6 +63,8 @@ func (mf MetaFarmer) Play(b Board) (Spot, float64) {
 	if !mf.Quiet {
 		log.Printf("played %d games. white: %.2f black: %.2f\n",
 			mf.gamesPlayed, mf.whiteWinRate, mf.blackWinRate)
+		mf.whitePlayer.Debug()
+		mf.blackPlayer.Debug()
 	}
 
 	switch b.GetToMove() {

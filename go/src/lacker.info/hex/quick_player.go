@@ -110,3 +110,16 @@ func (player *QuickPlayer) Playout(opponent *QuickPlayer) *TopoBoard {
 
 	return board
 }
+
+// Prints some debug information
+func (player *QuickPlayer) Debug() {
+	log.Printf("%s quickplayer prefers:\n", player.color.Name())
+	for index, scoredSpot := range player.ranking {
+		if index >= 10 {
+			break
+		}
+		log.Printf("(%d, %d) scores %.1f\n",
+			scoredSpot.Spot.ToSpot().Row, scoredSpot.Spot.ToSpot().Col,
+			scoredSpot.Score)
+	}
+}
