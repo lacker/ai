@@ -35,6 +35,8 @@ func GetPlayer(s string) Player {
 		return MakeMCTS(20)
 	case "ss5":
 		return SpotSorter{Seconds:5, Quiet:false}
+	case "mf5":
+		return MetaFarmer{Seconds:5, Quiet:false}
 	default:
 		log.Fatalf("unknown player type: %s", s)
 		return nil

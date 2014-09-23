@@ -43,7 +43,7 @@ func (mf *MetaFarmer) updateWinRate(winner Color) {
 }
 
 
-func (mf *MetaFarmer) Play(b Board) (Spot, float64) {
+func (mf MetaFarmer) Play(b Board) (Spot, float64) {
 	start := time.Now()
 	mf.init(b.ToTopoBoard())
 
