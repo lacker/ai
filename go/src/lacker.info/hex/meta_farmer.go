@@ -2,6 +2,7 @@ package hex
 
 import (
 	"bufio"
+	"fmt"
 	"log"
 	"os"
 	"time"
@@ -52,6 +53,7 @@ func (mf MetaFarmer) Play(b Board) (Spot, float64) {
 	for i := 0; true; i++ {
 		if Debug {
 			// Read a debugger command
+			fmt.Printf("> ")
 			bio := bufio.NewReader(os.Stdin)
 			line, _, _ := bio.ReadLine()
 			command := string(line)
