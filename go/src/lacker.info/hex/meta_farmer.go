@@ -51,20 +51,20 @@ func (mf *MetaFarmer) Debug() {
 
 func (mf *MetaFarmer) PlayOneGame(debug bool) {
 	// Play a game
-	ending := mf.whitePlayer.Playout(mf.blackPlayer)
+	ending := mf.whitePlayer.Playout(mf.blackPlayer, debug)
 	mf.updateWinRate(ending.Winner)
 
 	// Have the loser learn
 	if ending.Winner == White {
 		if debug {
-			log.Printf("white is learning")
-		}
-		mf.whitePlayer.Learn(ending)
-	} else {
-		if debug {
-			log.Printf("black is learning")
+			log.Printf("white won. black is learning")
 		}
 		mf.blackPlayer.Learn(ending)
+	} else {
+		if debug {
+			log.Printf("black won. white is learning")
+		}
+		mf.whitePlayer.Learn(ending)
 	}
 }
 
@@ -74,7 +74,8 @@ func (mf MetaFarmer) Play(b Board) (Spot, float64) {
 	mf.init(b.ToTopoBoard())
 
 	if Debug {
-		for {
+		keepPlaying := true
+		for keepPlaying {
 			// Read a debugger command
 			log.Printf("enter command:")
 			bio := bufio.NewReader(os.Stdin)
@@ -83,6 +84,7 @@ func (mf MetaFarmer) Play(b Board) (Spot, float64) {
 			log.Printf("read command: [%s]", command)
 
 			// Handle the command
+			endGame := false
 			switch command {
 			case "b":
 				// Print what black is thinking
@@ -99,9 +101,12 @@ func (mf MetaFarmer) Play(b Board) (Spot, float64) {
 				log.Printf("ran a playout")
 			case "x":
 				// exit the loop and finish
-				break
+				keepPlaying = false
 			default:
 				log.Printf("unrecognized command")
+			}
+			if endGame {
+				break
 			}
 		}
 	} else {

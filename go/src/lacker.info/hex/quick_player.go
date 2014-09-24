@@ -53,12 +53,15 @@ func (player *QuickPlayer) Reset() {
 }
 
 // Make one move
-func (player *QuickPlayer) MakeMove(board *TopoBoard) {
+func (player *QuickPlayer) MakeMove(board *TopoBoard, debug bool) {
 	for player.index < len(player.ranking) {
 		spot := player.ranking[player.index].Spot
 		player.index++
 		if board.GetTopoSpot(spot) == Empty {
 			board.SetTopoSpot(spot, player.color)
+			if debug {
+				log.Printf("%s moves %s", player.color.Name(), spot.String())
+			}
 			return
 		}
 	}
@@ -84,7 +87,9 @@ func (player *QuickPlayer) Learn(board *TopoBoard) {
 }
 
 // Plays out a game and returns the final board state.
-func (player *QuickPlayer) Playout(opponent *QuickPlayer) *TopoBoard {
+func (player *QuickPlayer) Playout(
+	opponent *QuickPlayer, debug bool) *TopoBoard {
+
 	if player.color == opponent.color {
 		log.Fatal("both players are the same color")
 	}
@@ -102,12 +107,15 @@ func (player *QuickPlayer) Playout(opponent *QuickPlayer) *TopoBoard {
 	// Play the playout
 	for board.Winner == Empty {
 		if player.color == board.GetToMove() {
-			player.MakeMove(board)
+			player.MakeMove(board, debug)
 		} else {
-			opponent.MakeMove(board)
+			opponent.MakeMove(board, debug)
 		}
 	}
 
+	if debug {
+		log.Printf("%s wins the playout", board.Winner.Name())
+	}
 	return board
 }
 

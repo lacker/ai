@@ -71,6 +71,10 @@ func (s TopoSpot) ToSpot() Spot {
 	return Spot{Row: row, Col: col}
 }
 
+func (s TopoSpot) String() string {
+	return fmt.Sprintf("(%d, %d)", s.ToSpot().Row, s.ToSpot().Col)
+}
+
 type TopoBoard struct {
 	// Contents of the board, indexed by TopoSpot
 	Board [NumTopoSpots]Color
