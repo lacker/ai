@@ -2,7 +2,6 @@ package hex
 
 import (
 	"bufio"
-	"fmt"
 	"log"
 	"os"
 	"time"
@@ -45,16 +44,26 @@ func (mf *MetaFarmer) updateWinRate(winner Color) {
 	mf.blackWinRate /= 1.001
 }
 
+func (mf *MetaFarmer) Debug() {
+	log.Printf("played %d games. white: %.2f black: %.2f\n",
+		mf.gamesPlayed, mf.whiteWinRate, mf.blackWinRate)
+}
 
-func (mf *MetaFarmer) PlayOneGame() {
+func (mf *MetaFarmer) PlayOneGame(debug bool) {
 	// Play a game
 	ending := mf.whitePlayer.Playout(mf.blackPlayer)
 	mf.updateWinRate(ending.Winner)
 
 	// Have the loser learn
 	if ending.Winner == White {
+		if debug {
+			log.Printf("white is learning")
+		}
 		mf.whitePlayer.Learn(ending)
 	} else {
+		if debug {
+			log.Printf("black is learning")
+		}
 		mf.blackPlayer.Learn(ending)
 	}
 }
@@ -67,24 +76,42 @@ func (mf MetaFarmer) Play(b Board) (Spot, float64) {
 	if Debug {
 		for {
 			// Read a debugger command
-			fmt.Printf("> ")
+			log.Printf("enter command:")
 			bio := bufio.NewReader(os.Stdin)
 			line, _, _ := bio.ReadLine()
 			command := string(line)
-			log.Printf("read command: [%s]\n", command)
+			log.Printf("read command: [%s]", command)
 
 			// Handle the command
-			// TODO
+			switch command {
+			case "b":
+				// Print what black is thinking
+				mf.blackPlayer.Debug()
+			case "w":
+				// Print what white is thinking
+				mf.whitePlayer.Debug()
+			case "s":
+				// Print overall status
+				mf.Debug()
+			case "1":
+				// Run one playout
+				mf.PlayOneGame(true)
+				log.Printf("ran a playout")
+			case "x":
+				// exit the loop and finish
+				break
+			default:
+				log.Printf("unrecognized command")
+			}
 		}
 	} else {
 		for SecondsSince(start) < mf.Seconds {
-			mf.PlayOneGame()
+			mf.PlayOneGame(false)
 		}
 	}
 
 	if !mf.Quiet {
-		log.Printf("played %d games. white: %.2f black: %.2f\n",
-			mf.gamesPlayed, mf.whiteWinRate, mf.blackWinRate)
+		mf.Debug()
 		mf.whitePlayer.Debug()
 		mf.blackPlayer.Debug()
 	}
