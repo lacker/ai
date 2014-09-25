@@ -2,6 +2,7 @@ package hex
 
 import (
 	"log"
+	"sort"
 )
 
 /*
@@ -59,6 +60,7 @@ func (player *QuickPlayer) MakeMove(board *TopoBoard, debug bool) {
 		player.index++
 		if board.GetTopoSpot(spot) == Empty {
 			board.SetTopoSpot(spot, player.color)
+			board.ToMove = -board.ToMove
 			if debug {
 				log.Printf("%s moves %s", player.color.Name(), spot.String())
 			}
@@ -84,6 +86,9 @@ func (player *QuickPlayer) Learn(board *TopoBoard) {
 		}
 		scoredSpot.Score /= 1.0001
 	}
+
+	// Sort the possible moves by score
+	sort.Stable(player.ranking)
 }
 
 // Plays out a game and returns the final board state.
