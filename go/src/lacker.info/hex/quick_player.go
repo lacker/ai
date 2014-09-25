@@ -2,6 +2,7 @@ package hex
 
 import (
 	"log"
+	"math/rand"
 	"sort"
 )
 
@@ -90,16 +91,36 @@ func (player *QuickPlayer) updateScores(board *TopoBoard, heat float64) {
 	}
 }
 
+// Randomizes scores and sorts moves in random order
+func (player *QuickPlayer) randomize() {
+	for _, scoredSpot := range player.ranking {
+		scoredSpot.Score = rand.Float64() * 20000.0 - 10000.0
+	}
+	sort.Stable(player.ranking)
+}
+
 // Learns from a playouted game.
 func (player *QuickPlayer) Learn(board *TopoBoard) {
 	if board.Winner == Empty {
 		log.Fatal("cannot learn from a board with no winner")
 	}
 
-	player.updateScores(board, 1.0)
+	for heat := 1.0; true; heat *= 2.0 {
+		player.updateScores(board, heat)
+		if !sort.IsSorted(player.ranking) {
+			// We learned something. Update our move ordering
+			sort.Stable(player.ranking)
 
-	// Sort the possible moves by score
-	sort.Stable(player.ranking)
+			// TODO: check for cycles
+			break
+		}
+		if heat > 10000.0 {
+			// It's impossible to learn anything from this game.
+			// Randomize.
+			player.randomize()
+			break
+		}
+	}
 }
 
 // Plays out a game and returns the final board state.
