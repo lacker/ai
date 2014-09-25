@@ -27,3 +27,11 @@ func (slice ScoredSpotSlice) Less(i, j int) bool {
 func (slice ScoredSpotSlice) Swap(i, j int) {
 	slice[i], slice[j] = slice[j], slice[i]
 }
+
+func (ss ScoredSpot) Row() int {
+	return ss.Spot.ToSpot().Row
+}
+
+func (ss ScoredSpot) Col() int {
+	return ss.Spot.ToSpot().Col
+}

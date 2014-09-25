@@ -1,9 +1,11 @@
 package hex
 
 import (
+	"fmt"
 	"log"
 	"math/rand"
 	"sort"
+	"strings"
 )
 
 /*
@@ -72,6 +74,15 @@ func (player *QuickPlayer) MakeMove(board *TopoBoard, debug bool) {
 		}
 	}
 	log.Fatal("ran out of ranking spots to play")
+}
+
+// Encodes the spot-ranking as a string
+func (player *QuickPlayer) RankingString() string {
+	parts := make([]string, len(player.ranking))
+	for i, scoredSpot := range player.ranking {
+		parts[i] = fmt.Sprintf("%d,%d", scoredSpot.Row(), scoredSpot.Col())
+	}
+	return strings.Join(parts, ">")
 }
 
 // Updates scores based on a game the player lost.
