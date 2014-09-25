@@ -15,7 +15,8 @@ a smarter player.
 
 type QuickPlayer struct {
 	// The spots we prefer in sorted order
-	// It would be nice if the scoring made some sense.
+	// -10,000 is the worst possible score
+	// 10,000 is the best possible score
 	ranking ScoredSpotSlice
 
 	// QuickPlayers always go from the same starting position.
@@ -75,6 +76,7 @@ func (player *QuickPlayer) Learn(board *TopoBoard) {
 	if board.Winner == Empty {
 		log.Fatal("cannot learn from a board with no winner")
 	}
+
 	for _, scoredSpot := range player.ranking {
 		// Count all spots played by the winner as a win.
 		// Spots not played by either side would also have lost for the

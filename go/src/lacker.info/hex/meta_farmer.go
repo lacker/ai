@@ -54,7 +54,7 @@ func (mf *MetaFarmer) PlayOneGame(debug bool) {
 	ending := mf.whitePlayer.Playout(mf.blackPlayer, debug)
 	mf.updateWinRate(ending.Winner)
 
-	// Have the loser learn
+	// Have the loser learn and the winner celebrate
 	if ending.Winner == White {
 		if debug {
 			log.Printf("white won. black is learning")
