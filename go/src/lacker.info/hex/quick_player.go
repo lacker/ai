@@ -93,6 +93,15 @@ func (player *QuickPlayer) Learn(board *TopoBoard) {
 	sort.Stable(player.ranking)
 }
 
+// Searches the space of adjacent strategies near this player in order
+// to find something that beats the opponent.
+// This attempts to mutate the player into something that defeats the
+// opponent. However, it might not be able to do so. It returns
+// whether it succeeded.
+func (player *QuickPlayer) AdaptToOpponent(opponent *QuickPlayer) bool {
+	panic("TODO: implement")
+}
+
 // Plays out a game and returns the final board state.
 func (player *QuickPlayer) Playout(
 	opponent *QuickPlayer, debug bool) *TopoBoard {
