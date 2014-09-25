@@ -3,6 +3,7 @@ package hex
 import (
 	"fmt"
 	"log"
+	"math/rand"
 )
 
 /*
@@ -283,6 +284,30 @@ func (b *TopoBoard) SetTopoSpot(s TopoSpot, color Color) {
 			b.maybeMergeSpots(s, s + BoardSize - 1)
 		}
 	}
+}
+
+// Returns a zobrist hash of the board state.
+var blackZobrist [NumTopoSpots]int64
+var whiteZobrist [NumTopoSpots]int64
+var zobristInitialized bool = false
+func (b TopoBoard) Zobrist() int64 {
+	var spot TopoSpot
+	if !zobristInitialized {
+		for spot = TopLeftCorner; spot <= BottomRightCorner; spot++ {
+			blackZobrist[spot] = rand.Int63()
+			whiteZobrist[spot] = rand.Int63()
+		}
+	}
+	var answer int64 = 0
+	for spot = TopLeftCorner; spot <= BottomRightCorner; spot++ {
+		switch b.Board[spot] {
+		case Black:
+			answer ^= blackZobrist[spot]
+		case White:
+			answer ^= whiteZobrist[spot]
+		}
+	}
+	return answer
 }
 
 func (b *TopoBoard) PossibleTopoSpotMoves() []TopoSpot {
