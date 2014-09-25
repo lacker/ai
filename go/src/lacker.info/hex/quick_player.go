@@ -121,7 +121,7 @@ func (player *QuickPlayer) LearnFromLoss(board *TopoBoard) {
 		log.Fatal("cannot learn from a board with no winner")
 	}
 
-/*
+/* Somehow this logic actually makes us play worse. TODO: debug
 	zob := board.Zobrist()
 	if player.recentBoards[zob] {
 		// We have already lost in this exact way. Learning must be stuck
