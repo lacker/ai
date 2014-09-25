@@ -33,9 +33,6 @@ type QuickPlayer struct {
 	// The index in the ranking that we're considering next.
 	// index only makes sense mid-playout
 	index int
-
-	// Boards we have lost on recently
-	recentBoards map[int64]bool
 }
 
 func MakeQuickPlayer(b *TopoBoard, c Color) *QuickPlayer {
@@ -43,7 +40,6 @@ func MakeQuickPlayer(b *TopoBoard, c Color) *QuickPlayer {
 		ranking: make(ScoredSpotSlice, 0),
 		startingPosition: b,
 		color: c,
-		recentBoards: make(map[int64]bool),
 	}
 
 	// Populate the ranking
@@ -99,9 +95,6 @@ func (player *QuickPlayer) updateScores(board *TopoBoard, heat float64) {
 
 // Randomizes scores and sorts moves in random order
 func (player *QuickPlayer) randomize() {
-	// Forget about our recent losses
-	player.recentBoards = make(map[int64]bool)
-
 	// Randomize preferences
 	for _, scoredSpot := range player.ranking {
 		scoredSpot.Score = MaxScore * (rand.Float64() * 2.0 - 1.0)
@@ -111,8 +104,6 @@ func (player *QuickPlayer) randomize() {
 
 // Learns from a playouted game.
 func (player *QuickPlayer) LearnFromWin(board *TopoBoard) {
-	// When we win, we forget about our recent losses.
-	player.recentBoards = make(map[int64]bool)
 }
 
 // Learns from a playouted game.
@@ -120,17 +111,6 @@ func (player *QuickPlayer) LearnFromLoss(board *TopoBoard) {
 	if board.Winner == Empty {
 		log.Fatal("cannot learn from a board with no winner")
 	}
-
-/* Somehow this logic actually makes us play worse. TODO: debug
-	zob := board.Zobrist()
-	if player.recentBoards[zob] {
-		// We have already lost in this exact way. Learning must be stuck
-		// in a cycle.
-		player.randomize()
-		return
-	}
-	player.recentBoards[zob] = true
-*/
 
 	for heat := 1.0; true; heat *= 2.0 {
 		player.updateScores(board, heat)
