@@ -56,15 +56,11 @@ func (mf *MetaFarmer) PlayOneGame(debug bool) {
 
 	// Have the loser learn and the winner celebrate
 	if ending.Winner == White {
-		if debug {
-			log.Printf("white won. black is learning")
-		}
-		mf.blackPlayer.Learn(ending)
+		mf.whitePlayer.LearnFromWin(ending)
+		mf.blackPlayer.LearnFromLoss(ending)
 	} else {
-		if debug {
-			log.Printf("black won. white is learning")
-		}
-		mf.whitePlayer.Learn(ending)
+		mf.blackPlayer.LearnFromWin(ending)
+		mf.whitePlayer.LearnFromLoss(ending)
 	}
 }
 

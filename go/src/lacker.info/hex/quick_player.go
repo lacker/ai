@@ -102,7 +102,12 @@ func (player *QuickPlayer) randomize() {
 }
 
 // Learns from a playouted game.
-func (player *QuickPlayer) Learn(board *TopoBoard) {
+func (player *QuickPlayer) LearnFromWin(board *TopoBoard) {
+	// Our heuristic is to learn nothing from winning.
+}
+
+// Learns from a playouted game.
+func (player *QuickPlayer) LearnFromLoss(board *TopoBoard) {
 	if board.Winner == Empty {
 		log.Fatal("cannot learn from a board with no winner")
 	}
