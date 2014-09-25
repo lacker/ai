@@ -14,6 +14,8 @@ QuickPlayers to do more complicated things on top of that to become
 a smarter player.
 */
 
+const MaxScore float64 = 10000.0
+
 type QuickPlayer struct {
 	// The spots we prefer in sorted order
 	// -10,000 is the worst possible score
@@ -87,14 +89,14 @@ func (player *QuickPlayer) updateScores(board *TopoBoard, heat float64) {
 		} else {
 			scoredSpot.Score -= heat
 		}
-		scoredSpot.Score /= (1.0 + heat / 10000.0)
+		scoredSpot.Score /= (1.0 + heat / MaxScore)
 	}
 }
 
 // Randomizes scores and sorts moves in random order
 func (player *QuickPlayer) randomize() {
 	for _, scoredSpot := range player.ranking {
-		scoredSpot.Score = rand.Float64() * 20000.0 - 10000.0
+		scoredSpot.Score = MaxScore * (rand.Float64() * 2.0 - 1.0)
 	}
 	sort.Stable(player.ranking)
 }
@@ -114,7 +116,7 @@ func (player *QuickPlayer) Learn(board *TopoBoard) {
 			// TODO: check for cycles
 			break
 		}
-		if heat > 10000.0 {
+		if heat > MaxScore {
 			// It's impossible to learn anything from this game.
 			// Randomize.
 			player.randomize()
