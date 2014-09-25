@@ -71,35 +71,35 @@ func (player *QuickPlayer) MakeMove(board *TopoBoard, debug bool) {
 	log.Fatal("ran out of ranking spots to play")
 }
 
+// Updates scores based on a game the player lost.
+// Heat indicates how much to fluctuate the scores.
+// A heat of 1.0 is typical. Over 10k there is diminishing returns
+// because basically all ordering will be determined by this
+// particular board.
+func (player *QuickPlayer) updateScores(board *TopoBoard, heat float64) {
+	for _, scoredSpot := range player.ranking {
+		// Count all spots played by the winner as a win.
+		// Spots not played by either side would also have lost for the
+		// loser, so they count as a loss.
+		if board.GetTopoSpot(scoredSpot.Spot) == board.Winner {
+			scoredSpot.Score += heat
+		} else {
+			scoredSpot.Score -= heat
+		}
+		scoredSpot.Score /= (1.0 + heat / 10000.0)
+	}
+}
+
 // Learns from a playouted game.
 func (player *QuickPlayer) Learn(board *TopoBoard) {
 	if board.Winner == Empty {
 		log.Fatal("cannot learn from a board with no winner")
 	}
 
-	for _, scoredSpot := range player.ranking {
-		// Count all spots played by the winner as a win.
-		// Spots not played by either side would also have lost for the
-		// loser, so they count as a loss.
-		if board.GetTopoSpot(scoredSpot.Spot) == board.Winner {
-			scoredSpot.Score += 1.0
-		} else {
-			scoredSpot.Score -= 1.0
-		}
-		scoredSpot.Score /= 1.0001
-	}
+	player.updateScores(board, 1.0)
 
 	// Sort the possible moves by score
 	sort.Stable(player.ranking)
-}
-
-// Searches the space of adjacent strategies near this player in order
-// to find something that beats the opponent.
-// This attempts to mutate the player into something that defeats the
-// opponent. However, it might not be able to do so. It returns
-// whether it succeeded.
-func (player *QuickPlayer) AdaptToOpponent(opponent *QuickPlayer) bool {
-	panic("TODO: implement")
 }
 
 // Plays out a game and returns the final board state.
