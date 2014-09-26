@@ -96,9 +96,9 @@ func (player *QuickPlayer) updateScores(board *TopoBoard, heat float64) {
 		// Spots not played by either side would also have lost for the
 		// loser, so they count as a loss.
 		if board.GetTopoSpot(scoredSpot.Spot) == board.Winner {
-			scoredSpot.Score += heat
+			scoredSpot.Score += heat * (1.1 - 0.2 * rand.Float64())
 		} else {
-			scoredSpot.Score -= heat
+			scoredSpot.Score -= heat * (1.1 - 0.2 * rand.Float64())
 		}
 		scoredSpot.Score /= (1.0 + heat / MaxScore)
 	}
