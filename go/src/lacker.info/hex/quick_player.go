@@ -114,11 +114,11 @@ func (player *QuickPlayer) randomize() {
 }
 
 // Learns from a playouted game.
-func (player *QuickPlayer) LearnFromWin(board *TopoBoard) {
+func (player *QuickPlayer) LearnFromWin(board *TopoBoard, debug bool) {
 }
 
 // Learns from a playouted game.
-func (player *QuickPlayer) LearnFromLoss(board *TopoBoard) {
+func (player *QuickPlayer) LearnFromLoss(board *TopoBoard, debug bool) {
 	if board.Winner == Empty {
 		log.Fatal("cannot learn from a board with no winner")
 	}
@@ -128,11 +128,18 @@ func (player *QuickPlayer) LearnFromLoss(board *TopoBoard) {
 		if !sort.IsSorted(player.ranking) {
 			// We learned something. Update our move ordering
 			sort.Stable(player.ranking)
+			if debug {
+				log.Printf("%s has a new mind to try.", player.color.Name())
+			}
 			return
 		}
 		if heat > MaxScore {
 			// It's impossible to learn anything from this game.
 			// Randomize.
+			if debug {
+				log.Printf("%s cannot learn anything from this game. randomize.",
+					player.color.Name())
+			}
 			player.randomize()
 			return
 		}

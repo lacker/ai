@@ -56,11 +56,11 @@ func (mf *MetaFarmer) PlayOneGame(debug bool) {
 
 	// Have the loser learn and the winner celebrate
 	if ending.Winner == White {
-		mf.whitePlayer.LearnFromWin(ending)
-		mf.blackPlayer.LearnFromLoss(ending)
+		mf.whitePlayer.LearnFromWin(ending, debug)
+		mf.blackPlayer.LearnFromLoss(ending, debug)
 	} else {
-		mf.blackPlayer.LearnFromWin(ending)
-		mf.whitePlayer.LearnFromLoss(ending)
+		mf.blackPlayer.LearnFromWin(ending, debug)
+		mf.whitePlayer.LearnFromLoss(ending, debug)
 	}
 }
 
@@ -95,6 +95,11 @@ func (mf MetaFarmer) Play(b Board) (Spot, float64) {
 				// Run one playout
 				mf.PlayOneGame(true)
 				log.Printf("ran a playout")
+			case "1000":
+				for i := 0; i < 1000; i++ {
+					mf.PlayOneGame(false)
+				}
+				log.Printf("ran a thousand playouts")
 			case "x":
 				// exit the loop and finish
 				keepPlaying = false
