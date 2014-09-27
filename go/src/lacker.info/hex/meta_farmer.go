@@ -11,6 +11,16 @@ import (
 /*
 The meta farmer keeps a lot of quick players and does what the best
 ones of those do.
+
+With linear-ranking-based quickplayers:
+mf handles doomed1, doomed2, doomed3 (mostly), ladder.
+mf cannot handle needle. doesn't find (5, 6). the losing spots just
+alternate.
+mf does seem to handle simpleBlock, usually finding (5, 9) there.
+but actually given the nature of the opponent, moves like (5, 6) in
+needle might not be the best.
+so the theory is that the linear-ranking-based quickplayer is just not
+good enough.
 */
 
 type MetaFarmer struct {
