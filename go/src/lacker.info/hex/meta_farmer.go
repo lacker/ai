@@ -123,7 +123,9 @@ func (mf MetaFarmer) Play(b Board) (Spot, float64) {
 					numGames += 1
 				}
 
-				log.Printf("ran %d games, until %s won.", numGames, mf.lastWinner)
+				log.Printf("ran %d games, until %s won.",
+					numGames, mf.lastWinner.Name())
+
 			default:
 				log.Printf("unrecognized command")
 			}
