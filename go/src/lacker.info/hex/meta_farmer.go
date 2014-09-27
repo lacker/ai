@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"log"
 	"os"
+	"strconv"
 	"time"
 )
 
@@ -23,6 +24,7 @@ type MetaFarmer struct {
 	whiteWinRate float64
 	blackWinRate float64
 	gamesPlayed int
+	lastWinner Color
 }
 
 func (mf *MetaFarmer) init(b *TopoBoard) {
@@ -31,6 +33,7 @@ func (mf *MetaFarmer) init(b *TopoBoard) {
 	mf.whiteWinRate = 0.5
 	mf.blackWinRate = 0.5
 	mf.gamesPlayed = 0
+	mf.lastWinner = Empty
 }
 
 func (mf *MetaFarmer) updateWinRate(winner Color) {
@@ -42,6 +45,8 @@ func (mf *MetaFarmer) updateWinRate(winner Color) {
 	}
 	mf.whiteWinRate /= 1.001
 	mf.blackWinRate /= 1.001
+
+	mf.lastWinner = winner
 }
 
 func (mf *MetaFarmer) Debug() {
@@ -49,8 +54,8 @@ func (mf *MetaFarmer) Debug() {
 		mf.gamesPlayed, mf.whiteWinRate, mf.blackWinRate)
 }
 
+// Play a game
 func (mf *MetaFarmer) PlayOneGame(debug bool) {
-	// Play a game
 	ending := mf.whitePlayer.Playout(mf.blackPlayer, debug)
 	mf.updateWinRate(ending.Winner)
 
@@ -95,14 +100,30 @@ func (mf MetaFarmer) Play(b Board) (Spot, float64) {
 				// Run one playout
 				mf.PlayOneGame(true)
 				log.Printf("ran a playout")
-			case "1000":
-				for i := 0; i < 1000; i++ {
+			case "10", "100", "1000", "10000", "100000", "1000000":
+				// Run many playouts
+				numPlayouts, err := strconv.ParseInt(command, 10, 32)
+				if err != nil {
+					panic("bad number")
+				}
+				for i := 0; i < int(numPlayouts); i++ {
 					mf.PlayOneGame(false)
 				}
-				log.Printf("ran a thousand playouts")
+				log.Printf("ran %d playouts", numPlayouts)
 			case "x":
 				// exit the loop and finish
 				keepPlaying = false
+			case "n":
+				// Keep playouting until there is a new winner.
+				initialWinner := mf.lastWinner
+
+				numGames := 0
+				for mf.lastWinner == initialWinner {
+					mf.PlayOneGame(false)
+					numGames += 1
+				}
+
+				log.Printf("ran %d games, until %s won.", numGames, mf.lastWinner)
 			default:
 				log.Printf("unrecognized command")
 			}
