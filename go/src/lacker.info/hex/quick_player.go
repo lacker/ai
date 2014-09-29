@@ -9,24 +9,22 @@ import (
 )
 
 /*
-The QuickPlayer just plays one side of a position, using an algorithm
+The LinearPlayer just plays one side of a position, using an algorithm
 that just orders spots by preference in playing them. You can play out
-a game or learn from it. Then other algorithms can use lots of
-QuickPlayers to do more complicated things on top of that to become
-a smarter player.
+a game or learn from it.
 */
 
 const MaxScore float64 = 10000.0
 
-type QuickPlayer struct {
+type LinearPlayer struct {
 	// The spots we prefer in sorted order
 	// -10,000 is the worst possible score
 	// 10,000 is the best possible score
 	ranking ScoredSpotSlice
 
-	// QuickPlayers always go from the same starting position.
+	// LinearPlayers always go from the same starting position.
 	// The starting position should never be mutated from the
-	// QuickPlayer - that way lies only pain.
+	// LinearPlayer - that way lies only pain.
 	startingPosition *TopoBoard
 
 	// What color we play
@@ -37,8 +35,8 @@ type QuickPlayer struct {
 	index int
 }
 
-func MakeQuickPlayer(b *TopoBoard, c Color) *QuickPlayer {
-	qp := &QuickPlayer{
+func MakeLinearPlayer(b *TopoBoard, c Color) *LinearPlayer {
+	qp := &LinearPlayer{
 		ranking: make(ScoredSpotSlice, 0),
 		startingPosition: b,
 		color: c,
@@ -55,12 +53,12 @@ func MakeQuickPlayer(b *TopoBoard, c Color) *QuickPlayer {
 }
 
 // Prepare for a new playout
-func (player *QuickPlayer) Reset() {
+func (player *LinearPlayer) Reset() {
 	player.index = 0
 }
 
 // Make one move
-func (player *QuickPlayer) MakeMove(board *TopoBoard, debug bool) {
+func (player *LinearPlayer) MakeMove(board *TopoBoard, debug bool) {
 	for player.index < len(player.ranking) {
 		spot := player.ranking[player.index].Spot
 		player.index++
@@ -77,7 +75,7 @@ func (player *QuickPlayer) MakeMove(board *TopoBoard, debug bool) {
 }
 
 // Encodes the spot-ranking as a string
-func (player *QuickPlayer) RankingString() string {
+func (player *LinearPlayer) RankingString() string {
 	parts := make([]string, len(player.ranking))
 	for i, scoredSpot := range player.ranking {
 		parts[i] = fmt.Sprintf("%d,%d", scoredSpot.Row(), scoredSpot.Col())
@@ -90,7 +88,7 @@ func (player *QuickPlayer) RankingString() string {
 // A heat of 1.0 is typical. Over 10k there is diminishing returns
 // because basically all ordering will be determined by this
 // particular board.
-func (player *QuickPlayer) updateScores(board *TopoBoard, heat float64) {
+func (player *LinearPlayer) updateScores(board *TopoBoard, heat float64) {
 	for _, scoredSpot := range player.ranking {
 		// Count all spots played by the winner as a win.
 		// Spots not played by either side would also have lost for the
@@ -105,7 +103,7 @@ func (player *QuickPlayer) updateScores(board *TopoBoard, heat float64) {
 }
 
 // Randomizes scores and sorts moves in random order
-func (player *QuickPlayer) randomize() {
+func (player *LinearPlayer) randomize() {
 	// Randomize preferences
 	for _, scoredSpot := range player.ranking {
 		scoredSpot.Score = MaxScore * (rand.Float64() * 2.0 - 1.0)
@@ -114,11 +112,11 @@ func (player *QuickPlayer) randomize() {
 }
 
 // Learns from a playouted game.
-func (player *QuickPlayer) LearnFromWin(board *TopoBoard, debug bool) {
+func (player *LinearPlayer) LearnFromWin(board *TopoBoard, debug bool) {
 }
 
 // Learns from a playouted game.
-func (player *QuickPlayer) LearnFromLoss(board *TopoBoard, debug bool) {
+func (player *LinearPlayer) LearnFromLoss(board *TopoBoard, debug bool) {
 	if board.Winner == Empty {
 		log.Fatal("cannot learn from a board with no winner")
 	}
@@ -147,8 +145,8 @@ func (player *QuickPlayer) LearnFromLoss(board *TopoBoard, debug bool) {
 }
 
 // Plays out a game and returns the final board state.
-func (player *QuickPlayer) Playout(
-	opponent *QuickPlayer, debug bool) *TopoBoard {
+func (player *LinearPlayer) Playout(
+	opponent *LinearPlayer, debug bool) *TopoBoard {
 
 	if player.color == opponent.color {
 		log.Fatal("both players are the same color")
@@ -180,7 +178,7 @@ func (player *QuickPlayer) Playout(
 }
 
 // Prints some debug information
-func (player *QuickPlayer) Debug() {
+func (player *LinearPlayer) Debug() {
 	log.Printf("%s quickplayer prefers:\n", player.color.Name())
 	for index, scoredSpot := range player.ranking {
 		if index >= 10 {
