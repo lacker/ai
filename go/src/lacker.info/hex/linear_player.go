@@ -52,6 +52,14 @@ func MakeLinearPlayer(b *TopoBoard, c Color) *LinearPlayer {
 	return qp
 }
 
+func (player LinearPlayer) Color() Color {
+	return player.color
+}
+
+func (player LinearPlayer) StartingPosition() *TopoBoard {
+	return player.startingPosition
+}
+
 // Prepare for a new playout
 func (player *LinearPlayer) Reset() {
 	player.index = 0
@@ -145,7 +153,8 @@ func (player *LinearPlayer) LearnFromLoss(board *TopoBoard, debug bool) {
 }
 
 // Plays out a game and returns the final board state.
-func (player *LinearPlayer) Playout(
+// TODO: delete this
+func (player *LinearPlayer) PlayoutDeprecated(
 	opponent *LinearPlayer, debug bool) *TopoBoard {
 
 	if player.color == opponent.color {
@@ -179,13 +188,12 @@ func (player *LinearPlayer) Playout(
 
 // Prints some debug information
 func (player *LinearPlayer) Debug() {
-	log.Printf("%s quickplayer prefers:\n", player.color.Name())
+	log.Printf("%s linear player prefers:\n", player.color.Name())
 	for index, scoredSpot := range player.ranking {
 		if index >= 10 {
 			break
 		}
 		log.Printf("(%d, %d) scores %.1f\n",
-			scoredSpot.Spot.ToSpot().Row, scoredSpot.Spot.ToSpot().Col,
-			scoredSpot.Score)
+			scoredSpot.Spot.Row(), scoredSpot.Spot.Col(), scoredSpot.Score)
 	}
 }

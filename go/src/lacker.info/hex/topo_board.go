@@ -72,8 +72,16 @@ func (s TopoSpot) ToSpot() Spot {
 	return Spot{Row: row, Col: col}
 }
 
+func (s TopoSpot) Row() int {
+	return s.ToSpot().Row
+}
+
+func (s TopoSpot) Col() int {
+	return s.ToSpot().Col
+}
+
 func (s TopoSpot) String() string {
-	return fmt.Sprintf("(%d, %d)", s.ToSpot().Row, s.ToSpot().Col)
+	return fmt.Sprintf("(%d, %d)", s.Row(), s.Col())
 }
 
 type TopoBoard struct {

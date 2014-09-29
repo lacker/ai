@@ -66,7 +66,7 @@ func (mf *MetaFarmer) Debug() {
 
 // Play a game
 func (mf *MetaFarmer) PlayOneGame(debug bool) {
-	ending := mf.whitePlayer.Playout(mf.blackPlayer, debug)
+	ending := Playout(mf.whitePlayer, mf.blackPlayer, debug)
 	mf.updateWinRate(ending.Winner)
 
 	// Have the loser learn and the winner celebrate
