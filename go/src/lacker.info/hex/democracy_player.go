@@ -31,6 +31,7 @@ func (demo *DemocracyPlayer) StartingPosition() *TopoBoard {
 	return demo.startingPosition
 }
 
+// TODO: check this works somehow
 func (demo *DemocracyPlayer) Add(linear *LinearPlayer) {
 	if demo.Color() != linear.Color() {
 		log.Fatal("color mismatch")
@@ -40,5 +41,5 @@ func (demo *DemocracyPlayer) Add(linear *LinearPlayer) {
 		log.Fatal("position mismatch")
 	}
 
-	panic("TODO: implement")
+	demo.players = append(demo.players, linear)
 }
