@@ -52,11 +52,11 @@ func MakeLinearPlayer(b *TopoBoard, c Color) *LinearPlayer {
 	return qp
 }
 
-func (player LinearPlayer) Color() Color {
+func (player *LinearPlayer) Color() Color {
 	return player.color
 }
 
-func (player LinearPlayer) StartingPosition() *TopoBoard {
+func (player *LinearPlayer) StartingPosition() *TopoBoard {
 	return player.startingPosition
 }
 
