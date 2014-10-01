@@ -43,3 +43,12 @@ func (demo *DemocracyPlayer) Add(linear *LinearPlayer) {
 
 	demo.players = append(demo.players, linear)
 }
+
+func (demo *DemocracyPlayer) Debug() {
+	log.Printf("the demo consists of %d subplayers:\n",
+		len(demo.players))
+	for _, player := range demo.players {
+		player.Debug()
+		log.Printf("-----\n")
+	}
+}
