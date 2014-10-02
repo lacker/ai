@@ -52,3 +52,7 @@ func (demo *DemocracyPlayer) Debug() {
 		log.Printf("-----\n")
 	}
 }
+
+func (demo *DemocracyPlayer) MakeMove(board *TopoBoard, debug bool) {
+	panic("TODO: implement")
+}
