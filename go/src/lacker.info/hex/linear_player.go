@@ -65,21 +65,26 @@ func (player *LinearPlayer) Reset() {
 	player.index = 0
 }
 
-// Make one move
-func (player *LinearPlayer) MakeMove(board *TopoBoard, debug bool) {
+// Returns the best move to make
+func (player *LinearPlayer) BestMove(board *TopoBoard) TopoSpot {
 	for player.index < len(player.ranking) {
 		spot := player.ranking[player.index].Spot
-		player.index++
 		if board.GetTopoSpot(spot) == Empty {
-			board.SetTopoSpot(spot, player.color)
-			board.ToMove = -board.ToMove
-			if debug {
-				log.Printf("%s moves %s", player.color.Name(), spot.String())
-			}
-			return
+			return spot
 		}
+		player.index++
 	}
-	log.Fatal("ran out of ranking spots to play")
+	panic("ran out of ranking spots to play")
+}
+
+// Make one move
+func (player *LinearPlayer) MakeMove(board *TopoBoard, debug bool) {
+	spot := player.BestMove(board)
+	board.SetTopoSpot(spot, player.color)
+	board.ToMove = -board.ToMove
+	if debug {
+		log.Printf("%s moves %s", player.color.Name(), spot.String())
+	}
 }
 
 // Encodes the spot-ranking as a string
