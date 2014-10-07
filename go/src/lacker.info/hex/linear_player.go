@@ -74,6 +74,7 @@ func (player *LinearPlayer) BestMove(board *TopoBoard) TopoSpot {
 		}
 		player.index++
 	}
+
 	panic("ran out of ranking spots to play")
 }
 
