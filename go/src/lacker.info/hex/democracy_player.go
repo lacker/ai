@@ -53,6 +53,15 @@ func (demo *DemocracyPlayer) Debug() {
 	}
 }
 
+// TODO: make the move that most of the players make
 func (demo *DemocracyPlayer) MakeMove(board *TopoBoard, debug bool) {
+	if len(demo.players) < 1 {
+		log.Fatal("cannot make a move in a democracy with no players")
+	}
+	moves := make([]TopoSpot, len(demo.players))
+	for i, player := range demo.players {
+		moves[i] = player.BestMove(board)
+	}
+
 	panic("TODO: implement")
 }
