@@ -54,7 +54,6 @@ func (demo *DemocracyPlayer) Debug() {
 }
 
 // Make the move that most of the players make
-// TODO: test to see if this works
 func (demo *DemocracyPlayer) MakeMove(board *TopoBoard, debug bool) {
 	if len(demo.players) < 1 {
 		log.Fatal("cannot make a move in a democracy with no players")
@@ -82,5 +81,12 @@ func (demo *DemocracyPlayer) MakeMove(board *TopoBoard, debug bool) {
 			demo.color.Name(), bestMove.String(),
 			bestCount, len(demo.players),
 			100.0 * float64(bestCount) / float64(len(demo.players)))
+	}
+}
+
+// Prepare for a new playout
+func (demo *DemocracyPlayer) Reset() {
+	for _, player := range demo.players {
+		player.Reset()
 	}
 }
