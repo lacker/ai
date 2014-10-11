@@ -90,3 +90,12 @@ func (demo *DemocracyPlayer) Reset() {
 		player.Reset()
 	}
 }
+
+// Limit to only a certain number of players by cutting the old ones
+func (demo *DemocracyPlayer) Truncate(limit int) {
+	if limit >= len(demo.players) {
+		return
+	}
+
+	panic("TODO: implement")
+}
