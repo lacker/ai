@@ -8,7 +8,7 @@ import (
 type Puzzle struct {
 	String string
 	Board *NaiveBoard
-	CorrectAnswer Spot
+	CorrectAnswer NaiveSpot
 }
 
 var PuzzleMap map[string]Puzzle = MakePuzzleMap()

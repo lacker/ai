@@ -46,7 +46,7 @@ func (s *SpotSorter) Init(b Board) {
 	s.losses = 0
 }
 
-func (s SpotSorter) Play(b Board) (Spot, float64) {
+func (s SpotSorter) Play(b Board) (NaiveSpot, float64) {
 	start := time.Now()
 
 	s.Init(b)

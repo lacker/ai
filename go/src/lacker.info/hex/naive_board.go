@@ -24,11 +24,11 @@ func NewNaiveBoard() *NaiveBoard {
 	return &NaiveBoard{ToMove: Black}
 }
 
-func (b *NaiveBoard) Get(spot Spot) Color {
+func (b *NaiveBoard) Get(spot NaiveSpot) Color {
 	return b.Board[spot.Row][spot.Col]
 }
 
-func (b *NaiveBoard) Set(spot Spot, color Color) {
+func (b *NaiveBoard) Set(spot NaiveSpot, color Color) {
 	b.Board[spot.Row][spot.Col] = color
 }
 
@@ -53,19 +53,19 @@ func (b *NaiveBoard) Eprint() {
 	}
 }
 
-func (b *NaiveBoard) PossibleMoves() []Spot {
-	answer := make([]Spot, 0)
+func (b *NaiveBoard) PossibleMoves() []NaiveSpot {
+	answer := make([]NaiveSpot, 0)
 	for r, col := range b.Board {
 		for c, color := range col {
 			if color == Empty {
-				answer = append(answer, MakeSpot(r, c))
+				answer = append(answer, MakeNaiveSpot(r, c))
 			}
 		}
 	}
 	return answer
 }
 
-func (b *NaiveBoard) MakeMoveWithNaiveSpot(s Spot) {
+func (b *NaiveBoard) MakeMoveWithNaiveSpot(s NaiveSpot) {
 	if b.ToMove == Empty {
 		log.Fatal("this isn't a valid board, there is nobody to move")
 	}
@@ -143,11 +143,11 @@ func (b *NaiveBoard) IsBlackTheWinner() bool {
 	// Frontier is black stones we haven't investigated yet.
 	// Checked is any previously-frontier stone we already processed.
 	// Start off with the frontier of all the row-zero black stones.
-	frontier := make([]Spot, 0)
+	frontier := make([]NaiveSpot, 0)
 	var checked [NumSpots]bool
 	for col, color := range(b.Board[0]) {
 		if color == Black {
-			frontier = append(frontier, MakeSpot(0, col))
+			frontier = append(frontier, MakeNaiveSpot(0, col))
 		}
 	}
 
@@ -159,7 +159,7 @@ func (b *NaiveBoard) IsBlackTheWinner() bool {
 
 		// Find all the neighboring black stones
 		done := false
-		spot.ApplyToNeighbors(func(neighbor Spot) {
+		spot.ApplyToNeighbors(func(neighbor NaiveSpot) {
 			if b.Get(neighbor) != Black {
 				return
 			}
@@ -200,6 +200,6 @@ func NewNaiveBoardFromJSON(j string) *NaiveBoard {
 	return b
 }
 
-func (b *NaiveBoard) GetWinningPathSpots() []Spot {
+func (b *NaiveBoard) GetWinningPathSpots() []NaiveSpot {
 	panic("not implemented")
 }

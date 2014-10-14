@@ -10,7 +10,7 @@ import (
 
 type Player interface {
 	// Returns the best move and an expected win rate
-	Play(b Board) (Spot, float64)
+	Play(b Board) (NaiveSpot, float64)
 }
 
 func GetPlayer(s string) Player {

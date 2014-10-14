@@ -62,14 +62,14 @@ func (s TopoSpot) isSpecialSpot() bool {
 	return s < TopLeftCorner
 }
 
-func (s TopoSpot) ToSpot() Spot {
+func (s TopoSpot) ToSpot() NaiveSpot {
 	if s < TopLeftCorner {
-		panic("special spots cannot be converted to Spot")
+		panic("special spots cannot be converted to NaiveSpot")
 	}
 	x := int(s - TopLeftCorner)
 	col := x % BoardSize
 	row := (x - col) / BoardSize
-	return Spot{Row: row, Col: col}
+	return NaiveSpot{Row: row, Col: col}
 }
 
 func (s TopoSpot) Row() int {
@@ -195,11 +195,11 @@ func TopoSpotFromRowCol(row int, col int) TopoSpot {
 	return TopoSpot(4 + col + BoardSize * row)
 }
 
-func TopoSpotFromSpot(s Spot) TopoSpot {
+func TopoSpotFromSpot(s NaiveSpot) TopoSpot {
 	return TopoSpotFromRowCol(s.Row, s.Col)
 }
 
-func (b *TopoBoard) Get(s Spot) Color {
+func (b *TopoBoard) Get(s NaiveSpot) Color {
 	return b.GetByRowCol(s.Row, s.Col)
 }
 
@@ -330,16 +330,16 @@ func (b *TopoBoard) PossibleTopoSpotMoves() []TopoSpot {
 	return answer
 }
 
-func (b *TopoBoard) PossibleMoves() []Spot {
+func (b *TopoBoard) PossibleMoves() []NaiveSpot {
 	topo := b.PossibleTopoSpotMoves()
-	answer := make([]Spot, len(topo))
+	answer := make([]NaiveSpot, len(topo))
 	for i, s := range topo {
 		answer[i] = s.ToSpot()
 	}
 	return answer
 }
 
-func (b *TopoBoard) MakeMoveWithNaiveSpot(s Spot) {
+func (b *TopoBoard) MakeMoveWithNaiveSpot(s NaiveSpot) {
 	b.MakeMove(TopoSpotFromSpot(s))
 }
 
@@ -377,11 +377,11 @@ func (b *TopoBoard) GetToMove() Color {
 	return b.ToMove
 }
 
-func (b *TopoBoard) GetWinningPathSpots() []Spot {
+func (b *TopoBoard) GetWinningPathSpots() []NaiveSpot {
 	if b.Winner == Empty {
 		panic("cannot GetWinningPathSpots with no winner")
 	}
-	answer := make([]Spot, 0)
+	answer := make([]NaiveSpot, 0)
 	for _, spot := range b.WinningPathSpots {
 		if spot.isSpecialSpot() {
 			continue

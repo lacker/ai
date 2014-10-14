@@ -17,13 +17,13 @@ func TestNaiveBoardBlackWin(t *testing.T) {
 	b := NewNaiveBoard()
 	for r := 0; r < BoardSize; r++ {
 		if r != 5 {
-			b.Set(MakeSpot(r, 3), Black)
+			b.Set(MakeNaiveSpot(r, 3), Black)
 		}
 	}
 	if b.IsBlackTheWinner() {
 		t.Fatalf("black is not supposed to be the winner because 5, 3 is missing")
 	}
-	b.Set(MakeSpot(5, 3), Black)
+	b.Set(MakeNaiveSpot(5, 3), Black)
 	if !b.IsBlackTheWinner() {
 		t.Fatalf("black is supposed to be the winner because *, 3 is set")
 	}
@@ -33,13 +33,13 @@ func TestNaiveBoardWhiteWin(t *testing.T) {
 	b := NewNaiveBoard()
 	for c := 0; c < BoardSize; c++ {
 		if c != 8 {
-			b.Set(MakeSpot(7, c), White)
+			b.Set(MakeNaiveSpot(7, c), White)
 		}
 	}
 	if b.Winner() != Empty {
 		t.Fatalf("expected empty")
 	}
-	b.Set(MakeSpot(7, 8), White)
+	b.Set(MakeNaiveSpot(7, 8), White)
 	if b.Winner() != White {
 		t.Fatalf("expected white")
 	}
@@ -58,7 +58,7 @@ func TestNaiveBoardPlayout(t *testing.T) {
 }
 
 func TestNaiveBoardStringification(t *testing.T) {
-	s := MakeSpot(2, 3)
+	s := MakeNaiveSpot(2, 3)
 	if fmt.Sprintf("%s", s) != "(2, 3)" {
 		t.Fatalf("problems printf'ing %s", s)
 	}

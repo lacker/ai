@@ -50,7 +50,7 @@ func Fastlog(x int) float64 {
 }
 
 // Shuffles a list of spots
-func ShuffleSpots(spots []Spot) {
+func ShuffleSpots(spots []NaiveSpot) {
 	for i := range spots {
     j := rand.Intn(i + 1)
     spots[i], spots[j] = spots[j], spots[i]

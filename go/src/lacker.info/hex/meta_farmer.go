@@ -80,7 +80,7 @@ func (mf *MetaFarmer) PlayOneGame(debug bool) {
 }
 
 
-func (mf MetaFarmer) Play(b Board) (Spot, float64) {
+func (mf MetaFarmer) Play(b Board) (NaiveSpot, float64) {
 	start := time.Now()
 	mf.init(b.ToTopoBoard())
 

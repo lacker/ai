@@ -26,10 +26,10 @@ type ShallowRave struct {
 	Quiet bool
 }
 
-func (s ShallowRave) Play(b Board) (Spot, float64) {
+func (s ShallowRave) Play(b Board) (NaiveSpot, float64) {
 	start := time.Now()
 
-	records := make(map[Spot]*WinLossRecord)
+	records := make(map[NaiveSpot]*WinLossRecord)
 	moves := b.PossibleMoves()
 	for _, move := range moves {
 		records[move] = new(WinLossRecord)
@@ -51,7 +51,7 @@ func (s ShallowRave) Play(b Board) (Spot, float64) {
 		// Then play moves in that order on a copy of the board.
 		// Track the moves that "we" played, i.e. the player to move on b
 		playout := b.ToNaiveBoard()
-		ourMoves := make([]Spot, 0)
+		ourMoves := make([]NaiveSpot, 0)
 		for _, move := range moves {
 			if playout.ToMove == b.GetToMove() {
 				ourMoves = append(ourMoves, move)
@@ -80,7 +80,7 @@ func (s ShallowRave) Play(b Board) (Spot, float64) {
 	// We have finished all the playouts. Now we just need to choose
 	// the best-scoring move.
 	bestScore := -1.0
-	bestMove := MakeSpot(-1, -1)
+	bestMove := MakeNaiveSpot(-1, -1)
 	for move, record := range records {
 		if record.Score() > bestScore {
 			bestScore = record.Score()

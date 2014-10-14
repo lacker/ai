@@ -16,7 +16,7 @@ type TreeNode struct {
 	WhiteWins int
 	Board Board
 	NumPossibleMoves int
-	Children map[Spot]*TreeNode
+	Children map[NaiveSpot]*TreeNode
 	Parent *TreeNode
 
 	// Holds parameters that may affect the search
@@ -32,7 +32,7 @@ type TreeNode struct {
 	RaveWhiteWins [NumSpots]int
 }
 
-func NewChild(parent *TreeNode, move Spot) *TreeNode {
+func NewChild(parent *TreeNode, move NaiveSpot) *TreeNode {
 	if parent == nil {
 		panic("cannot create a child of nil")
 	}
@@ -51,7 +51,7 @@ func NewChild(parent *TreeNode, move Spot) *TreeNode {
 	}
 	node.Board.MakeMoveWithNaiveSpot(move)
 	parent.Children[move] = node
-	node.Children = make(map[Spot]*TreeNode)
+	node.Children = make(map[NaiveSpot]*TreeNode)
 	node.NumPossibleMoves = parent.NumPossibleMoves - 1
 	node.Parent = parent
 	return node
@@ -111,8 +111,8 @@ func (n *TreeNode) ToMoveLetter() string {
 
 // Finds the move from this node with the most MCTS simulations.
 // Panics if it can't find any move.
-func (n *TreeNode) MostSimulatedMove() Spot {
-	var bestMove Spot
+func (n *TreeNode) MostSimulatedMove() NaiveSpot {
+	var bestMove NaiveSpot
 	numSims := -1
 
 	for move, child := range n.Children {
@@ -272,7 +272,7 @@ func (mcts *MonteCarloTreeSearch) NewRoot(b Board) *TreeNode {
 	} else {
 		node.Board = b.ToNaiveBoard()
 	}
-	node.Children = make(map[Spot]*TreeNode)
+	node.Children = make(map[NaiveSpot]*TreeNode)
 	node.NumPossibleMoves = len(node.Board.PossibleMoves())
 	node.Strategy = mcts
 	return node
@@ -288,7 +288,7 @@ func (mcts *MonteCarloTreeSearch) NewRoot(b Board) *TreeNode {
 // a Dirichlet backoff from exact to rave to a constant.
 // In general this is not as good as a V around 1000.
 func (mcts *MonteCarloTreeSearch) ExpectedWinRate(
-	parent *TreeNode, move Spot, child *TreeNode, debug bool) float64 {
+	parent *TreeNode, move NaiveSpot, child *TreeNode, debug bool) float64 {
 	var raveWins int
 	var raveLosses int
 	switch parent.Board.GetToMove() {
@@ -434,10 +434,10 @@ func (mcts *MonteCarloTreeSearch) ExpectedWinRate(
 // Uses ExpectedWinRate to figure out which move is expected to be the
 // best.
 func (mcts *MonteCarloTreeSearch) ExpectedBestMove(n *TreeNode) (
-	Spot, *TreeNode, float64) {
+	NaiveSpot, *TreeNode, float64) {
 
 	bestWinRate := math.Inf(-1)
-	var bestMove Spot
+	var bestMove NaiveSpot
 	var bestChild *TreeNode
 	for move, child := range n.Children {
 		winRate := mcts.ExpectedWinRate(n, move, child, false)
@@ -478,7 +478,7 @@ func (mcts *MonteCarloTreeSearch) RunOneRound(n *TreeNode) {
 	leaf.Backprop(winner, board)
 }
 
-func (mcts MonteCarloTreeSearch) Play(b Board) (Spot, float64) {
+func (mcts MonteCarloTreeSearch) Play(b Board) (NaiveSpot, float64) {
 	start := time.Now()
 	root := mcts.NewRoot(b)
 
@@ -504,7 +504,7 @@ func (mcts MonteCarloTreeSearch) Play(b Board) (Spot, float64) {
 		fmt.Printf("\n")
 
 		// The move to debug why we didn't make it. TODO: make this a flag
-		debugMove := Spot{Row: 7, Col: 0}
+		debugMove := NaiveSpot{Row: 7, Col: 0}
 
 		fmt.Printf("debugging move %s\n", ToJSON(debugMove))
 		fmt.Printf("parent record: %s\n", root.String())
