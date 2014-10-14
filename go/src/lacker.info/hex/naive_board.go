@@ -65,17 +65,19 @@ func (b *NaiveBoard) PossibleMoves() []Spot {
 	return answer
 }
 
-// Returns whether it was a possible move
-func (b *NaiveBoard) MakeMove(s Spot) bool {
+func (b *NaiveBoard) MakeMoveWithNaiveSpot(s Spot) {
 	if b.ToMove == Empty {
 		log.Fatal("this isn't a valid board, there is nobody to move")
 	}
 	if b.Get(s) != Empty {
-		return false
+		log.Fatal("cannot move on a non empty spot")
 	}
 	b.Set(s, b.ToMove)
 	b.ToMove = -b.ToMove
-	return true
+}
+
+func (b *NaiveBoard) MakeMove(s TopoSpot) {
+	b.MakeMoveWithNaiveSpot(s.ToSpot())
 }
 
 func (b *NaiveBoard) GetToMove() Color {
@@ -124,9 +126,7 @@ func (b *NaiveBoard) Playout() Color {
 	ShuffleSpots(moves)
 
 	for _, move := range moves {
-		if !b.MakeMove(move) {
-			log.Fatal("a playout played an invalid move")
-		}
+		b.MakeMoveWithNaiveSpot(move)
 	}
 
 	winner := b.Winner()

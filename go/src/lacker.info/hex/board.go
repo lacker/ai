@@ -130,7 +130,8 @@ type Board interface {
 	ToTopoBoard() *TopoBoard
 	Copy() Board
 	PossibleMoves() []Spot
-	MakeMove(s Spot) bool
+	MakeMoveWithNaiveSpot(s Spot)
+	MakeMove(s TopoSpot)
 	GetToMove() Color
 	Get(s Spot) Color
 

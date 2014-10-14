@@ -56,9 +56,7 @@ func (s ShallowRave) Play(b Board) (Spot, float64) {
 			if playout.ToMove == b.GetToMove() {
 				ourMoves = append(ourMoves, move)
 			}
-			if !playout.MakeMove(move) {
-				log.Fatal("a playout somehow played an invalid move")
-			}
+			playout.MakeMoveWithNaiveSpot(move)
 		}
 
 		winner := playout.Winner()

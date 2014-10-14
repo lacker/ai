@@ -61,9 +61,7 @@ func (s SpotSorter) Play(b Board) (Spot, float64) {
 		// Run the playout by moving in rank order.
 		playout := b.ToTopoBoard()
 		for _, move := range s.ranked {
-			if !playout.MakeMove(move.Spot.ToSpot()) {
-				log.Fatal("a playout played an invalid move")
-			}
+			playout.MakeMoveWithNaiveSpot(move.Spot.ToSpot())
 			if playout.Winner != Empty {
 				break
 			}

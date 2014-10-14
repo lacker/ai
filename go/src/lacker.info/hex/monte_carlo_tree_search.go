@@ -49,9 +49,7 @@ func NewChild(parent *TreeNode, move Spot) *TreeNode {
 	} else {
 		node.Board = parent.Board.ToNaiveBoard()
 	}
-	if !node.Board.MakeMove(move) {
-		panic("cannot create new child with invalid move")
-	}
+	node.Board.MakeMoveWithNaiveSpot(move)
 	parent.Children[move] = node
 	node.Children = make(map[Spot]*TreeNode)
 	node.NumPossibleMoves = parent.NumPossibleMoves - 1

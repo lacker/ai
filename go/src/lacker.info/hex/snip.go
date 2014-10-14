@@ -57,6 +57,7 @@ func FindWinningSnipList(
 		// Add new snip lists to the frontier.
 		// We use the heuristic that the only reasonable snips are the ones
 		// that the opponent plays in a game.
+		// TODO: we need game history for this really, add to TopoBoard
 		log.Fatal("TODO", frontier, current, ending)
 	}
 }

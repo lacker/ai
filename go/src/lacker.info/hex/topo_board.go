@@ -339,15 +339,16 @@ func (b *TopoBoard) PossibleMoves() []Spot {
 	return answer
 }
 
-// Returns whether it was a possible move
-// This one actually crashes if it wasn't.
-func (b *TopoBoard) MakeMove(s Spot) bool {
+func (b *TopoBoard) MakeMoveWithNaiveSpot(s Spot) {
+	b.MakeMove(TopoSpotFromSpot(s))
+}
+
+func (b *TopoBoard) MakeMove(s TopoSpot) {
 	if b.ToMove == Empty {
 		log.Fatal("this isn't a valid topo board, there is nobody to move")
 	}
-	b.SetTopoSpot(TopoSpotFromSpot(s), b.ToMove)
+	b.SetTopoSpot(s, b.ToMove)
 	b.ToMove = -b.ToMove
-	return true
 }
 
 // Just passes the turn to the other player.
@@ -363,7 +364,7 @@ func (b *TopoBoard) Playout() Color {
 	ShuffleSpots(moves)
 
 	for _, move := range moves {
-		b.MakeMove(move)
+		b.MakeMoveWithNaiveSpot(move)
 		if b.Winner != Empty {
 			return b.Winner
 		}
