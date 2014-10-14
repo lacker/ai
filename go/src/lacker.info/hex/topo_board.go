@@ -105,6 +105,9 @@ type TopoBoard struct {
 
 	// The spots that led the winner to win
 	WinningPathSpots []TopoSpot
+
+	// All the moves made in this game
+	History []TopoSpot
 }
 
 // Adds a group of a single spot. Does not merge with any neighbors.
@@ -181,6 +184,7 @@ func NewTopoBoard() *TopoBoard {
 	b := &TopoBoard{ToMove: Black}
 
 	b.GroupSpots = [][]TopoSpot{}
+	b.History = make([]TopoSpot, 0)
 
 	// Set up the initial groups for special spots
 	b.addNewGroup(TopSide, Black)
@@ -349,11 +353,7 @@ func (b *TopoBoard) MakeMove(s TopoSpot) {
 	}
 	b.SetTopoSpot(s, b.ToMove)
 	b.ToMove = -b.ToMove
-}
-
-// Just passes the turn to the other player.
-func (b *TopoBoard) Pass() {
-	b.ToMove = -b.ToMove
+	b.History = append(b.History, s)
 }
 
 // Makes moves repeatedly. When this stops the game is over.
