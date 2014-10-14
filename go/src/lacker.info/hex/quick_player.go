@@ -32,7 +32,13 @@ type QuickPlayer interface {
 // Plays out a game and returns the final board state.
 func Playout(
 	player1 QuickPlayer, player2 QuickPlayer, debug bool) *TopoBoard {
-	
+	return PlayoutWithSnipList(player1, player2, nil, debug)
+}
+
+func PlayoutWithSnipList(
+	player1 QuickPlayer, player2 QuickPlayer,
+	snipList []Snip, debug bool) *TopoBoard {
+
 	if player1.Color() == player2.Color() {
 		log.Fatal("both players are the same color")
 	}
@@ -46,11 +52,20 @@ func Playout(
 	board := player1.StartingPosition().ToTopoBoard()
 	player1.Reset()
 	player2.Reset()
+	moveNumber := -1
 
 	// Play the playout
 	for board.Winner == Empty {
 		if player1.Color() == board.GetToMove() {
-			player1.MakeMove(board, debug)
+			moveNumber++
+			if snipList != nil && len(snipList) > 0 &&
+				snipList[0].moveNumber == moveNumber {
+				// The snip list overrides the player
+				board.SetTopoSpot(snipList[0].spot, player1.Color())
+				board.ToMove = -board.ToMove
+			} else {
+				player1.MakeMove(board, debug)
+			}
 		} else {
 			player2.MakeMove(board, debug)
 		}
