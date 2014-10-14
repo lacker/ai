@@ -61,8 +61,7 @@ func PlayoutWithSnipList(
 			if snipList != nil && len(snipList) > 0 &&
 				snipList[0].moveNumber == moveNumber {
 				// The snip list overrides the player
-				board.SetTopoSpot(snipList[0].spot, player1.Color())
-				board.ToMove = -board.ToMove
+				board.MakeMove(snipList[0].spot)
 			} else {
 				player1.MakeMove(board, debug)
 			}

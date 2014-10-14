@@ -55,6 +55,9 @@ func (demo *DemocracyPlayer) Debug() {
 
 // Make the move that most of the players make
 func (demo *DemocracyPlayer) MakeMove(board *TopoBoard, debug bool) {
+	if demo.Color() != board.GetToMove() {
+		log.Fatal("not our turn to move")
+	}
 	if len(demo.players) < 1 {
 		log.Fatal("cannot make a move in a democracy with no players")
 	}
@@ -74,8 +77,7 @@ func (demo *DemocracyPlayer) MakeMove(board *TopoBoard, debug bool) {
 	}
 
 	// Make the move
-	board.SetTopoSpot(bestMove, demo.color)
-	board.ToMove = -board.ToMove
+	board.MakeMove(bestMove)
 	if debug {
 		log.Printf("%s moves %s, which scored %d out of %d = %.1f%%",
 			demo.color.Name(), bestMove.String(),

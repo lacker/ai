@@ -80,9 +80,11 @@ func (player *LinearPlayer) BestMove(board *TopoBoard) TopoSpot {
 
 // Make one move
 func (player *LinearPlayer) MakeMove(board *TopoBoard, debug bool) {
+	if player.Color() != board.GetToMove() {
+		log.Fatal("not the right player's turn")
+	}
 	spot := player.BestMove(board)
-	board.SetTopoSpot(spot, player.color)
-	board.ToMove = -board.ToMove
+	board.MakeMove(spot)
 	if debug {
 		log.Printf("%s moves %s", player.color.Name(), spot.String())
 	}
