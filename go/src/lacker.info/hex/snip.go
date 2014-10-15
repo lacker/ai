@@ -15,11 +15,14 @@ pronounced "Snip".
 */
 
 type Snip struct {
-	// The moveNumber is how far in the future for this player to apply
-	// the Snip. *Not* ply.
-	// 0 = the next move this player makes
-	// 1 = the one after that
-	moveNumber int
+	// The ply is how far deep in the game to apply this snip with.
+	// 0 = the first move in the game
+	// 1 = the second player's first move
+	// 2 = th first player's second move
+	// This is also an index into History. After playing a game with
+	// this snip, checking the plyth element of History should reflect
+	// this snip.
+	ply int
 
 	// The spot to move for this player
 	spot TopoSpot
@@ -31,7 +34,9 @@ type Snip struct {
 // mainLine should be a board showing the position where player lost
 // to opponent.
 func FindWinningSnipList(
-	player QuickPlayer, opponent QuickPlayer, mainLine *TopoBoard) []Snip {
+	player QuickPlayer, opponent QuickPlayer, mainLine *TopoBoard,
+	debug bool) []Snip {
+
 	// Sanity checks
 	if player.Color() == opponent.Color() {
 		log.Fatal("both player and opponent are the same color")
@@ -41,8 +46,6 @@ func FindWinningSnipList(
 		log.Fatal("starting positions do not match")
 	}
 
-	// Use breadth-first search because it seems like the easiest
-	// reasonable thing.
 	// The frontier is a list of snip lists we haven't tried yet.
 	frontier := make([][]Snip, 0)
 
@@ -52,12 +55,61 @@ func FindWinningSnipList(
 	// ending is the ending position we get with the current snip list.
 	ending := mainLine
 
+	// Every viable ply is in [beginPly, endPly) a la STL iterators
+	beginPly := len(player.StartingPosition().History)
+	endPly := len(ending.History)
+
 	for {
 		// The current snip list failed to defeat the opponent.
-		// Add new snip lists to the frontier.
-		// We use the heuristic that the only reasonable snips are the ones
-		// that the opponent plays in a game.
-		// TODO: we need game history for this really, add to TopoBoard
-		log.Fatal("TODO", frontier, current, ending)
+
+		// We want to add new snip lists to the frontier.
+		// We use the heuristic that the only reasonable snips are the moves
+		// that the opponent plays in a game after the snip point.
+		// We use breadth-first search on top of this heuristic.
+		// A more nuanced heuristic might be better.
+
+		// Figure out the first ply to consider a snip at.
+		// Snips must be in order in the snip list, so we can start at the
+		// previous one.
+		var startPly int
+		if len(current) == 0 {
+			// There are no snips in current, so the first ply to consider a
+			// snip at is the player's first move after the starting
+			// position.
+			if player.StartingPosition().GetToMove() == player.Color() {
+				startPly = beginPly
+			} else {
+				startPly = beginPly + 1
+			}
+		} else {
+			startPly = current[len(current) - 1].ply + 2
+		}
+
+		// Figure out which ply to snip at
+		for snipPly := startPly; snipPly < endPly; snipPly += 2 {
+			// Figure out which move to insert
+			for oppoPly := snipPly + 1; oppoPly < endPly; oppoPly += 2 {
+				snip := Snip{ply: snipPly, spot: ending.History[oppoPly]}
+				frontier = append(frontier, append(current, snip))
+			}
+		}
+
+		// So we added new snip lists to the frontier. That means we are
+		// done with current. It is time to play a new game with the next
+		// snip list.
+		if len(frontier) == 0 {
+			log.Fatal("ran out of frontier")
+		}
+		current = frontier[0]
+		frontier = frontier[1:]
+		ending = PlayoutWithSnipList(player, opponent, current, debug)
+
+		if ending.Winner == player.Color() {
+			// This snip list made player win!
+			return current
+		}
+
+		// This snip list also did not succeed. Just continue through to
+		// the next iteration of the loop.
 	}
 }

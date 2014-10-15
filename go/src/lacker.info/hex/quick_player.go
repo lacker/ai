@@ -35,6 +35,8 @@ func Playout(
 	return PlayoutWithSnipList(player1, player2, nil, debug)
 }
 
+// Plays out a game, overriding the players whenever mandated to by
+// the snip list. Returns the final board state.
 func PlayoutWithSnipList(
 	player1 QuickPlayer, player2 QuickPlayer,
 	snipList []Snip, debug bool) *TopoBoard {
@@ -52,19 +54,17 @@ func PlayoutWithSnipList(
 	board := player1.StartingPosition().ToTopoBoard()
 	player1.Reset()
 	player2.Reset()
-	moveNumber := -1
+	snipListIndex := 0
 
 	// Play the playout
 	for board.Winner == Empty {
-		if player1.Color() == board.GetToMove() {
-			moveNumber++
-			if snipList != nil && len(snipList) > 0 &&
-				snipList[0].moveNumber == moveNumber {
-				// The snip list overrides the player
-				board.MakeMove(snipList[0].spot)
-			} else {
-				player1.MakeMove(board, debug)
-			}
+		if snipList != nil && len(snipList) > snipListIndex &&
+			snipList[snipListIndex].ply == len(board.History) {
+			// The snip list overrides the player
+			board.MakeMove(snipList[snipListIndex].spot)
+			snipListIndex++
+		} else if player1.Color() == board.GetToMove() {
+			player1.MakeMove(board, debug)
 		} else {
 			player2.MakeMove(board, debug)
 		}
