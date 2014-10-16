@@ -64,17 +64,17 @@ func (demo *DemocracyPlayer) MakeMove(board *TopoBoard, debug bool) {
 	if demo.Color() != board.GetToMove() {
 		log.Fatal("not our turn to move")
 	}
-	if len(demo.players) < 1 {
-		log.Fatal("cannot make a move in a democracy with no players")
-	}
 
 	moveCount := make([]int, NumTopoSpots)
-	var bestMove TopoSpot
+	bestMove := NotASpot
 	bestCount := 0
 
 	// Find the most-preferred move
 	for _, player := range demo.players {
 		move := player.BestMove(board)
+		if move == NotASpot {
+			continue
+		}
 		moveCount[move]++
 		if moveCount[move] > bestCount {
 			bestCount = moveCount[move]
@@ -82,14 +82,25 @@ func (demo *DemocracyPlayer) MakeMove(board *TopoBoard, debug bool) {
 		}
 	}
 
-	// Make the move
-	board.MakeMove(bestMove)
-	if debug {
+	// If we don't have any move, go to fallback
+	if bestMove == NotASpot {
+		for board.GetTopoSpot(demo.fallbackSpot) != Empty {
+			demo.fallbackSpot++
+		}
+		bestMove = demo.fallbackSpot
+		if debug {
+			log.Printf("%s moves at the fallback: %s",
+				demo.color.Name(), bestMove.String())
+		}
+	} else if debug {
 		log.Printf("%s moves %s, which scored %d out of %d = %.1f%%",
 			demo.color.Name(), bestMove.String(),
 			bestCount, len(demo.players),
 			100.0 * float64(bestCount) / float64(len(demo.players)))
 	}
+
+	// Make the move
+	board.MakeMove(bestMove)
 }
 
 // Prepare for a new playout

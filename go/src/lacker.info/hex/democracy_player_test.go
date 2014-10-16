@@ -31,3 +31,13 @@ func TestDemocracyPlayerPlayout(t *testing.T) {
 		log.Fatal("expected Black to win because Black wins individuals")
 	}
 }
+
+func TestDemocracyPlayerEmptiness(t *testing.T) {
+	board := NewTopoBoard()
+	black := NewDemocracyPlayer(board, Black)
+	white := NewDemocracyPlayer(board, White)
+	ending := Playout(black, white, false)
+	if ending.Winner != Black {
+		log.Fatal("expected Black to win along column 0 via fallbacks")
+	}
+}
