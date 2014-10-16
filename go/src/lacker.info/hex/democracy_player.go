@@ -6,12 +6,17 @@ import (
 
 // The DemocracyPlayer contains a bunch of LinearPlayers and they all
 // vote on the best move.
+// There is a fallback which just iterates through all possible spots,
+// so that even the DemocracyPlayer with no LinearPlayers, or with
+// LinearPlayers that have all given up on ideas, will be able to do
+// something.
 
 type DemocracyPlayer struct {
 	startingPosition *TopoBoard
 	color Color
 
 	players []*LinearPlayer
+	fallbackSpot TopoSpot
 }
 
 func NewDemocracyPlayer(b *TopoBoard, c Color) *DemocracyPlayer {
@@ -19,6 +24,7 @@ func NewDemocracyPlayer(b *TopoBoard, c Color) *DemocracyPlayer {
 		startingPosition: b,
 		color: c,
 		players: make([]*LinearPlayer, 0),
+		fallbackSpot: TopLeftCorner,
 	}
 	return dp
 }
@@ -91,6 +97,7 @@ func (demo *DemocracyPlayer) Reset() {
 	for _, player := range demo.players {
 		player.Reset()
 	}
+	demo.fallbackSpot = TopLeftCorner
 }
 
 // Limit to only a certain number of players by cutting the old ones
