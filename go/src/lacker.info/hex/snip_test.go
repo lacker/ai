@@ -25,5 +25,7 @@ func TestFindWinningSnipList(t *testing.T) {
 		log.Fatal("expected 10, 1 to be empty")
 	}
 
-	
+	// TODO: get some intuition here for why this works
+	// snipList := FindWinningSnipList(black, white, mainLine, false)
+	// log.Printf("snipList: %v", snipList)
 }
