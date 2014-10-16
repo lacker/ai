@@ -30,6 +30,8 @@ func (c checker) expectFail(puzzle Puzzle) {
 func TestPuzzles(t *testing.T) {
 	rand.Seed(1)
 	
+	/* These tests pass, but are slightly bothersomely slow.
+
 	sr := checker{
 		Tester: t,
 		Name: "SR",
@@ -51,6 +53,8 @@ func TestPuzzles(t *testing.T) {
 
 	manyBridges := GetPuzzle("manyBridges")
 	sr.expectFail(manyBridges)
+
+	*/
 
 	// This mostly fails but not always
 	// mcts.expectFail(manyBridges)
