@@ -65,7 +65,8 @@ func (player *LinearPlayer) Reset() {
 	player.index = 0
 }
 
-// Returns the best move to make
+// Returns the best move to make.
+// If this player ran out of ideas, returns NotASpot.
 func (player *LinearPlayer) BestMove(board *TopoBoard) TopoSpot {
 	for player.index < len(player.ranking) {
 		spot := player.ranking[player.index].Spot
@@ -75,7 +76,10 @@ func (player *LinearPlayer) BestMove(board *TopoBoard) TopoSpot {
 		player.index++
 	}
 
-	panic("ran out of ranking spots to play")
+	// This might lead to bugs elsewhere, but we need this to not just
+	// fail so that we can create combined players out of linear players
+	// which really do not have spots to move.
+	return NotASpot
 }
 
 // Make one move
