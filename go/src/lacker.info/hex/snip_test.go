@@ -2,6 +2,7 @@ package hex
 
 import (
 	"log"
+	"sort"
 	"testing"
 )
 
@@ -31,5 +32,34 @@ func TestFindWinningSnipList(t *testing.T) {
 	}
 	if ending.Winner != White {
 		log.Fatal("expected White to win with the new snip list")
+	}
+}
+
+func TestSolvingDoubleBridgeViaSnipList(t *testing.T) {
+	// This test is supposed to ensure that a double-bridge that a
+	// linear player is attempting to block one bridge at a time can be
+	// solved via snip list.
+	board := PuzzleMap["doomed2"].Board.ToTopoBoard()
+	
+	// White is a semismart defender that just happens to prefer (5, 6)
+	// and (6, 6) to (6, 2) and (7, 2).
+	white := NewLinearPlayer(board, White)
+	white.SetScore(5, 6, 400)
+	white.SetScore(6, 6, 300)
+	white.SetScore(6, 2, 200)
+	white.SetScore(7, 2, 100)
+	sort.Stable(white.ranking)
+
+	// The only way to defeat white is by running through 6,2 and 7,2.
+	// We should find that in a snip list.
+	black := NewLinearPlayer(board, Black)
+	mainLine := Playout(black, white, false)
+	if mainLine.Winner != White {
+		log.Fatal("expected White to defend the bridges")
+	}
+	
+	snipList, ending := FindWinningSnipList(black, white, mainLine, true)
+	if snipList == nil || ending == nil {
+		log.Fatal("bad output")
 	}
 }

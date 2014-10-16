@@ -160,6 +160,16 @@ func (player *LinearPlayer) LearnFromLoss(board *TopoBoard, debug bool) {
 	}
 }
 
+// Inefficiently sets the score for a particular spot.
+func (player *LinearPlayer) SetScore(row int, col int, score float64) {
+	for i, scoredSpot := range player.ranking {
+		if scoredSpot.Row() == row && scoredSpot.Col() == col {
+			player.ranking[i].Score = score
+			break
+		}
+	}
+}
+
 // Plays out a game and returns the final board state.
 // TODO: delete this
 func (player *LinearPlayer) PlayoutDeprecated(
