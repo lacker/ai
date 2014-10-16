@@ -349,6 +349,9 @@ func (b *TopoBoard) MakeMoveWithNaiveSpot(s NaiveSpot) {
 }
 
 func (b *TopoBoard) MakeMove(s TopoSpot) {
+	if s == NotASpot {
+		log.Fatal("cannot MakeMove with NotASpot")
+	}
 	if b.ToMove == Empty {
 		log.Fatal("this isn't a valid topo board, there is nobody to move")
 	}
