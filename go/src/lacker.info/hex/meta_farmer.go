@@ -38,8 +38,8 @@ type MetaFarmer struct {
 }
 
 func (mf *MetaFarmer) init(b *TopoBoard) {
-	mf.whitePlayer = MakeLinearPlayer(b, White)
-	mf.blackPlayer = MakeLinearPlayer(b, Black)
+	mf.whitePlayer = NewLinearPlayer(b, White)
+	mf.blackPlayer = NewLinearPlayer(b, Black)
 	mf.whiteWinRate = 0.5
 	mf.blackWinRate = 0.5
 	mf.gamesPlayed = 0

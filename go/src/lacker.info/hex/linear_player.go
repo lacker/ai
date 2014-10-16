@@ -35,7 +35,7 @@ type LinearPlayer struct {
 	index int
 }
 
-func MakeLinearPlayer(b *TopoBoard, c Color) *LinearPlayer {
+func NewLinearPlayer(b *TopoBoard, c Color) *LinearPlayer {
 	qp := &LinearPlayer{
 		ranking: make(ScoredSpotSlice, 0),
 		startingPosition: b,

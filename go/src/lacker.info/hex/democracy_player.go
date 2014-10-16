@@ -14,7 +14,7 @@ type DemocracyPlayer struct {
 	players []*LinearPlayer
 }
 
-func MakeDemocracyPlayer(b *TopoBoard, c Color) *DemocracyPlayer {
+func NewDemocracyPlayer(b *TopoBoard, c Color) *DemocracyPlayer {
 	dp := &DemocracyPlayer{
 		startingPosition: b,
 		color: c,
