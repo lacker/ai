@@ -58,8 +58,14 @@ func TestSolvingDoubleBridgeViaSnipList(t *testing.T) {
 		log.Fatal("expected White to defend the bridges")
 	}
 	
-	snipList, ending := FindWinningSnipList(black, white, mainLine, true)
-	if snipList == nil || ending == nil {
-		log.Fatal("bad output")
+	snipList, _ := FindWinningSnipList(black, white, mainLine, false)
+	if len(snipList) != 2 {
+		log.Fatal("expected two snips for a bridge")
+	}
+	if snipList[0].String() != "0 => (6, 2)" {
+		log.Fatal("expected snipList[0] to be 0 => (6, 2)")
+	}
+	if snipList[1].String() != "2 => (7, 2)" {
+		log.Fatal("expected snipList[1] to be 2 => (7, 2)")
 	}
 }

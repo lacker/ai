@@ -64,9 +64,8 @@ func FindWinningSnipList(
 	// ending is the ending position we get with the current snip list.
 	ending := mainLine
 
-	// Every viable ply is in [beginPly, endPly) a la STL iterators
+	// Every viable ply is at least beginPly a la STL iterators
 	beginPly := len(player.StartingPosition().History)
-	endPly := len(ending.History)
 
 	for {
 		// The current snip list failed to defeat the opponent.
@@ -95,9 +94,9 @@ func FindWinningSnipList(
 		}
 
 		// Figure out which ply to snip at
-		for snipPly := startPly; snipPly < endPly; snipPly += 2 {
+		for snipPly := startPly; snipPly < len(ending.History); snipPly += 2 {
 			// Figure out which move to insert
-			for oppoPly := snipPly + 1; oppoPly < endPly; oppoPly += 2 {
+			for oppoPly := snipPly + 1; oppoPly < len(ending.History); oppoPly += 2 {
 				snip := Snip{ply: snipPly, spot: ending.History[oppoPly]}
 				frontier = append(frontier, append(current, snip))
 			}
