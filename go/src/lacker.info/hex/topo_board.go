@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"math/rand"
+	"strings"
 )
 
 /*
@@ -391,3 +392,26 @@ func (b *TopoBoard) GetWinningPathSpots() []NaiveSpot {
 	return answer
 }
 
+// Log the state of the board
+func (b *TopoBoard) Log() {
+	log.Printf("%s to move\n", b.GetToMove().Name())
+	for r := 0; r < BoardSize; r++ {
+		line := strings.Repeat(" ", r)
+		for c := 0; c < BoardSize; c++ {
+			switch b.GetByRowCol(r, c) {
+			case Black:
+				line += "B"
+			case White:
+				line += "W"
+			case Empty:
+				line += "."
+			}
+			if c == BoardSize - 1 {
+				line += "\n"
+			} else {
+				line += " "
+			}
+		}
+		log.Printf(line)
+	}
+}

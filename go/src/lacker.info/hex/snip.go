@@ -1,6 +1,7 @@
 package hex
 
 import (
+	"fmt"
 	"log"
 )
 
@@ -28,14 +29,19 @@ type Snip struct {
 	spot TopoSpot
 }
 
+func (s Snip) String() string {
+	return fmt.Sprintf("%d => %s", s.ply, s.spot)
+}
+
 // Finds a list of Snips in chronological order that will let player
 // beat opponent.
 // player and opponent both need to be deterministic for this to work.
 // mainLine should be a board showing the position where player lost
 // to opponent.
+// Returns the winning snip list along with the ending position.
 func FindWinningSnipList(
 	player QuickPlayer, opponent QuickPlayer, mainLine *TopoBoard,
-	debug bool) []Snip {
+	debug bool) ([]Snip, *TopoBoard) {
 
 	// Sanity checks
 	if player.Color() == opponent.Color() {
@@ -44,6 +50,9 @@ func FindWinningSnipList(
 	board := player.StartingPosition()
 	if board != opponent.StartingPosition() {
 		log.Fatal("starting positions do not match")
+	}
+	if mainLine.Winner != opponent.Color() {
+		log.Fatal("mainLine is supposed to have player losing to opponent")
 	}
 
 	// The frontier is a list of snip lists we haven't tried yet.
@@ -102,11 +111,16 @@ func FindWinningSnipList(
 		}
 		current = frontier[0]
 		frontier = frontier[1:]
-		ending = PlayoutWithSnipList(player, opponent, current, debug)
+		ending = PlayoutWithSnipList(player, opponent, current, false)
 
 		if ending.Winner == player.Color() {
 			// This snip list made player win!
-			return current
+			if debug {
+				log.Printf("%s wins with snip list: %+v",
+					player.Color().Name(), current)
+				ending.Log()
+			}
+			return current, ending
 		}
 
 		// This snip list also did not succeed. Just continue through to
