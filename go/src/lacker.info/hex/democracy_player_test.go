@@ -40,4 +40,7 @@ func TestDemocracyPlayerEmptiness(t *testing.T) {
 	if ending.Winner != Black {
 		log.Fatal("expected Black to win along column 0 via fallbacks")
 	}
+	if ending.GetByRowCol(10, 1) != Empty {
+		log.Fatal("expected fallback to never get to 10, 1")
+	}
 }
