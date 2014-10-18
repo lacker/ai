@@ -60,6 +60,21 @@ func (demo *DemocracyPlayer) Debug() {
 	}
 }
 
+// Makes the weights sum to 10,000 because that's a nice number.
+// If there is no weight this is just a no-op.
+func (demo *DemocracyPlayer) NormalizeWeights() {
+	totalWeight := 0.0
+	for _, w := range demo.weights {
+		totalWeight += w
+	}
+	if totalWeight <= 0.0 {
+		return
+	}
+	for i, w := range demo.weights {
+		demo.weights[i] = w * 10000.0 / totalWeight
+	}
+}
+
 // Make the move that most of the players make
 func (demo *DemocracyPlayer) MakeMove(board *TopoBoard, debug bool) {
 	if demo.Color() != board.GetToMove() {
