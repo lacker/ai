@@ -16,6 +16,7 @@ type DemocracyPlayer struct {
 	color Color
 
 	players []*LinearPlayer
+	weights []float64
 	fallbackSpot TopoSpot
 }
 
@@ -37,7 +38,6 @@ func (demo *DemocracyPlayer) StartingPosition() *TopoBoard {
 	return demo.startingPosition
 }
 
-// TODO: check this works somehow
 func (demo *DemocracyPlayer) Add(linear *LinearPlayer) {
 	if demo.Color() != linear.Color() {
 		log.Fatal("color mismatch")
@@ -48,6 +48,7 @@ func (demo *DemocracyPlayer) Add(linear *LinearPlayer) {
 	}
 
 	demo.players = append(demo.players, linear)
+	demo.weights = append(demo.weights, 1.0)
 }
 
 func (demo *DemocracyPlayer) Debug() {
@@ -65,19 +66,22 @@ func (demo *DemocracyPlayer) MakeMove(board *TopoBoard, debug bool) {
 		log.Fatal("not our turn to move")
 	}
 
-	moveCount := make([]int, NumTopoSpots)
+	moveWeight := make([]float64, NumTopoSpots)
 	bestMove := NotASpot
-	bestCount := 0
+	bestWeight := 0.0
+	totalWeight := 0.0
 
 	// Find the most-preferred move
-	for _, player := range demo.players {
+	for i, player := range demo.players {
 		move := player.BestMove(board)
 		if move == NotASpot {
 			continue
 		}
-		moveCount[move]++
-		if moveCount[move] > bestCount {
-			bestCount = moveCount[move]
+		moveWeight[move] += demo.weights[i]
+		totalWeight += demo.weights[i]
+		
+		if moveWeight[move] > bestWeight {
+			bestWeight = moveWeight[move]
 			bestMove = move
 		}
 	}
@@ -95,8 +99,8 @@ func (demo *DemocracyPlayer) MakeMove(board *TopoBoard, debug bool) {
 	} else if debug {
 		log.Printf("%s moves %s, which scored %d out of %d = %.1f%%",
 			demo.color.Name(), bestMove.String(),
-			bestCount, len(demo.players),
-			100.0 * float64(bestCount) / float64(len(demo.players)))
+			bestWeight, len(demo.players),
+			100.0 * bestWeight / totalWeight)
 	}
 
 	// Make the move
