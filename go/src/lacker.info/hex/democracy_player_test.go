@@ -44,3 +44,14 @@ func TestDemocracyPlayerEmptiness(t *testing.T) {
 		log.Fatal("expected fallback to never get to 10, 1")
 	}
 }
+
+func TestDemocracyPlayerWeights(t *testing.T) {
+	board := NewTopoBoard()
+	black := NewDemocracyPlayer(board, Black)
+	sub := NewLinearPlayer(board, Black)
+	black.Add(sub)
+	black.NormalizeWeights()
+	if black.weights[0] != 10000.0 {
+		log.Fatal("expected weights to be normalized")
+	}
+}
