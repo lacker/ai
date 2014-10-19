@@ -87,6 +87,12 @@ func (demo *DemocracyPlayer) NormalizeWeights() {
 // would play our side of the targetGame after merging.
 func (demo *DemocracyPlayer) MergeForTheWin(
 	linear *LinearPlayer, targetGame []TopoSpot) {
+	if demo.Color() != linear.Color() {
+		log.Fatal("cannot merge wrong color")
+	}
+	if demo.StartingPosition() != linear.StartingPosition() {
+		log.Fatal("cannot merge with different starting positions")
+	}
 	panic("TODO")
 }
 
