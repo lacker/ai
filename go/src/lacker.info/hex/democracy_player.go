@@ -51,6 +51,16 @@ func (demo *DemocracyPlayer) Add(linear *LinearPlayer) {
 	demo.weights = append(demo.weights, 1.0)
 }
 
+// "linear" should be a linear player that makes the moves that lead
+// to targetGame.
+// The goal is to merge in linear, similar to what Add would do,
+// except ensuring that the weight of linear is high enough so that we
+// would play our side of the targetGame after merging.
+func (demo *DemocracyPlayer) MergeForTheWin(
+	linear *LinearPlayer, targetGame []TopoSpot) {
+	panic("TODO")
+}
+
 func (demo *DemocracyPlayer) Debug() {
 	log.Printf("the demo consists of %d subplayers:\n",
 		len(demo.players))
