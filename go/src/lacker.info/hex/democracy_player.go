@@ -39,6 +39,11 @@ func (demo *DemocracyPlayer) StartingPosition() *TopoBoard {
 }
 
 func (demo *DemocracyPlayer) Add(linear *LinearPlayer) {
+	demo.AddWithWeight(linear, 1.0)
+}
+
+func (demo *DemocracyPlayer) AddWithWeight(linear *LinearPlayer,
+	weight float64) {
 	if demo.Color() != linear.Color() {
 		log.Fatal("color mismatch")
 	}
@@ -49,16 +54,6 @@ func (demo *DemocracyPlayer) Add(linear *LinearPlayer) {
 
 	demo.players = append(demo.players, linear)
 	demo.weights = append(demo.weights, 1.0)
-}
-
-// "linear" should be a linear player that makes the moves that lead
-// to targetGame.
-// The goal is to merge in linear, similar to what Add would do,
-// except ensuring that the weight of linear is high enough so that we
-// would play our side of the targetGame after merging.
-func (demo *DemocracyPlayer) MergeForTheWin(
-	linear *LinearPlayer, targetGame []TopoSpot) {
-	panic("TODO")
 }
 
 func (demo *DemocracyPlayer) Debug() {
@@ -83,6 +78,16 @@ func (demo *DemocracyPlayer) NormalizeWeights() {
 	for i, w := range demo.weights {
 		demo.weights[i] = w * 10000.0 / totalWeight
 	}
+}
+
+// "linear" should be a linear player that makes the moves that lead
+// to targetGame.
+// The goal is to merge in linear, similar to what Add would do,
+// except ensuring that the weight of linear is high enough so that we
+// would play our side of the targetGame after merging.
+func (demo *DemocracyPlayer) MergeForTheWin(
+	linear *LinearPlayer, targetGame []TopoSpot) {
+	panic("TODO")
 }
 
 // Find the move that most of the players like.
