@@ -120,25 +120,7 @@ func (demo *DemocracyPlayer) MakeMove(board *TopoBoard, debug bool) {
 		log.Fatal("not our turn to move")
 	}
 
-	bestMove := NotASpot
-	bestWeight := 0.0
-	moveWeight := make([]float64, NumTopoSpots)
-	totalWeight := 0.0
-
-	// Find the most-preferred move
-	for i, player := range demo.players {
-		move := player.BestMove(board)
-		if move == NotASpot {
-			continue
-		}
-		moveWeight[move] += demo.weights[i]
-		totalWeight += demo.weights[i]
-		
-		if moveWeight[move] > bestWeight {
-			bestWeight = moveWeight[move]
-			bestMove = move
-		}
-	}
+	bestMove, bestWeight, _, totalWeight := demo.findBestMove(board)
 
 	// If we don't have any move, go to fallback
 	if bestMove == NotASpot {
