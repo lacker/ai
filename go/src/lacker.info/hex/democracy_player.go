@@ -85,15 +85,44 @@ func (demo *DemocracyPlayer) NormalizeWeights() {
 	}
 }
 
+// Find the move that most of the players like.
+// Returns the best move, the weight on it, the array of weights, and
+// the total weight.
+// If there is no weight on any move, this will return NotASpot and 0.
+func (demo *DemocracyPlayer) findBestMove(
+	board *TopoBoard) (TopoSpot, float64, []float64, float64) {
+	bestMove := NotASpot
+	bestWeight := 0.0
+	moveWeight := make([]float64, NumTopoSpots)
+	totalWeight := 0.0
+
+	// Find the most-preferred move
+	for i, player := range demo.players {
+		move := player.BestMove(board)
+		if move == NotASpot {
+			continue
+		}
+		moveWeight[move] += demo.weights[i]
+		totalWeight += demo.weights[i]
+		
+		if moveWeight[move] > bestWeight {
+			bestWeight = moveWeight[move]
+			bestMove = move
+		}
+	}
+
+	return bestMove, bestWeight, moveWeight, totalWeight
+}
+
 // Make the move that most of the players make
 func (demo *DemocracyPlayer) MakeMove(board *TopoBoard, debug bool) {
 	if demo.Color() != board.GetToMove() {
 		log.Fatal("not our turn to move")
 	}
 
-	moveWeight := make([]float64, NumTopoSpots)
 	bestMove := NotASpot
 	bestWeight := 0.0
+	moveWeight := make([]float64, NumTopoSpots)
 	totalWeight := 0.0
 
 	// Find the most-preferred move
