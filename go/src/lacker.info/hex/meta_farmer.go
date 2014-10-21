@@ -9,18 +9,16 @@ import (
 )
 
 /*
-The meta farmer keeps a lot of quick players and does what the best
-ones of those do.
+The meta farmer keeps two opposing democracy players. It repeatedly
+finds a way for the loser to slightly alter its ways to beat the
+winner, with the hope that this converges towards the ideal way to
+play.
 
-With linear players:
-mf handles doomed1, doomed2, doomed3 (mostly), ladder.
-mf cannot handle needle. doesn't find (5, 6). the losing spots just
-alternate.
-mf does seem to handle simpleBlock, usually finding (5, 9) there.
-but actually given the nature of the opponent, moves like (5, 6) in
-needle might not be the best.
-so the theory is that the linear player is just not
-good enough.
+One cycle is finding a linear player that can defeat the winner, and
+then merging this new linear player into the loser hard enough so that
+it now wins.
+
+TODO: test and summarize here how well the meta farmer does.
 */
 
 type MetaFarmer struct {
@@ -28,57 +26,21 @@ type MetaFarmer struct {
 	Quiet bool
 
 	// The players we are farming
-	whitePlayer *LinearPlayer
-	blackPlayer *LinearPlayer
-
-	whiteWinRate float64
-	blackWinRate float64
-	gamesPlayed int
-	lastWinner Color
+	whitePlayer *DemocracyPlayer
+	blackPlayer *DemocracyPlayer
 }
 
 func (mf *MetaFarmer) init(b *TopoBoard) {
-	mf.whitePlayer = NewLinearPlayer(b, White)
-	mf.blackPlayer = NewLinearPlayer(b, Black)
-	mf.whiteWinRate = 0.5
-	mf.blackWinRate = 0.5
-	mf.gamesPlayed = 0
-	mf.lastWinner = Empty
-}
-
-func (mf *MetaFarmer) updateWinRate(winner Color) {
-	mf.gamesPlayed++
-	if winner == White {
-		mf.whiteWinRate += 0.001
-	} else {
-		mf.blackWinRate += 0.001
-	}
-	mf.whiteWinRate /= 1.001
-	mf.blackWinRate /= 1.001
-
-	mf.lastWinner = winner
+	mf.whitePlayer = NewDemocracyPlayer(b, White)
+	mf.blackPlayer = NewDemocracyPlayer(b, Black)
 }
 
 func (mf *MetaFarmer) Debug() {
-	log.Printf("played %d games. white: %.2f black: %.2f\n",
-		mf.gamesPlayed, mf.whiteWinRate, mf.blackWinRate)
 }
 
-// Play a game
-func (mf *MetaFarmer) PlayOneGame(debug bool) {
-	ending := Playout(mf.whitePlayer, mf.blackPlayer, debug)
-	mf.updateWinRate(ending.Winner)
-
-	// Have the loser learn and the winner celebrate
-	if ending.Winner == White {
-		mf.whitePlayer.LearnFromWin(ending, debug)
-		mf.blackPlayer.LearnFromLoss(ending, debug)
-	} else {
-		mf.blackPlayer.LearnFromWin(ending, debug)
-		mf.whitePlayer.LearnFromLoss(ending, debug)
-	}
+func (mf *MetaFarmer) PlayOneCycle(debug bool) {
+	panic("TODO: implement")
 }
-
 
 func (mf MetaFarmer) Play(b Board) (NaiveSpot, float64) {
 	start := time.Now()
@@ -96,6 +58,7 @@ func (mf MetaFarmer) Play(b Board) (NaiveSpot, float64) {
 
 			// Handle the command
 			endGame := false
+
 			switch command {
 			case "b":
 				// Print what black is thinking
@@ -107,34 +70,21 @@ func (mf MetaFarmer) Play(b Board) (NaiveSpot, float64) {
 				// Print overall status
 				mf.Debug()
 			case "1":
-				// Run one playout
-				mf.PlayOneGame(true)
-				log.Printf("ran a playout")
+				mf.PlayOneCycle(true)
+				log.Printf("ran a cycle")
 			case "10", "100", "1000", "10000", "100000", "1000000":
-				// Run many playouts
-				numPlayouts, err := strconv.ParseInt(command, 10, 32)
+				// Run many cycles
+				numCycles, err := strconv.ParseInt(command, 10, 32)
 				if err != nil {
 					panic("bad number")
 				}
-				for i := 0; i < int(numPlayouts); i++ {
-					mf.PlayOneGame(false)
+				for i := 0; i < int(numCycles); i++ {
+					mf.PlayOneCycle(false)
 				}
-				log.Printf("ran %d playouts", numPlayouts)
+				log.Printf("ran %d cycles", numCycles)
 			case "x":
 				// exit the loop and finish
 				keepPlaying = false
-			case "n":
-				// Keep playouting until there is a new winner.
-				initialWinner := mf.lastWinner
-
-				numGames := 0
-				for mf.lastWinner == initialWinner {
-					mf.PlayOneGame(false)
-					numGames += 1
-				}
-
-				log.Printf("ran %d games, until %s won.",
-					numGames, mf.lastWinner.Name())
 
 			default:
 				log.Printf("unrecognized command")
@@ -145,22 +95,14 @@ func (mf MetaFarmer) Play(b Board) (NaiveSpot, float64) {
 		}
 	} else {
 		for SecondsSince(start) < mf.Seconds {
-			mf.PlayOneGame(false)
+			mf.PlayOneCycle(false)
 		}
 	}
 
 	if !mf.Quiet {
-		mf.Debug()
 		mf.whitePlayer.Debug()
 		mf.blackPlayer.Debug()
 	}
 
-	switch b.GetToMove() {
-	case White:
-		return mf.whitePlayer.ranking[0].Spot.ToSpot(), mf.whiteWinRate
-	case Black:
-		return mf.blackPlayer.ranking[0].Spot.ToSpot(), mf.blackWinRate
-	default:
-		panic("there is no player to move")
-	}
+	panic("TODO: return best move and estimated win rate")
 }
