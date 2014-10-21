@@ -2,6 +2,7 @@ package hex
 
 import (
 	"log"
+	"math"
 )
 
 // The DemocracyPlayer contains a bunch of LinearPlayers and they all
@@ -93,7 +94,56 @@ func (demo *DemocracyPlayer) MergeForTheWin(
 	if demo.StartingPosition() != linear.StartingPosition() {
 		log.Fatal("cannot merge with different starting positions")
 	}
-	panic("TODO")
+
+	// Amount we want targetGame to win by
+	epsilon := 0.1
+
+	// Minimum amount we need to weigh linear in order to win by epsilon
+	delta := 0.0
+	
+	// We are going to do a playout on a copy.
+	board := linear.StartingPosition().ToTopoBoard()
+	demo.Reset()
+
+	// Play the playout
+	for board.Winner == Empty {
+		// Figure out what the next move should be
+		nextMoveIndex := len(board.History)
+		if nextMoveIndex >= len(targetGame) {
+			log.Fatal("ran off the end of the target game")
+		}
+		nextMove := targetGame[nextMoveIndex]
+
+		if board.GetToMove() != demo.Color() {
+			// Just make a move according to the target game
+			board.MakeMove(nextMove)
+			continue
+		}
+
+		// See what we would do without linear
+		bestMove, bestWeight, moveWeight, _ := demo.findBestMove(board)
+		if bestMove != nextMove {
+			// We'll need some extra weight on linear. How much?
+			// Note that we just assume that linear would actually move
+			// according to the target game. If that isn't the case our
+			// output will get corrupted and meaningless.
+			nextMoveWeight := moveWeight[nextMove]
+			missingWeight := bestWeight - nextMoveWeight
+			if missingWeight < 0.0 {
+				log.Fatal("unclear why the best move was the best move")
+			}
+			delta = math.Max(delta, missingWeight + epsilon)
+		}
+	}
+
+	// Sanity check
+	if delta == 0.0 {
+		log.Fatal("merging for the win didn't even change anything")
+	}
+
+	// Merge
+	demo.AddWithWeight(linear, delta)
+	demo.NormalizeWeights()
 }
 
 // Find the move that most of the players like.
