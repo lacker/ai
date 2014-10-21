@@ -204,6 +204,25 @@ func (demo *DemocracyPlayer) MakeMove(board *TopoBoard, debug bool) {
 	board.MakeMove(bestMove)
 }
 
+// Drop the player with the least weight
+func (demo *DemocracyPlayer) DropLightestPlayer() {
+	if len(demo.weights) == 0 {
+		log.Fatal("can't drop lightest player bc there are no players")
+	}
+	lightestIndex := 0
+	lightestWeight := demo.weights[0]
+	for i := 1; i < len(demo.weights); i++ {
+		if demo.weights[i] < lightestWeight {
+			lightestIndex = i
+			lightestWeight = demo.weights[i]
+		}
+	}
+
+	demo.players = append(
+		demo.players[lightestIndex:],
+		demo.players[:lightestIndex]...)
+}
+
 // Prepare for a new playout
 func (demo *DemocracyPlayer) Reset() {
 	for _, player := range demo.players {
