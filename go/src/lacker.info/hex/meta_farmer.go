@@ -19,6 +19,7 @@ then merging this new linear player into the loser hard enough so that
 it now wins.
 
 TODO: test and summarize here how well the meta farmer does.
+(vs doomedx, ladder, needle, simpleBlock, manyBridges)
 */
 
 type MetaFarmer struct {
