@@ -6,6 +6,6 @@ import (
 
 func TestMetaFarmerInit(t *testing.T) {
 	board := NewTopoBoard()
-	mf := &MetaFarmer{Seconds:5, Quiet:true}
+	mf := &MetaFarmer{Seconds:-1, Quiet:true}
 	mf.init(board)
 }
