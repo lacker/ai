@@ -45,7 +45,25 @@ func (mf *MetaFarmer) Debug() {
 }
 
 func (mf *MetaFarmer) PlayOneCycle(debug bool) {
-	panic("TODO: implement")
+	// The plan is to evolve the player who loses the main line.
+	// Find who loses the main line
+	var evolver *DemocracyPlayer
+	var opponent *DemocracyPlayer
+	if mf.mainLine.Winner == White {
+		opponent = mf.whitePlayer
+		evolver = mf.blackPlayer
+	} else {
+		opponent = mf.blackPlayer
+		evolver = mf.whitePlayer
+	}
+
+	// Create a miniplayer that beats the opponent
+	_, ending := FindWinningSnipList(evolver, opponent, mf.mainLine, false)
+	linear := NewLinearPlayerFromPlayout(
+		evolver.startingPosition, evolver.Color(), ending)
+
+	// Merge the miniplayer into the evolver to evolve it
+	evolver.MergeForTheWin(linear, ending.History)
 }
 
 func (mf MetaFarmer) Play(b Board) (NaiveSpot, float64) {

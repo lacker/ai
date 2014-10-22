@@ -52,6 +52,30 @@ func NewLinearPlayer(b *TopoBoard, c Color) *LinearPlayer {
 	return qp
 }
 
+// Make a linear player that just tries to play the provided game as
+// closely as possible.
+func NewLinearPlayerFromPlayout(
+	b *TopoBoard, c Color, ending *TopoBoard) *LinearPlayer {
+	
+	if len(b.History) >= len(ending.History) {
+		log.Fatal("ending is supposed to be a descendant of b")
+	}
+
+	qp := &LinearPlayer{
+		ranking: make(ScoredSpotSlice, 0),
+		startingPosition: b,
+		color: c,
+	}
+
+	// Populate the ranking
+	for i := len(b.History); i < len(ending.History); i++ {
+		scoredSpot := &ScoredSpot{Spot:ending.History[i], Score:-float64(i)}
+		qp.ranking = append(qp.ranking, scoredSpot)
+	}
+
+	return qp
+}
+
 func (player *LinearPlayer) Color() Color {
 	return player.color
 }
