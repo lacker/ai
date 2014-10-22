@@ -28,11 +28,16 @@ type MetaFarmer struct {
 	// The players we are farming
 	whitePlayer *DemocracyPlayer
 	blackPlayer *DemocracyPlayer
+
+	// What you get when the white player and black player play each
+	// other
+	mainLine *TopoBoard
 }
 
 func (mf *MetaFarmer) init(b *TopoBoard) {
 	mf.whitePlayer = NewDemocracyPlayer(b, White)
 	mf.blackPlayer = NewDemocracyPlayer(b, Black)
+	mf.mainLine = Playout(mf.whitePlayer, mf.blackPlayer, false)
 }
 
 func (mf *MetaFarmer) Debug() {
