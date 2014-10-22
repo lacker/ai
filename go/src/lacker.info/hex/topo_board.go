@@ -63,6 +63,7 @@ func (s TopoSpot) isSpecialSpot() bool {
 	return s < TopLeftCorner
 }
 
+// TODO: rename to ToNaiveSpot
 func (s TopoSpot) ToSpot() NaiveSpot {
 	if s < TopLeftCorner {
 		panic("special spots cannot be converted to NaiveSpot")

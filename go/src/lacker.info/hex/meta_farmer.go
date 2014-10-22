@@ -128,5 +128,8 @@ func (mf MetaFarmer) Play(b Board) (NaiveSpot, float64) {
 		mf.blackPlayer.Debug()
 	}
 
-	panic("TODO: return best move and estimated win rate")
+	// Get the best move based on history
+	alreadyMoved := len(mf.whitePlayer.StartingPosition().History)
+	bestMove := mf.mainLine.History[alreadyMoved]
+	return bestMove.ToSpot(), 0.1337
 }
