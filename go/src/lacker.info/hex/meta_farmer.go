@@ -94,6 +94,7 @@ func (mf MetaFarmer) Play(b Board) (NaiveSpot, float64) {
 				// Print overall status
 				mf.Debug()
 			case "1":
+				log.Printf("about to run a cycle")
 				mf.PlayOneCycle(true)
 				log.Printf("ran a cycle")
 			case "10", "100", "1000", "10000", "100000", "1000000":
