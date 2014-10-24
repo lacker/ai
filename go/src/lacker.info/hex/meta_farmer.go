@@ -131,5 +131,5 @@ func (mf MetaFarmer) Play(b Board) (NaiveSpot, float64) {
 	// Get the best move based on history
 	alreadyMoved := len(mf.whitePlayer.StartingPosition().History)
 	bestMove := mf.mainLine.History[alreadyMoved]
-	return bestMove.ToSpot(), 0.1337
+	return bestMove.NaiveSpot(), 0.1337
 }

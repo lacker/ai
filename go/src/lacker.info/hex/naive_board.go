@@ -77,7 +77,7 @@ func (b *NaiveBoard) MakeMoveWithNaiveSpot(s NaiveSpot) {
 }
 
 func (b *NaiveBoard) MakeMove(s TopoSpot) {
-	b.MakeMoveWithNaiveSpot(s.ToSpot())
+	b.MakeMoveWithNaiveSpot(s.NaiveSpot())
 }
 
 func (b *NaiveBoard) GetToMove() Color {

@@ -63,8 +63,7 @@ func (s TopoSpot) isSpecialSpot() bool {
 	return s < TopLeftCorner
 }
 
-// TODO: rename to ToNaiveSpot
-func (s TopoSpot) ToSpot() NaiveSpot {
+func (s TopoSpot) NaiveSpot() NaiveSpot {
 	if s < TopLeftCorner {
 		panic("special spots cannot be converted to NaiveSpot")
 	}
@@ -75,11 +74,11 @@ func (s TopoSpot) ToSpot() NaiveSpot {
 }
 
 func (s TopoSpot) Row() int {
-	return s.ToSpot().Row
+	return s.NaiveSpot().Row
 }
 
 func (s TopoSpot) Col() int {
-	return s.ToSpot().Col
+	return s.NaiveSpot().Col
 }
 
 func (s TopoSpot) String() string {
@@ -340,7 +339,7 @@ func (b *TopoBoard) PossibleMoves() []NaiveSpot {
 	topo := b.PossibleTopoSpotMoves()
 	answer := make([]NaiveSpot, len(topo))
 	for i, s := range topo {
-		answer[i] = s.ToSpot()
+		answer[i] = s.NaiveSpot()
 	}
 	return answer
 }
@@ -391,7 +390,7 @@ func (b *TopoBoard) GetWinningPathSpots() []NaiveSpot {
 		if spot.isSpecialSpot() {
 			continue
 		}
-		answer = append(answer, spot.ToSpot())
+		answer = append(answer, spot.NaiveSpot())
 	}
 	return answer
 }

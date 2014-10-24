@@ -61,7 +61,7 @@ func (s SpotSorter) Play(b Board) (NaiveSpot, float64) {
 		// Run the playout by moving in rank order.
 		playout := b.ToTopoBoard()
 		for _, move := range s.ranked {
-			playout.MakeMoveWithNaiveSpot(move.Spot.ToSpot())
+			playout.MakeMoveWithNaiveSpot(move.Spot.NaiveSpot())
 			if playout.Winner != Empty {
 				break
 			}
@@ -77,7 +77,7 @@ func (s SpotSorter) Play(b Board) (NaiveSpot, float64) {
 
 		// Update the scores for all spots.
 		for _, scoredSpot := range s.ranked {
-			if playout.Get(scoredSpot.Spot.ToSpot()) == playout.Winner {
+			if playout.Get(scoredSpot.Spot.NaiveSpot()) == playout.Winner {
 				// This counts all spots played by the winner as a win
 				scoredSpot.Score += 1.0
 			} else {
@@ -100,11 +100,11 @@ func (s SpotSorter) Play(b Board) (NaiveSpot, float64) {
 				break
 			}
 			log.Printf("(%d, %d) scores %.1f\n",
-				scoredSpot.Spot.ToSpot().Row, scoredSpot.Spot.ToSpot().Col,
+				scoredSpot.Spot.NaiveSpot().Row, scoredSpot.Spot.NaiveSpot().Col,
 				scoredSpot.Score)
 		}
 	}
 
 	// Return the best move
-	return s.ranked[0].Spot.ToSpot(), winRate
+	return s.ranked[0].Spot.NaiveSpot(), winRate
 }
