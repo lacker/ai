@@ -12,17 +12,17 @@ func main() {
 	hex.Seed()
 
 	// Usage:
-	//   go run solve_puzzles.go puzzlename playername [--debug]
+	//   go run solve_puzzles.go [--debug] playerName puzzleName
 
 	var debugp = flag.Bool("debug", false, "show debugging info")
 
 	flag.Parse()
 	args := flag.Args()
 	if len(args) != 2 {
-		log.Fatal("expected exactly 2 args to solve_puzzles")
+		log.Fatal("usage: go run solve_puzzles.go [--debug] playerName puzzleName")
 	}
-	puzzleName := args[0]
-	playerName := args[1]
+	playerName := args[0]
+	puzzleName := args[1]
 
 	player := hex.GetPlayer(playerName)
 	puzzle := hex.GetPuzzle(puzzleName)
