@@ -198,40 +198,6 @@ func (player *LinearPlayer) SetScore(row int, col int, score float64) {
 	}
 }
 
-// Plays out a game and returns the final board state.
-// TODO: delete this
-func (player *LinearPlayer) PlayoutDeprecated(
-	opponent *LinearPlayer, debug bool) *TopoBoard {
-
-	if player.color == opponent.color {
-		log.Fatal("both players are the same color")
-	}
-
-	if player.startingPosition != opponent.startingPosition {
-		log.Fatal("starting positions don't match")
-	}
-
-	// Prepare for the game.
-	// Run the playout on a copy so that we don't alter the original
-	board := player.startingPosition.ToTopoBoard()
-	player.Reset()
-	opponent.Reset()
-
-	// Play the playout
-	for board.Winner == Empty {
-		if player.color == board.GetToMove() {
-			player.MakeMove(board, debug)
-		} else {
-			opponent.MakeMove(board, debug)
-		}
-	}
-
-	if debug {
-		log.Printf("%s wins the playout", board.Winner.Name())
-	}
-	return board
-}
-
 // Prints some debug information
 func (player *LinearPlayer) Debug() {
 	log.Printf("%s linear player prefers:\n", player.color.Name())
