@@ -73,6 +73,9 @@ func (mf *MetaFarmer) PlayOneCycle(debug bool) {
 	// ending.History. If that isn't the case this algorithm will subtly
 	// corrupt things, so we double-check here if we're in debug mode.
 	if debug {
+		log.Printf("evolver:\n")
+		evolver.Debug()
+
 		ending2 := Playout(evolver, opponent, false)
 		AssertHistoriesEqual(ending.History, ending2.History)
 		if ending2.Winner != evolver.Color() {

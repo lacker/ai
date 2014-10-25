@@ -17,17 +17,12 @@ func TestMetaFarmerIntegration(t *testing.T) {
 	mf.init(board)
 	mf.PlayOneCycle(false)
 	mf.PlayOneCycle(false)
-
-	log.Printf("---- state before training ----")
-
-	mf.Debug()
-
-	log.Printf("---- entering critical game ----")
-
-	mf.PlayOneCycle(true)
+	mf.PlayOneCycle(false)
 
 	realMainLine := Playout(mf.whitePlayer, mf.blackPlayer, false)
 	AssertHistoriesEqual(mf.mainLine.History, realMainLine.History)
+
+	log.Printf("---- got here ok ----")
 
 	mf.PlayOneCycle(false)
 	realMainLine = Playout(mf.whitePlayer, mf.blackPlayer, false)

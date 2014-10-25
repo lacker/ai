@@ -54,7 +54,7 @@ func (demo *DemocracyPlayer) AddWithWeight(linear *LinearPlayer,
 	}
 
 	demo.players = append(demo.players, linear)
-	demo.weights = append(demo.weights, 1.0)
+	demo.weights = append(demo.weights, weight)
 }
 
 func (demo *DemocracyPlayer) Debug() {
@@ -140,6 +140,9 @@ func (demo *DemocracyPlayer) MergeForTheWin(
 	}
 
 	// Merge
+	if debug {
+		log.Printf("merging with weight %.1f\n", delta)
+	}
 	demo.AddWithWeight(linear, delta)
 	demo.NormalizeWeights()
 }
