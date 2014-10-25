@@ -184,6 +184,9 @@ func (mf MetaFarmer) Play(b Board) (NaiveSpot, float64) {
 	} else {
 		for SecondsSince(start) < mf.Seconds {
 			mf.PlayOneCycle(false)
+			if mf.gameSolved {
+				break
+			}
 		}
 	}
 
