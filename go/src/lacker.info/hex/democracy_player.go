@@ -61,7 +61,7 @@ func (demo *DemocracyPlayer) Debug() {
 	log.Printf("%s democracy has size %d\n", demo.Color().Name(),
 		len(demo.players))
 	for i, player := range demo.players {
-		log.Printf("Citizen %d has weight %.1f\n", i, demo.weights[i])
+		log.Printf("Citizen %d has weight %.3f\n", i, demo.weights[i])
 		player.Debug()
 	}
 }
