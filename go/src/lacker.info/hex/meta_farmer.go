@@ -18,8 +18,10 @@ One cycle is finding a linear player that can defeat the winner, and
 then merging this new linear player into the loser hard enough so that
 it now wins.
 
-TODO: test and summarize here how well the meta farmer does.
-(vs doomedx, ladder, needle, simpleBlock, manyBridges)
+The meta farmer:
+Solves doomed1, doomed2, doomed3
+Moves correctly on ladder but does not totally solve it
+Moves right on needle, simpleBlock, manyBridges
 */
 
 type MetaFarmer struct {
