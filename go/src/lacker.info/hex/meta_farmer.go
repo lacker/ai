@@ -58,7 +58,7 @@ func (mf *MetaFarmer) PlayOneCycle(debug bool) {
 	}
 
 	// Create a miniplayer that beats the opponent
-	_, ending := FindWinningSnipList(evolver, opponent, mf.mainLine, false)
+	_, ending := FindWinningSnipList(evolver, opponent, mf.mainLine, true)
 	linear := NewLinearPlayerFromPlayout(
 		evolver.startingPosition, evolver.Color(), ending)
 
