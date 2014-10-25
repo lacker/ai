@@ -58,12 +58,12 @@ func (mf *MetaFarmer) PlayOneCycle(debug bool) {
 	}
 
 	// Create a miniplayer that beats the opponent
-	_, ending := FindWinningSnipList(evolver, opponent, mf.mainLine, true)
+	_, ending := FindWinningSnipList(evolver, opponent, mf.mainLine, debug)
 	linear := NewLinearPlayerFromPlayout(
 		evolver.startingPosition, evolver.Color(), ending)
 
 	// Merge the miniplayer into the evolver to evolve it
-	evolver.MergeForTheWin(linear, ending.History)
+	evolver.MergeForTheWin(linear, ending.History, debug)
 }
 
 func (mf MetaFarmer) Play(b Board) (NaiveSpot, float64) {

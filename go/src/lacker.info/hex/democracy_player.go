@@ -87,7 +87,7 @@ func (demo *DemocracyPlayer) NormalizeWeights() {
 // except ensuring that the weight of linear is high enough so that we
 // would play our side of the targetGame after merging.
 func (demo *DemocracyPlayer) MergeForTheWin(
-	linear *LinearPlayer, targetGame []TopoSpot) {
+	linear *LinearPlayer, targetGame []TopoSpot, debug bool) {
 	if demo.Color() != linear.Color() {
 		log.Fatal("cannot merge wrong color")
 	}
@@ -114,26 +114,24 @@ func (demo *DemocracyPlayer) MergeForTheWin(
 		}
 		nextMove := targetGame[nextMoveIndex]
 
-		if board.GetToMove() != demo.Color() {
-			// Just make a move according to the target game
-			board.MakeMove(nextMove)
-			continue
-		}
-
-		// See what we would do without linear
-		bestMove, bestWeight, moveWeight, _ := demo.findBestMove(board)
-		if bestMove != nextMove {
-			// We'll need some extra weight on linear. How much?
-			// Note that we just assume that linear would actually move
-			// according to the target game. If that isn't the case our
-			// output will get corrupted and meaningless.
-			nextMoveWeight := moveWeight[nextMove]
-			missingWeight := bestWeight - nextMoveWeight
-			if missingWeight < 0.0 {
-				log.Fatal("unclear why the best move was the best move")
+		if board.GetToMove() == demo.Color() {
+			// We need to train on this move.
+			// See what we would do without linear
+			bestMove, bestWeight, moveWeight, _ := demo.findBestMove(board)
+			if bestMove != nextMove {
+				// We'll need some extra weight on linear. How much?
+				// Note that we just assume that linear would actually move
+				// according to the target game. If that isn't the case our
+				// output will get corrupted and meaningless.
+				nextMoveWeight := moveWeight[nextMove]
+				missingWeight := bestWeight - nextMoveWeight
+				if missingWeight < 0.0 {
+					log.Fatal("unclear why the best move was the best move")
+				}
+				delta = math.Max(delta, missingWeight + epsilon)
 			}
-			delta = math.Max(delta, missingWeight + epsilon)
 		}
+		board.MakeMove(nextMove)
 	}
 
 	// Sanity check
