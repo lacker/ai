@@ -51,6 +51,10 @@ func (mf *MetaFarmer) Debug() {
 	mf.mainLine.Debug()
 }
 
+func (mf *MetaFarmer) StartingPosition() *TopoBoard {
+	return mf.whitePlayer.StartingPosition()
+}
+
 func (mf *MetaFarmer) PlayOneCycle(debug bool) {
 	if mf.gameSolved {
 		if debug {
@@ -112,7 +116,7 @@ func (mf MetaFarmer) Play(b Board) (NaiveSpot, float64) {
 		keepPlaying := true
 
 		log.Printf("Initial position:\n")
-		mf.whitePlayer.StartingPosition().Debug()
+		mf.StartingPosition().Debug()
 
 		for keepPlaying {
 			// Read a debugger command
@@ -174,7 +178,7 @@ func (mf MetaFarmer) Play(b Board) (NaiveSpot, float64) {
 	}
 
 	// Get the best move based on history
-	alreadyMoved := len(mf.whitePlayer.StartingPosition().History)
+	alreadyMoved := len(mf.StartingPosition().History)
 	bestMove := mf.mainLine.History[alreadyMoved]
 	return bestMove.NaiveSpot(), 0.1337
 }
