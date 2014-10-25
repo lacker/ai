@@ -21,6 +21,10 @@ func TestMetaFarmerIntegration(t *testing.T) {
 	mf.PlayOneCycle(false)
 	realMainLine := Playout(mf.whitePlayer, mf.blackPlayer, false)
 	if mf.mainLine.Winner != realMainLine.Winner {
+		log.Printf("metafarmer main line:\n")
+		mf.mainLine.Debug()
+		log.Printf("main line from actual players:\n")
+		realMainLine.Debug()
 		log.Fatal("main line got corrupted")
 	}
 }

@@ -117,7 +117,7 @@ func FindWinningSnipList(
 			if debug {
 				log.Printf("%s wins with snip list: %+v",
 					player.Color().Name(), current)
-				ending.Log()
+				ending.Debug()
 			}
 			return current, ending
 		}
