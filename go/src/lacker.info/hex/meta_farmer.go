@@ -55,6 +55,21 @@ func (mf *MetaFarmer) StartingPosition() *TopoBoard {
 	return mf.whitePlayer.StartingPosition()
 }
 
+// Of the player to move
+func (mf *MetaFarmer) WinProbability() float64 {
+	toMove := mf.StartingPosition().GetToMove()
+	if mf.gameSolved {
+		if toMove == mf.mainLine.Winner {
+			return 1.0
+		} else {
+			return 0.0
+		}
+	}
+
+	// We could probably use a more intelligent heuristic
+	return 0.5
+}
+
 func (mf *MetaFarmer) PlayOneCycle(debug bool) {
 	if mf.gameSolved {
 		if debug {
@@ -180,5 +195,5 @@ func (mf MetaFarmer) Play(b Board) (NaiveSpot, float64) {
 	// Get the best move based on history
 	alreadyMoved := len(mf.StartingPosition().History)
 	bestMove := mf.mainLine.History[alreadyMoved]
-	return bestMove.NaiveSpot(), 0.1337
+	return bestMove.NaiveSpot(), mf.WinProbability()
 }
