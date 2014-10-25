@@ -110,6 +110,10 @@ func (mf MetaFarmer) Play(b Board) (NaiveSpot, float64) {
 
 	if Debug {
 		keepPlaying := true
+
+		log.Printf("Initial position:\n")
+		mf.whitePlayer.StartingPosition().Debug()
+
 		for keepPlaying {
 			// Read a debugger command
 			log.Printf("enter command:")
