@@ -33,6 +33,9 @@ type MetaFarmer struct {
 	// What you get when the white player and black player play each
 	// other
 	mainLine *TopoBoard
+
+	// Whether the game is solved
+	gameSolved bool
 }
 
 func (mf *MetaFarmer) init(b *TopoBoard) {
@@ -63,6 +66,13 @@ func (mf *MetaFarmer) PlayOneCycle(debug bool) {
 
 	// Create a miniplayer that beats the opponent
 	_, ending := FindWinningSnipList(evolver, opponent, mf.mainLine, debug)
+	if ending == nil {
+		if debug {
+			log.Printf("It's over. %s is unbeatable.\n", opponent.Color().Name())
+		}
+		mf.gameSolved = true
+		return
+	}
 	linear := NewLinearPlayerFromPlayout(
 		evolver.startingPosition, evolver.Color(), ending)
 
@@ -73,7 +83,7 @@ func (mf *MetaFarmer) PlayOneCycle(debug bool) {
 	// ending.History. If that isn't the case this algorithm will subtly
 	// corrupt things, so we double-check here if we're in debug mode.
 	if debug {
-		log.Printf("evolver:\n")
+		log.Printf("%s evolved into:\n", evolver.Color().Name())
 		evolver.Debug()
 
 		ending2 := Playout(evolver, opponent, false)
@@ -115,19 +125,21 @@ func (mf MetaFarmer) Play(b Board) (NaiveSpot, float64) {
 				// Print overall status
 				mf.Debug()
 			case "1":
-				log.Printf("about to run a cycle")
 				mf.PlayOneCycle(true)
-				log.Printf("ran a cycle")
 			case "10", "100", "1000", "10000", "100000", "1000000":
 				// Run many cycles
 				numCycles, err := strconv.ParseInt(command, 10, 32)
 				if err != nil {
 					panic("bad number")
 				}
-				for i := 0; i < int(numCycles); i++ {
+				i := 1
+				for ; i <= int(numCycles); i++ {
 					mf.PlayOneCycle(false)
+					if mf.gameSolved {
+						break
+					}
 				}
-				log.Printf("ran %d cycles", numCycles)
+				log.Printf("ran %d cycles", i)
 			case "x":
 				// exit the loop and finish
 				keepPlaying = false

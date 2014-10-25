@@ -38,6 +38,7 @@ func (s Snip) String() string {
 // player and opponent both need to be deterministic for this to work.
 // mainLine should be a board showing the position where player lost
 // to opponent.
+// If it's impossible to find a winning snip list, this returns nils.
 // Returns the winning snip list along with the ending position.
 func FindWinningSnipList(
 	player QuickPlayer, opponent QuickPlayer, mainLine *TopoBoard,
@@ -106,7 +107,8 @@ func FindWinningSnipList(
 		// done with current. It is time to play a new game with the next
 		// snip list.
 		if len(frontier) == 0 {
-			log.Fatal("ran out of frontier")
+			// We can't find a winning snip list. The opponent is unbeatable.
+			return nil, nil
 		}
 		current = frontier[0]
 		frontier = frontier[1:]
