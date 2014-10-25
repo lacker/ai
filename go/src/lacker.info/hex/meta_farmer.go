@@ -64,6 +64,19 @@ func (mf *MetaFarmer) PlayOneCycle(debug bool) {
 
 	// Merge the miniplayer into the evolver to evolve it
 	evolver.MergeForTheWin(linear, ending.History, debug)
+
+	// At this point, evolver should defeat the opponent with the game
+	// ending.History. If that isn't the case this algorithm will subtly
+	// corrupt things, so we double-check here if we're in debug mode.
+	if debug {
+		ending2 := Playout(evolver, opponent, false)
+		if ending2.Winner != evolver.Color() {
+			log.Fatal("sanity check failed; MergeForTheWin did not achieve win")
+		}
+	}
+
+	// Update the main line.
+	mf.mainLine = ending
 }
 
 func (mf MetaFarmer) Play(b Board) (NaiveSpot, float64) {

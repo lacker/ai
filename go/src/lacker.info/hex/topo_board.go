@@ -397,7 +397,11 @@ func (b *TopoBoard) GetWinningPathSpots() []NaiveSpot {
 
 // Log the state of the board
 func (b *TopoBoard) Log() {
-	log.Printf("%s to move\n", b.GetToMove().Name())
+	if b.Winner == Empty {
+		log.Printf("%s to move\n", b.GetToMove().Name())
+	} else {
+		log.Printf("%s won\n", b.Winner.Name())
+	}
 	for r := 0; r < BoardSize; r++ {
 		line := strings.Repeat(" ", r)
 		for c := 0; c < BoardSize; c++ {
