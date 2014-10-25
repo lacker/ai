@@ -422,3 +422,11 @@ func (b *TopoBoard) Debug() {
 		log.Printf(line)
 	}
 }
+
+func AssertHistoriesEqual(h1 []TopoSpot, h2 []TopoSpot) {
+	s1 := fmt.Sprintf("%v", h1)
+	s2 := fmt.Sprintf("%v", h2)
+	if s1 != s2 {
+		log.Fatalf("histories differ: %s vs %s", s1, s2)
+	}
+}

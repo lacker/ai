@@ -70,6 +70,7 @@ func (mf *MetaFarmer) PlayOneCycle(debug bool) {
 	// corrupt things, so we double-check here if we're in debug mode.
 	if debug {
 		ending2 := Playout(evolver, opponent, false)
+		AssertHistoriesEqual(ending.History, ending2.History)
 		if ending2.Winner != evolver.Color() {
 			log.Fatal("sanity check failed; MergeForTheWin did not achieve win")
 		}

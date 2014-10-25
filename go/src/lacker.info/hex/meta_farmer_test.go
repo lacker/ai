@@ -18,8 +18,11 @@ func TestMetaFarmerIntegration(t *testing.T) {
 	mf.PlayOneCycle(false)
 	mf.PlayOneCycle(false)
 	mf.PlayOneCycle(false)
-	mf.PlayOneCycle(false)
+
 	realMainLine := Playout(mf.whitePlayer, mf.blackPlayer, false)
+	AssertHistoriesEqual(mf.mainLine.History, realMainLine.History)
+
+	mf.PlayOneCycle(false)
 	if mf.mainLine.Winner != realMainLine.Winner {
 		log.Printf("metafarmer main line:\n")
 		mf.mainLine.Debug()
