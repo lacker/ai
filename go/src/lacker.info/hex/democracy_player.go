@@ -58,11 +58,11 @@ func (demo *DemocracyPlayer) AddWithWeight(linear *LinearPlayer,
 }
 
 func (demo *DemocracyPlayer) Debug() {
-	log.Printf("the demo consists of %d subplayers:\n",
+	log.Printf("%s democracy has size %d\n", demo.Color().Name(),
 		len(demo.players))
-	for _, player := range demo.players {
+	for i, player := range demo.players {
+		log.Printf("Citizen %d has weight %.1f\n", i, demo.weights[i])
 		player.Debug()
-		log.Printf("-----\n")
 	}
 }
 

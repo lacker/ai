@@ -42,6 +42,10 @@ func (mf *MetaFarmer) init(b *TopoBoard) {
 }
 
 func (mf *MetaFarmer) Debug() {
+	mf.whitePlayer.Debug()
+	mf.blackPlayer.Debug()
+	log.Printf("Main line:\n")
+	mf.mainLine.Debug()
 }
 
 func (mf *MetaFarmer) PlayOneCycle(debug bool) {
