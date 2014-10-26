@@ -162,6 +162,21 @@ Black to move
           . . B . . . . . . . .
 `)
 
+	puzzleMap["doomed4"] = MakePuzzle(`
+Black to move
+. . . . . . . . . . B
+ . B . . . . . . . B .
+  . . . . . . . . B . .
+   . . . . . . . B . W .
+    . . . B B B B . W . .
+     . . B . . . . W . . .
+      . B . W W W . . . . .
+       . W . . . B . . . . .
+        . B B . B . . . . . .
+         . . B B . . . . . . .
+          . . B . . . . . . . .
+`)
+
 	// This should be pretty straightforward - there's one obvious move
 	// to block. You won't be winning but there's still some chance.
 	puzzleMap["simpleBlock"] = MakePuzzle(`

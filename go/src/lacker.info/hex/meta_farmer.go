@@ -20,8 +20,9 @@ it now wins.
 
 The meta farmer:
 Solves doomed1, doomed2, doomed3
-Moves correctly on ladder but does not totally solve it
-Moves right on needle, simpleBlock, manyBridges
+Cannot solve doomed4
+Moves correctly on ladder, manyBridges but does not totally solve
+Moves correctly on needle, simpleBlock
 */
 
 type MetaFarmer struct {
