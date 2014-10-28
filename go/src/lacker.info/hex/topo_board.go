@@ -204,8 +204,8 @@ func TopoSpotFromSpot(s NaiveSpot) TopoSpot {
 	return TopoSpotFromRowCol(s.Row, s.Col)
 }
 
-func (b *TopoBoard) Get(s NaiveSpot) Color {
-	return b.GetByRowCol(s.Row, s.Col)
+func (b *TopoBoard) Get(s Spot) Color {
+	return b.GetByRowCol(s.GetRow(), s.GetCol())
 }
 
 func (b *TopoBoard) GetTopoSpot(s TopoSpot) Color {

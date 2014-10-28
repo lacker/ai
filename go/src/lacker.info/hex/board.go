@@ -57,6 +57,14 @@ type NaiveSpot struct {
 	Row, Col int
 }
 
+func (s NaiveSpot) GetRow() int {
+	return s.Row
+}
+
+func (s NaiveSpot) GetCol() int {
+	return s.Col
+}
+
 func MakeNaiveSpot(row int, col int) NaiveSpot {
 	return NaiveSpot{Row: row, Col: col}
 }
@@ -133,7 +141,7 @@ type Board interface {
 	MakeMoveWithNaiveSpot(s NaiveSpot)
 	MakeMove(s TopoSpot)
 	GetToMove() Color
-	Get(s NaiveSpot) Color
+	Get(s Spot) Color
 
 	// Returns a list of spots to count that contributed towards the
 	// winner winning.

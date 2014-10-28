@@ -24,8 +24,8 @@ func NewNaiveBoard() *NaiveBoard {
 	return &NaiveBoard{ToMove: Black}
 }
 
-func (b *NaiveBoard) Get(spot NaiveSpot) Color {
-	return b.Board[spot.Row][spot.Col]
+func (b *NaiveBoard) Get(spot Spot) Color {
+	return b.Board[spot.GetRow()][spot.GetCol()]
 }
 
 func (b *NaiveBoard) Set(spot NaiveSpot, color Color) {
