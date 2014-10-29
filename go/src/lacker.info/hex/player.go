@@ -5,6 +5,7 @@ Player is an interface for a hex player.
 */
 
 import (
+	"fmt"
 	"log"
 )
 
@@ -41,4 +42,16 @@ func GetPlayer(s string) Player {
 		log.Fatalf("unknown player type: %s", s)
 		return nil
 	}
+}
+
+// Helper for script
+func PlayForJSON(playerType string, boardJSON string) {
+	board := NewNaiveBoardFromJSON(boardJSON)
+
+	// Have a player figure out what move to make on this board.
+	player := GetPlayer(playerType)
+	spot, _ := player.Play(board)
+
+	// Print out the move to make.
+	fmt.Printf("{\"Row\":%d,\"Col\":%d}\n", spot.Row(), spot.Col())
 }
