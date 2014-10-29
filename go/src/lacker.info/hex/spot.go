@@ -7,6 +7,9 @@ import (
 // NaiveSpot is, by test.
 // TopoSpot is not yet. TODO
 type Spot interface {
-	GetRow() int
-	GetCol() int
+	Row() int
+	Col() int
+	IsNotASpot() bool
+	NaiveSpot() NaiveSpot
+	TopoSpot() TopoSpot
 }

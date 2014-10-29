@@ -29,9 +29,9 @@ func (slice ScoredSpotSlice) Swap(i, j int) {
 }
 
 func (ss ScoredSpot) Row() int {
-	return ss.Spot.NaiveSpot().Row
+	return ss.Spot.NaiveSpot().Row()
 }
 
 func (ss ScoredSpot) Col() int {
-	return ss.Spot.NaiveSpot().Col
+	return ss.Spot.NaiveSpot().Col()
 }

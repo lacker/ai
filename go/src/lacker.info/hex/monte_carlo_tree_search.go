@@ -49,7 +49,7 @@ func NewChild(parent *TreeNode, move NaiveSpot) *TreeNode {
 	} else {
 		node.Board = parent.Board.ToNaiveBoard()
 	}
-	node.Board.MakeMoveWithNaiveSpot(move)
+	node.Board.MakeMove(move)
 	parent.Children[move] = node
 	node.Children = make(map[NaiveSpot]*TreeNode)
 	node.NumPossibleMoves = parent.NumPossibleMoves - 1
@@ -504,7 +504,7 @@ func (mcts MonteCarloTreeSearch) Play(b Board) (NaiveSpot, float64) {
 		fmt.Printf("\n")
 
 		// The move to debug why we didn't make it. TODO: make this a flag
-		debugMove := NaiveSpot{Row: 7, Col: 0}
+		debugMove := MakeNaiveSpot(7, 0)
 
 		fmt.Printf("debugging move %s\n", ToJSON(debugMove))
 		fmt.Printf("parent record: %s\n", root.String())

@@ -25,11 +25,11 @@ func NewNaiveBoard() *NaiveBoard {
 }
 
 func (b *NaiveBoard) Get(spot Spot) Color {
-	return b.Board[spot.GetRow()][spot.GetCol()]
+	return b.Board[spot.Row()][spot.Col()]
 }
 
-func (b *NaiveBoard) Set(spot NaiveSpot, color Color) {
-	b.Board[spot.Row][spot.Col] = color
+func (b *NaiveBoard) Set(spot Spot, color Color) {
+	b.Board[spot.Row()][spot.Col()] = color
 }
 
 func (b *NaiveBoard) Eprint() {
@@ -76,7 +76,7 @@ func (b *NaiveBoard) MakeMoveWithNaiveSpot(s NaiveSpot) {
 	b.ToMove = -b.ToMove
 }
 
-func (b *NaiveBoard) MakeMove(s TopoSpot) {
+func (b *NaiveBoard) MakeMove(s Spot) {
 	b.MakeMoveWithNaiveSpot(s.NaiveSpot())
 }
 
@@ -108,7 +108,7 @@ func (b *NaiveBoard) ToTopoBoard() *TopoBoard {
 	for _, spot := range AllSpots() {
 		color := b.Get(spot)
 		if color != Empty {
-			c.Set(spot.Row, spot.Col, color)
+			c.Set(spot.Row(), spot.Col(), color)
 		}
 	}
 	return c
@@ -167,7 +167,7 @@ func (b *NaiveBoard) IsBlackTheWinner() bool {
 				return
 			}
 			// fmt.Printf("processing %d, %d\n", neighbor.Row, neighbor.Col)
-			if neighbor.Row == BoardSize - 1 {
+			if neighbor.Row() == BoardSize - 1 {
 				done = true
 				return
 			}

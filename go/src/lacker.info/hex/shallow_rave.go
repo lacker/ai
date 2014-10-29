@@ -87,7 +87,7 @@ func (s ShallowRave) Play(b Board) (NaiveSpot, float64) {
 			bestMove = move
 		}
 	}
-	if bestMove.Row == -1 {
+	if bestMove.Row() == -1 {
 		log.Fatal("there was no nonnegative score")
 	}
 	if !s.Quiet {

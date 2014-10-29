@@ -43,24 +43,28 @@ const NumTopoSpots TopoSpot = TopoSpot(BoardSize * BoardSize) + TopLeftCorner
 const BottomRightCorner TopoSpot = NumTopoSpots - 1
 
 
-func (s TopoSpot) isOnLeftSide() bool {
+func (s TopoSpot) IsOnLeftSide() bool {
 	return s % BoardSize == TopLeftCorner
 }
 
-func (s TopoSpot) isOnTopSide() bool {
+func (s TopoSpot) IsOnTopSide() bool {
 	return s >= TopLeftCorner && s < TopLeftCorner + BoardSize
 }
 
-func (s TopoSpot) isOnBottomSide() bool {
+func (s TopoSpot) IsOnBottomSide() bool {
 	return s <= BottomRightCorner && s > BottomRightCorner - BoardSize
 }
 
-func (s TopoSpot) isOnRightSide() bool {
+func (s TopoSpot) IsOnRightSide() bool {
 	return s % BoardSize == TopLeftCorner - 1
 }
 
 func (s TopoSpot) isSpecialSpot() bool {
 	return s < TopLeftCorner
+}
+
+func (s TopoSpot) IsNotASpot() bool {
+	return s == NotASpot
 }
 
 func (s TopoSpot) NaiveSpot() NaiveSpot {
@@ -70,15 +74,19 @@ func (s TopoSpot) NaiveSpot() NaiveSpot {
 	x := int(s - TopLeftCorner)
 	col := x % BoardSize
 	row := (x - col) / BoardSize
-	return NaiveSpot{Row: row, Col: col}
+	return MakeNaiveSpot(row, col)
+}
+
+func (s TopoSpot) TopoSpot() TopoSpot {
+	return s
 }
 
 func (s TopoSpot) Row() int {
-	return s.NaiveSpot().Row
+	return s.NaiveSpot().Row()
 }
 
 func (s TopoSpot) Col() int {
-	return s.NaiveSpot().Col
+	return s.NaiveSpot().Col()
 }
 
 func (s TopoSpot) String() string {
@@ -196,16 +204,12 @@ func NewTopoBoard() *TopoBoard {
 	return b
 }
 
-func TopoSpotFromRowCol(row int, col int) TopoSpot {
+func MakeTopoSpot(row int, col int) TopoSpot {
 	return TopoSpot(4 + col + BoardSize * row)
 }
 
-func TopoSpotFromSpot(s NaiveSpot) TopoSpot {
-	return TopoSpotFromRowCol(s.Row, s.Col)
-}
-
 func (b *TopoBoard) Get(s Spot) Color {
-	return b.GetByRowCol(s.GetRow(), s.GetCol())
+	return b.GetByRowCol(s.Row(), s.Col())
 }
 
 func (b *TopoBoard) GetTopoSpot(s TopoSpot) Color {
@@ -213,7 +217,7 @@ func (b *TopoBoard) GetTopoSpot(s TopoSpot) Color {
 }
 
 func (b *TopoBoard) GetByRowCol(row int, col int) Color {
-	s := TopoSpotFromRowCol(row, col)
+	s := MakeTopoSpot(row, col)
 	return b.Board[s]
 }
 
@@ -249,8 +253,8 @@ func (b *TopoBoard) NumGroups() int {
 	return answer
 }
 
-func (b *TopoBoard) Set(row int, col int, color Color) {
-	s := TopoSpotFromRowCol(row, col)
+func (b *TopoBoard) Set(r int, c int, color Color) {
+	s := MakeTopoSpot(r, c)
 	b.SetTopoSpot(s, color)
 }
 
@@ -261,39 +265,39 @@ func (b *TopoBoard) SetTopoSpot(s TopoSpot, color Color) {
 	// Update connectivity with neighbors
 
 	// Up-left neighbor
-	if s.isOnTopSide() {
+	if s.IsOnTopSide() {
 		b.maybeMergeSpots(s, TopSide)
 	} else {
 		b.maybeMergeSpots(s, s - BoardSize)
 
 		// Up-right neighbor
-		if !s.isOnRightSide() {
+		if !s.IsOnRightSide() {
 			b.maybeMergeSpots(s, s - BoardSize + 1)
 		}
 	}
 
 	// Left neighbor
-	if s.isOnLeftSide() {
+	if s.IsOnLeftSide() {
 		b.maybeMergeSpots(s, LeftSide)
 	} else {
 		b.maybeMergeSpots(s, s - 1)
 	}
 
 	// Right neighbor
-	if s.isOnRightSide() {
+	if s.IsOnRightSide() {
 		b.maybeMergeSpots(s, RightSide)
 	} else {
 		b.maybeMergeSpots(s, s + 1)
 	}
 
 	// Bottom-right neighbor
-	if s.isOnBottomSide() {
+	if s.IsOnBottomSide() {
 		b.maybeMergeSpots(s, BottomSide)
 	} else {
 		b.maybeMergeSpots(s, s + BoardSize)
 
 		// Bottom-left neighbor
-		if !s.isOnLeftSide() {
+		if !s.IsOnLeftSide() {
 			b.maybeMergeSpots(s, s + BoardSize - 1)
 		}
 	}
@@ -344,20 +348,16 @@ func (b *TopoBoard) PossibleMoves() []NaiveSpot {
 	return answer
 }
 
-func (b *TopoBoard) MakeMoveWithNaiveSpot(s NaiveSpot) {
-	b.MakeMove(TopoSpotFromSpot(s))
-}
-
-func (b *TopoBoard) MakeMove(s TopoSpot) {
-	if s == NotASpot {
-		log.Fatal("cannot MakeMove with NotASpot")
+func (b *TopoBoard) MakeMove(s Spot) {
+	if s.IsNotASpot() {
+		log.Fatal("cannot MakeMove with s.IsNotASpot()")
 	}
 	if b.ToMove == Empty {
 		log.Fatal("this isn't a valid topo board, there is nobody to move")
 	}
-	b.SetTopoSpot(s, b.ToMove)
+	b.Set(s.Row(), s.Col(), b.ToMove)
 	b.ToMove = -b.ToMove
-	b.History = append(b.History, s)
+	b.History = append(b.History, s.TopoSpot())
 }
 
 // Makes moves repeatedly. When this stops the game is over.
@@ -368,7 +368,7 @@ func (b *TopoBoard) Playout() Color {
 	ShuffleSpots(moves)
 
 	for _, move := range moves {
-		b.MakeMoveWithNaiveSpot(move)
+		b.MakeMove(move)
 		if b.Winner != Empty {
 			return b.Winner
 		}
