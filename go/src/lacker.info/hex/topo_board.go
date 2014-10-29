@@ -209,11 +209,7 @@ func MakeTopoSpot(row int, col int) TopoSpot {
 }
 
 func (b *TopoBoard) Get(s Spot) Color {
-	return b.GetByRowCol(s.Row(), s.Col())
-}
-
-func (b *TopoBoard) GetTopoSpot(s TopoSpot) Color {
-	return b.Board[s]
+	return b.Board[s.TopoSpot()]
 }
 
 func (b *TopoBoard) GetByRowCol(row int, col int) Color {

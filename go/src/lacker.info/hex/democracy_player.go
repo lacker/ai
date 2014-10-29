@@ -186,7 +186,7 @@ func (demo *DemocracyPlayer) MakeMove(board *TopoBoard, debug bool) {
 
 	// If we don't have any move, go to fallback
 	if bestMove == NotASpot {
-		for board.GetTopoSpot(demo.fallbackSpot) != Empty {
+		for board.Get(demo.fallbackSpot) != Empty {
 			demo.fallbackSpot++
 		}
 		bestMove = demo.fallbackSpot

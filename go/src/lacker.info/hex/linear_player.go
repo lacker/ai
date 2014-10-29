@@ -94,7 +94,7 @@ func (player *LinearPlayer) Reset() {
 func (player *LinearPlayer) BestMove(board *TopoBoard) TopoSpot {
 	for player.index < len(player.ranking) {
 		spot := player.ranking[player.index].Spot
-		if board.GetTopoSpot(spot) == Empty {
+		if board.Get(spot) == Empty {
 			return spot
 		}
 		player.index++
@@ -137,7 +137,7 @@ func (player *LinearPlayer) updateScores(board *TopoBoard, heat float64) {
 		// Count all spots played by the winner as a win.
 		// Spots not played by either side would also have lost for the
 		// loser, so they count as a loss.
-		if board.GetTopoSpot(scoredSpot.Spot) == board.Winner {
+		if board.Get(scoredSpot.Spot) == board.Winner {
 			scoredSpot.Score += heat * (1.1 - 0.2 * rand.Float64())
 		} else {
 			scoredSpot.Score -= heat * (1.1 - 0.2 * rand.Float64())
