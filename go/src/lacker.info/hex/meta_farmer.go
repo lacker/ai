@@ -20,7 +20,7 @@ it now wins.
 
 The meta farmer:
 Solves doomed1, doomed2, doomed3
-Cannot solve doomed4
+Cannot solve doomed4, triangleBlock
 Moves correctly on ladder, manyBridges but does not totally solve
 Moves correctly on needle, simpleBlock
 */
@@ -127,7 +127,6 @@ func (mf *MetaFarmer) PlayOneCycle(debug bool) {
 }
 
 func (mf MetaFarmer) Play(b Board) (NaiveSpot, float64) {
-	start := time.Now()
 	mf.init(b.ToTopoBoard())
 
 	if Debug {
@@ -173,6 +172,18 @@ func (mf MetaFarmer) Play(b Board) (NaiveSpot, float64) {
 					}
 				}
 				log.Printf("ran %d cycles", i)
+			case "5s":
+				// Run for five seconds
+				start := time.Now()
+				i := 0
+				for SecondsSince(start) < mf.Seconds {
+					mf.PlayOneCycle(false)
+					i++
+					if mf.gameSolved {
+						break
+					}
+				}
+				log.Printf("ran %d cycles", i)
 			case "x":
 				// exit the loop and finish
 				keepPlaying = false
@@ -185,17 +196,13 @@ func (mf MetaFarmer) Play(b Board) (NaiveSpot, float64) {
 			}
 		}
 	} else {
+		start := time.Now()
 		for SecondsSince(start) < mf.Seconds {
 			mf.PlayOneCycle(false)
 			if mf.gameSolved {
 				break
 			}
 		}
-	}
-
-	if !mf.Quiet {
-		mf.whitePlayer.Debug()
-		mf.blackPlayer.Debug()
 	}
 
 	// Get the best move based on history

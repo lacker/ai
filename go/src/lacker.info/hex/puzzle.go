@@ -240,12 +240,84 @@ func MakePuzzle(s string) Puzzle {
 	return puzzle
 }
 
-func (puzzle Puzzle) Test(player Player) bool {
-	playerAnswer, _ := player.Play(puzzle.Board)
-	if puzzle.CorrectAnswer != playerAnswer {
-		log.Printf(puzzle.String)
-		log.Printf("got wrong answer: %s", playerAnswer)
-		return false
+type puzzleScorer struct {
+	playerName string
+	right int
+	wrong int
+	total int
+}
+
+func (s *puzzleScorer) score(success bool) bool {
+	if success {
+		s.right++
+	} else {
+		s.wrong++
 	}
-	return true
+	s.total++
+	return success
+}
+
+type PuzzleType int
+const (
+	DefiniteWin PuzzleType = iota
+	DefiniteLoss
+	ClearMove
+) 
+
+func (s *puzzleScorer) solve(puzzleName string, ptype PuzzleType) {
+	player := GetPlayer(s.playerName)
+	puzzle := GetPuzzle(puzzleName)
+	playerAnswer, conf := player.Play(puzzle.Board)
+
+	if ptype == DefiniteWin || ptype == ClearMove {
+		// Score the move
+		if s.score(puzzle.CorrectAnswer == playerAnswer) {
+			log.Printf("%s: move OK", puzzleName)
+		} else {
+			log.Printf("%s:%s", puzzleName, puzzle.String)
+			log.Printf("got wrong answer: %s", playerAnswer)
+			if ptype == DefiniteWin {
+				log.Printf("wrong answer means confidence doesn't matter")
+				s.score(false)
+				return
+			}
+		}
+	}
+
+	if ptype == DefiniteWin {
+		// Score the confidence
+		if s.score(conf > 0.999) {
+			log.Printf("%s: conf OK", puzzleName)
+		} else {
+			log.Printf(puzzle.String)
+			log.Printf("%s: confidence is only %.2f", puzzleName, conf)
+		}
+	}
+
+	if ptype == DefiniteLoss {
+		// Score the confidence
+		if s.score(conf < 0.001) {
+			log.Printf("%s: conf OK", puzzleName)
+		} else {
+			log.Printf(puzzle.String)
+			log.Printf("%s: confidence is unwarranted at %.2f", puzzleName, conf)
+		}
+	}
+}
+
+// Runs the player through a series of puzzles.
+func RunGauntlet(playerName string) {
+	s := puzzleScorer{playerName:playerName}
+
+	s.solve("doomed1", DefiniteLoss)
+	s.solve("doomed2", DefiniteLoss)
+	s.solve("doomed3", DefiniteLoss)
+	s.solve("doomed4", DefiniteLoss)
+	s.solve("triangleBlock", DefiniteWin)
+	s.solve("ladder", DefiniteWin)
+	s.solve("manyBridges", DefiniteWin)
+	s.solve("needle", ClearMove)
+	s.solve("simpleBlock", ClearMove)
+
+	log.Printf("SCORE: %d / %d", s.right, s.total)
 }

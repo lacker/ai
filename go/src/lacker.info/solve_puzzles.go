@@ -24,6 +24,11 @@ func main() {
 	playerName := args[0]
 	puzzleName := args[1]
 
+	if puzzleName == "gauntlet" {
+		hex.RunGauntlet(playerName)
+		return
+	}
+
 	player := hex.GetPlayer(playerName)
 	puzzle := hex.GetPuzzle(puzzleName)
 
@@ -35,6 +40,6 @@ func main() {
 
 	// Print out the puzzle
 	fmt.Printf("%s\n", puzzle.String)
-	fmt.Printf("%s moved %s, estimating odds at %.3f\n\n",
-		playerName, hex.ToJSON(spot), odds)
+	fmt.Printf("%s moved (%d, %d), estimating odds at %.3f\n\n",
+		playerName, spot.Row(), spot.Col(), odds)
 }
