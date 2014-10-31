@@ -106,7 +106,6 @@ func (mf *MetaFarmer) PlayOneCycle(debug bool) {
 		evolver.startingPosition, evolver.Color(), ending)
 
 	// Simplify the evolver a bit if it's too complicated
-	// TODO: test this out
 	if len(evolver.weights) >= 100 {
 		evolver.DropLightestPlayer()
 	}
