@@ -209,6 +209,9 @@ func (demo *DemocracyPlayer) DropLightestPlayer() {
 	if len(demo.weights) == 0 {
 		log.Fatal("can't drop lightest player bc there are no players")
 	}
+	if len(demo.players) != len(demo.weights) {
+		log.Fatal("len players != len weights")
+	}
 	lightestIndex := 0
 	lightestWeight := demo.weights[0]
 	for i := 1; i < len(demo.weights); i++ {
@@ -219,11 +222,11 @@ func (demo *DemocracyPlayer) DropLightestPlayer() {
 	}
 
 	demo.players = append(
-		demo.players[lightestIndex:],
-		demo.players[:lightestIndex]...)
+		demo.players[:lightestIndex],
+		demo.players[lightestIndex+1:]...)
 	demo.weights = append(
-		demo.weights[lightestIndex:],
-		demo.weights[:lightestIndex]...)
+		demo.weights[:lightestIndex],
+		demo.weights[lightestIndex+1:]...)
 }
 
 // Prepare for a new playout
