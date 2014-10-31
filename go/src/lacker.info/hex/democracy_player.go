@@ -221,6 +221,9 @@ func (demo *DemocracyPlayer) DropLightestPlayer() {
 	demo.players = append(
 		demo.players[lightestIndex:],
 		demo.players[:lightestIndex]...)
+	demo.weights = append(
+		demo.weights[lightestIndex:],
+		demo.weights[:lightestIndex]...)
 }
 
 // Prepare for a new playout
