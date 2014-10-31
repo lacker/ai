@@ -96,7 +96,7 @@ func (demo *DemocracyPlayer) MergeForTheWin(
 	}
 
 	// Amount we want targetGame to win by
-	epsilon := 0.1
+	epsilon := 1.0
 
 	// Minimum amount we need to weigh linear in order to win by epsilon
 	delta := 0.0
