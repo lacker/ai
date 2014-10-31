@@ -134,10 +134,12 @@ func (demo *DemocracyPlayer) MergeForTheWin(
 		board.MakeMove(nextMove)
 	}
 
-	// Sanity check
+	// This only made sense before doing a DropLightestPlayer
+	/*
 	if delta == 0.0 {
 		log.Fatal("merging for the win didn't even change anything")
 	}
+  */
 
 	// Merge
 	if debug {

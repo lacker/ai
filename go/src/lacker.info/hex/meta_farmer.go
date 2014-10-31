@@ -105,6 +105,12 @@ func (mf *MetaFarmer) PlayOneCycle(debug bool) {
 	linear := NewLinearPlayerFromPlayout(
 		evolver.startingPosition, evolver.Color(), ending)
 
+	// Simplify the evolver a bit if it's too complicated
+	// TODO: test this out
+	if len(evolver.weights) >= 100 {
+		evolver.DropLightestPlayer()
+	}
+
 	// Merge the miniplayer into the evolver to evolve it
 	evolver.MergeForTheWin(linear, ending.History, debug)
 
