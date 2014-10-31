@@ -49,7 +49,7 @@ func TestDemocracyPlayerWeights(t *testing.T) {
 	board := NewTopoBoard()
 	black := NewDemocracyPlayer(board, Black)
 	sub := NewLinearPlayer(board, Black)
-	black.Add(sub)
+	black.AddWithWeight(sub, 1000000.0)
 	black.NormalizeWeights()
 	if black.weights[0] != 10000.0 {
 		log.Fatal("expected weights to be normalized")
