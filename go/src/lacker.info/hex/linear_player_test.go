@@ -18,7 +18,7 @@ func TestLinearPlayerPlayout(t *testing.T) {
 func TestLinearPlayerBestMove(t *testing.T) {
 	board := NewTopoBoard()
 	black := NewLinearPlayer(board, Black)
-	spot := black.BestMove(board)
+	spot := black.BestMove(board, false)
 	if spot.Row() != 0 || spot.Col() != 0 {
 		log.Fatal("expected (0, 0) to be the best move")
 	}

@@ -90,8 +90,7 @@ func (player *LinearPlayer) Reset() {
 }
 
 // Returns the best move to make.
-// If this player ran out of ideas, returns NotASpot.
-func (player *LinearPlayer) BestMove(board *TopoBoard) TopoSpot {
+func (player *LinearPlayer) BestMove(board *TopoBoard, debug bool) TopoSpot {
 	for player.index < len(player.ranking) {
 		spot := player.ranking[player.index].Spot
 		if board.Get(spot) == Empty {
@@ -100,22 +99,7 @@ func (player *LinearPlayer) BestMove(board *TopoBoard) TopoSpot {
 		player.index++
 	}
 
-	// This might lead to bugs elsewhere, but we need this to not just
-	// fail so that we can create combined players out of linear players
-	// which really do not have spots to move.
 	return NotASpot
-}
-
-// Make one move
-func (player *LinearPlayer) MakeMove(board *TopoBoard, debug bool) {
-	if player.Color() != board.GetToMove() {
-		log.Fatal("not the right player's turn")
-	}
-	spot := player.BestMove(board)
-	board.MakeMove(spot)
-	if debug {
-		log.Printf("%s moves %s", player.color.Name(), spot.String())
-	}
 }
 
 // Encodes the spot-ranking as a string

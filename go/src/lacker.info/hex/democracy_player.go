@@ -5,18 +5,18 @@ import (
 	"math"
 )
 
-// The DemocracyPlayer contains a bunch of LinearPlayers and they all
+// The DemocracyPlayer contains a bunch of QuickPlayers and they all
 // vote on the best move.
 // There is a fallback which just iterates through all possible spots,
-// so that even the DemocracyPlayer with no LinearPlayers, or with
-// LinearPlayers that have all given up on ideas, will be able to do
+// so that even the DemocracyPlayer with no subplayers, or with
+// subplayers that have all given up on ideas, will be able to do
 // something.
 
 type DemocracyPlayer struct {
 	startingPosition *TopoBoard
 	color Color
 
-	players []*LinearPlayer
+	players []QuickPlayer
 	weights []float64
 	fallbackSpot TopoSpot
 }
@@ -25,7 +25,7 @@ func NewDemocracyPlayer(b *TopoBoard, c Color) *DemocracyPlayer {
 	dp := &DemocracyPlayer{
 		startingPosition: b,
 		color: c,
-		players: make([]*LinearPlayer, 0),
+		players: make([]QuickPlayer, 0),
 		fallbackSpot: TopLeftCorner,
 	}
 	return dp
@@ -39,21 +39,21 @@ func (demo *DemocracyPlayer) StartingPosition() *TopoBoard {
 	return demo.startingPosition
 }
 
-func (demo *DemocracyPlayer) Add(linear *LinearPlayer) {
-	demo.AddWithWeight(linear, 1.0)
+func (demo *DemocracyPlayer) Add(quick QuickPlayer) {
+	demo.AddWithWeight(quick, 1.0)
 }
 
-func (demo *DemocracyPlayer) AddWithWeight(linear *LinearPlayer,
+func (demo *DemocracyPlayer) AddWithWeight(quick QuickPlayer,
 	weight float64) {
-	if demo.Color() != linear.Color() {
+	if demo.Color() != quick.Color() {
 		log.Fatal("color mismatch")
 	}
 
-	if demo.StartingPosition() != linear.StartingPosition() {
+	if demo.StartingPosition() != quick.StartingPosition() {
 		log.Fatal("position mismatch")
 	}
 
-	demo.players = append(demo.players, linear)
+	demo.players = append(demo.players, quick)
 	demo.weights = append(demo.weights, weight)
 }
 
@@ -81,28 +81,28 @@ func (demo *DemocracyPlayer) NormalizeWeights() {
 	}
 }
 
-// "linear" should be a linear player that makes the moves that lead
+// "quick" should be a quick player that makes the moves that lead
 // to targetGame.
-// The goal is to merge in linear, similar to what Add would do,
-// except ensuring that the weight of linear is high enough so that we
+// The goal is to merge in quick, similar to what Add would do,
+// except ensuring that the weight of quick is high enough so that we
 // would play our side of the targetGame after merging.
 func (demo *DemocracyPlayer) MergeForTheWin(
-	linear *LinearPlayer, targetGame []TopoSpot, debug bool) {
-	if demo.Color() != linear.Color() {
+	quick QuickPlayer, targetGame []TopoSpot, debug bool) {
+	if demo.Color() != quick.Color() {
 		log.Fatal("cannot merge wrong color")
 	}
-	if demo.StartingPosition() != linear.StartingPosition() {
+	if demo.StartingPosition() != quick.StartingPosition() {
 		log.Fatal("cannot merge with different starting positions")
 	}
 
 	// Amount we want targetGame to win by
 	epsilon := 1.0
 
-	// Minimum amount we need to weigh linear in order to win by epsilon
+	// Minimum amount we need to weigh quick in order to win by epsilon
 	delta := 0.0
 	
 	// We are going to do a playout on a copy.
-	board := linear.StartingPosition().ToTopoBoard()
+	board := quick.StartingPosition().ToTopoBoard()
 	demo.Reset()
 
 	// Play the playout
@@ -116,11 +116,11 @@ func (demo *DemocracyPlayer) MergeForTheWin(
 
 		if board.GetToMove() == demo.Color() {
 			// We need to train on this move.
-			// See what we would do without linear
+			// See what we would do without quick
 			bestMove, bestWeight, moveWeight, _ := demo.findBestMove(board)
 			if bestMove != nextMove {
-				// We'll need some extra weight on linear. How much?
-				// Note that we just assume that linear would actually move
+				// We'll need some extra weight on quick. How much?
+				// Note that we just assume that quick would actually move
 				// according to the target game. If that isn't the case our
 				// output will get corrupted and meaningless.
 				nextMoveWeight := moveWeight[nextMove]
@@ -142,7 +142,7 @@ func (demo *DemocracyPlayer) MergeForTheWin(
 	if debug {
 		log.Printf("merging with weight %.1f\n", delta)
 	}
-	demo.AddWithWeight(linear, delta)
+	demo.AddWithWeight(quick, delta)
 	demo.NormalizeWeights()
 }
 
@@ -159,7 +159,7 @@ func (demo *DemocracyPlayer) findBestMove(
 
 	// Find the most-preferred move
 	for i, player := range demo.players {
-		move := player.BestMove(board)
+		move := player.BestMove(board, false)
 		if move == NotASpot {
 			continue
 		}
@@ -175,8 +175,8 @@ func (demo *DemocracyPlayer) findBestMove(
 	return bestMove, bestWeight, moveWeight, totalWeight
 }
 
-// Make the move that most of the players make
-func (demo *DemocracyPlayer) MakeMove(board *TopoBoard, debug bool) {
+// Prefers the move that's voted highest by the players
+func (demo *DemocracyPlayer) BestMove(board *TopoBoard, debug bool) TopoSpot {
 	if demo.Color() != board.GetToMove() {
 		log.Fatal("not our turn to move")
 	}
@@ -200,8 +200,7 @@ func (demo *DemocracyPlayer) MakeMove(board *TopoBoard, debug bool) {
 			100.0 * bestWeight / totalWeight)
 	}
 
-	// Make the move
-	board.MakeMove(bestMove)
+	return bestMove
 }
 
 // Drop the player with the least weight

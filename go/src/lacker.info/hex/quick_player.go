@@ -17,16 +17,28 @@ type QuickPlayer interface {
 	// positions that are the same.
 	StartingPosition() *TopoBoard
 
-	// Make a move from the provided position.
+	// Returns the best move.
+	// If this player has no idea it can return NotASpot.
 	// Positions should be progressing through the game until Reset is
 	// called, so a quick player can keep some state around.
-	MakeMove(board *TopoBoard, debug bool)
+	BestMove(board *TopoBoard, debug bool) TopoSpot
 
 	// Prints some debug information
 	Debug()
 
 	// Gets what color the player is
 	Color() Color
+}
+
+func MakeBestMove(player QuickPlayer, board *TopoBoard, debug bool) {
+	if player.Color() != board.GetToMove() {
+		log.Fatal("not the right player's turn")
+	}
+	spot := player.BestMove(board, debug)
+	board.MakeMove(spot)
+	if debug {
+		log.Printf("%s moves %s", player.Color().Name(), spot.String())
+	}
 }
 
 // Plays out a game and returns the final board state.
@@ -64,9 +76,9 @@ func PlayoutWithSnipList(
 			board.MakeMove(snipList[snipListIndex].spot)
 			snipListIndex++
 		} else if player1.Color() == board.GetToMove() {
-			player1.MakeMove(board, debug)
+			MakeBestMove(player1, board, debug)
 		} else {
-			player2.MakeMove(board, debug)
+			MakeBestMove(player2, board, debug)
 		}
 	}
 

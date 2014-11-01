@@ -14,8 +14,8 @@ finds a way for the loser to slightly alter its ways to beat the
 winner, with the hope that this converges towards the ideal way to
 play.
 
-One cycle is finding a linear player that can defeat the winner, and
-then merging this new linear player into the loser hard enough so that
+One cycle is finding a quick player that can defeat the winner, and
+then merging this new quick player into the loser hard enough so that
 it now wins.
 
 The meta farmer:
