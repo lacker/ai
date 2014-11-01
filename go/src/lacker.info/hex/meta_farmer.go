@@ -107,7 +107,7 @@ func (mf *MetaFarmer) PlayOneCycle(debug bool) {
 
 	// Simplify the evolver a bit if it's too complicated
 	if len(evolver.weights) >= 100 {
-		evolver.DropLightestPlayer()
+		evolver.DropLightestPlayer(debug)
 	}
 
 	// Merge the miniplayer into the evolver to evolve it

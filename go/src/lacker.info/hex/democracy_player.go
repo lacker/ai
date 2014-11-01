@@ -205,7 +205,7 @@ func (demo *DemocracyPlayer) MakeMove(board *TopoBoard, debug bool) {
 }
 
 // Drop the player with the least weight
-func (demo *DemocracyPlayer) DropLightestPlayer() {
+func (demo *DemocracyPlayer) DropLightestPlayer(debug bool) {
 	if len(demo.weights) == 0 {
 		log.Fatal("can't drop lightest player bc there are no players")
 	}
@@ -219,6 +219,11 @@ func (demo *DemocracyPlayer) DropLightestPlayer() {
 			lightestIndex = i
 			lightestWeight = demo.weights[i]
 		}
+	}
+
+	if debug {
+		log.Printf("lightest player has weight %.2f:", demo.weights[lightestIndex])
+		demo.players[lightestIndex].Debug()
 	}
 
 	demo.players = append(
