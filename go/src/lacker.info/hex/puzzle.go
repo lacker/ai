@@ -215,7 +215,7 @@ Black to move
 func GetPuzzle(name string) Puzzle {
 	answer, ok := PuzzleMap[name]
 	if !ok {
-		log.Fatal("no puzzle with name: %s", name)
+		log.Fatalf("no puzzle with name: %s", name)
 	}
 	return answer
 }

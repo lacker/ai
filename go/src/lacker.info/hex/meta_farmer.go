@@ -76,9 +76,8 @@ func (mf *MetaFarmer) WinProbability() float64 {
 func (mf *MetaFarmer) PlayOneCycle(debug bool) {
 	if mf.gameSolved {
 		if debug {
-			log.Printf("No need to play one cycle when the game is solved.\n")
+			log.Printf("The game is solved but we can try anyway.")
 		}
-		return
 	}
 
 	// The plan is to evolve the player who loses the main line.
