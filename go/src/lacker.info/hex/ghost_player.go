@@ -66,21 +66,23 @@ func (player *GhostPlayer) Reset() {
 	player.index = 0
 }
 
+func (player *GhostPlayer) ghostColorAtIndex(i int) Color {
+	if i % 2 == 0 {
+		return player.startingPosition.GetToMove()
+	} else {
+		return -player.startingPosition.GetToMove()
+	}
+}
+
 // Returns the best move to make.
 // If this player has nothing to suggest, returns NotASpot.
-func (player *GhostPlayer) BestMove(board *TopoBoard) TopoSpot {
+func (player *GhostPlayer) BestMove(board *TopoBoard, debug bool) TopoSpot {
 	if player.divergent {
 		return NotASpot
 	}
 
 	for player.index < len(player.ghostGame) {
-		// See what color the ghost was at this point
-		var ghostColor Color
-		if player.index % 2 == 0 {
-			ghostColor = player.startingPosition.GetToMove()
-		} else {
-			ghostColor = -player.startingPosition.GetToMove()
-		}
+		ghostColor := player.ghostColorAtIndex(player.index)
 
 		spot := player.ghostGame[player.index]
 		if ghostColor == player.color {
@@ -116,4 +118,15 @@ func (player *GhostPlayer) BestMove(board *TopoBoard) TopoSpot {
 	}
 
 	panic("We shouldn't get here - we should either win or diverge.")
+}
+
+func (player *GhostPlayer) Debug() {
+	log.Printf("%s ghost player prefers:\n", player.color.Name())
+	for index, spot := range player.ghostGame {
+		if index >= 10 {
+			break
+		}
+		log.Printf("%s: (%d, %d)", player.ghostColorAtIndex(index),
+			spot.Row(), spot.Col())
+	}
 }

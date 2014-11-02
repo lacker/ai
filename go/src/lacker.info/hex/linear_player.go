@@ -140,10 +140,6 @@ func (player *LinearPlayer) randomize() {
 }
 
 // Learns from a playouted game.
-func (player *LinearPlayer) LearnFromWin(board *TopoBoard, debug bool) {
-}
-
-// Learns from a playouted game.
 func (player *LinearPlayer) LearnFromLoss(board *TopoBoard, debug bool) {
 	if board.Winner == Empty {
 		log.Fatal("cannot learn from a board with no winner")

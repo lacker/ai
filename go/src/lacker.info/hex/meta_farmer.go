@@ -102,16 +102,24 @@ func (mf *MetaFarmer) PlayOneCycle(debug bool) {
 		mf.gameSolved = true
 		return
 	}
-	linear := NewLinearPlayerFromPlayout(
-		evolver.startingPosition, evolver.Color(), ending)
+
+	// TODO: flip once it works
+	var quick QuickPlayer
+	if true {
+		quick = NewLinearPlayerFromPlayout(evolver.startingPosition,
+			evolver.Color(), ending)
+	} else {
+		quick = NewGhostPlayer(evolver.startingPosition, evolver.Color(),
+			ending)
+	}
 
 	// Simplify the evolver a bit if it's too complicated
 	if len(evolver.weights) >= 100 {
 		evolver.DropLightestPlayer(debug)
 	}
 
-	// Merge the miniplayer into the evolver to evolve it
-	evolver.MergeForTheWin(linear, ending.History, debug)
+	// Merge the quickplayer into the evolver to evolve it
+	evolver.MergeForTheWin(quick, ending.History, debug)
 
 	// At this point, evolver should defeat the opponent with the game
 	// ending.History. If that isn't the case this algorithm will subtly
