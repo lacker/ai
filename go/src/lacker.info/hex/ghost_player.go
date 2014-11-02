@@ -15,7 +15,7 @@ conformity goes down, so the strength of moves reported goes down.
 
 // For each move that differs from the ghost game, conformity goes
 // down this much
-const DivergencePenalty = 0.5
+const DivergencePenalty = 0.1
 
 type GhostPlayer struct {
 	// Quickplayers always go from the same starting position

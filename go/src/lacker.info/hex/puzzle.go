@@ -315,7 +315,11 @@ func RunGauntlet(playerName string) {
 	s.solve("doomed4", DefiniteLoss)
 	s.solve("triangleBlock", DefiniteWin)
 	s.solve("ladder", DefiniteWin)
-	s.solve("manyBridges", DefiniteWin)
+
+	// Leave out manyBridges until doomed and triangle work, because it
+	// should be even harder than those.
+	// s.solve("manyBridges", DefiniteWin)
+
 	s.solve("needle", ClearMove)
 	s.solve("simpleBlock", ClearMove)
 
