@@ -15,7 +15,7 @@ conformity goes down, so the strength of moves reported goes down.
 
 // For each move that differs from the ghost game, conformity goes
 // down this much
-const DivergencePenalty = 0.1
+const DivergencePenalty = 0.99
 
 type GhostPlayer struct {
 	// Quickplayers always go from the same starting position
@@ -107,7 +107,7 @@ func (player *GhostPlayer) Debug() {
 		if index >= 10 {
 			break
 		}
-		log.Printf("%s: (%d, %d)", player.ghostColorAtIndex(index),
+		log.Printf("%s: (%d, %d)", player.ghostColorAtIndex(index).Name(),
 			spot.Row(), spot.Col())
 	}
 }
