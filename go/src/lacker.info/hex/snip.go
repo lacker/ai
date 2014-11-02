@@ -33,6 +33,18 @@ func (s Snip) String() string {
 	return fmt.Sprintf("%d => %s", s.ply, s.spot)
 }
 
+// A snip list scored by how likely it is to be the winner.
+// The higher the score, the less likely.
+type ScoredSnipList struct {
+	// TODO
+}
+
+// A SnipListHeap keeps a bunch of snip lists scored by how likely
+// they are to be a winner. The higher the score, the less likely.
+type SnipListHeap struct {
+	// TODO
+}
+
 // Finds a list of Snips in chronological order that will let player
 // beat opponent.
 // player and opponent both need to be deterministic for this to work.
