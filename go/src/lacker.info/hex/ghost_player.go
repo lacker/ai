@@ -10,12 +10,12 @@ It has a single game memorized, and it tries to play along with that
 game.
 If the color that plays on a particular spot in the ghost game
 differs from the color that plays in that spot in the real game, the
-ghost player becomes divergent and stops suggesting moves.
-If the opponent played at a spot in the ghost game but it is empty in
-the real game, that doesn't cause divergence; we just move on.
-The ghost player always tries to make the next move that
-its color made in the ghost game.
+conformity goes down, so the strength of moves reported goes down.
 */
+
+// For each move that differs from the ghost game, conformity goes
+// down this much
+const DivergencePenalty = 0.5
 
 type GhostPlayer struct {
 	// Quickplayers always go from the same starting position
@@ -33,9 +33,9 @@ type GhostPlayer struct {
 	// the ghost game
 	index int
 
-	// Whether the real game has diverged from the ghost game.
-	// Once the ghost becomes divergent it will no longer suggest moves
-	divergent bool
+	// This is 1.0 for games that exactly adhere to our ghost game, and
+	// goes down whenever observed moves differ.
+	conformity float64
 }
 
 // Create a new ghost player from a finished game
@@ -62,7 +62,7 @@ func (player *GhostPlayer) StartingPosition() *TopoBoard {
 }
 
 func (player *GhostPlayer) Reset() {
-	player.divergent = false
+	player.conformity = 1.0
 	player.index = 0
 }
 
@@ -78,47 +78,27 @@ func (player *GhostPlayer) ghostColorAtIndex(i int) Color {
 // If this player has nothing to suggest, returns NotASpot.
 func (player *GhostPlayer) BestMove(
 	board *TopoBoard, debug bool) (TopoSpot, float64) {
-	if player.divergent {
-		return NotASpot, 0.0
-	}
-
 	for player.index < len(player.ghostGame) {
 		ghostColor := player.ghostColorAtIndex(player.index)
-
 		spot := player.ghostGame[player.index]
-		if ghostColor == player.color {
-			// This is a move we made in the ghost game.
-			switch board.Get(spot) {
-			case player.color:
-				// The real game already moved here. Keep looking
-				player.index++
-			case Empty:
-				// Yahtzee
-				return spot, 1.0
-			case -player.color:
-				// Diverge
-				player.divergent = true
-				return NotASpot, 0.0
-			}
-		} else {
-			// This is a move our opponent made in the ghost game.
-			switch board.Get(spot) {
-			case player.color:
-				// Diverge
-				player.divergent = true
-				return NotASpot, 0.0
-			case Empty:
-				// Nobody has moved here. This isn't unusual enough to cause
-				// divergence, so just continue.
-				player.index++
-			case -player.color:
-				// The real game already moved here. Keep looking
-				player.index++
-			}
+
+		switch board.Get(spot) {
+		case ghostColor:
+			// Continue with no penalty
+			player.index++
+		case Empty:
+			// Yahtzee
+			return spot, player.conformity
+		case -ghostColor:
+			// Continue with a divergence penalty
+			player.conformity *= DivergencePenalty
+			player.index++
+		default:
+			panic("control should not get here")
 		}
 	}
 
-	panic("We shouldn't get here - we should either win or diverge.")
+	return NotASpot, 0.0
 }
 
 func (player *GhostPlayer) Debug() {
