@@ -76,9 +76,10 @@ func (player *GhostPlayer) ghostColorAtIndex(i int) Color {
 
 // Returns the best move to make.
 // If this player has nothing to suggest, returns NotASpot.
-func (player *GhostPlayer) BestMove(board *TopoBoard, debug bool) TopoSpot {
+func (player *GhostPlayer) BestMove(
+	board *TopoBoard, debug bool) (TopoSpot, float64) {
 	if player.divergent {
-		return NotASpot
+		return NotASpot, 0.0
 	}
 
 	for player.index < len(player.ghostGame) {
@@ -93,11 +94,11 @@ func (player *GhostPlayer) BestMove(board *TopoBoard, debug bool) TopoSpot {
 				player.index++
 			case Empty:
 				// Yahtzee
-				return spot
+				return spot, 1.0
 			case -player.color:
 				// Diverge
 				player.divergent = true
-				return NotASpot
+				return NotASpot, 0.0
 			}
 		} else {
 			// This is a move our opponent made in the ghost game.
@@ -105,7 +106,7 @@ func (player *GhostPlayer) BestMove(board *TopoBoard, debug bool) TopoSpot {
 			case player.color:
 				// Diverge
 				player.divergent = true
-				return NotASpot
+				return NotASpot, 0.0
 			case Empty:
 				// Nobody has moved here. This isn't unusual enough to cause
 				// divergence, so just continue.

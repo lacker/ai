@@ -159,12 +159,12 @@ func (demo *DemocracyPlayer) findBestMove(
 
 	// Find the most-preferred move
 	for i, player := range demo.players {
-		move := player.BestMove(board, false)
+		move, subweight := player.BestMove(board, false)
 		if move == NotASpot {
 			continue
 		}
-		moveWeight[move] += demo.weights[i]
-		totalWeight += demo.weights[i]
+		moveWeight[move] += demo.weights[i] * subweight
+		totalWeight += demo.weights[i] * subweight
 		
 		if moveWeight[move] > bestWeight {
 			bestWeight = moveWeight[move]
@@ -176,12 +176,14 @@ func (demo *DemocracyPlayer) findBestMove(
 }
 
 // Prefers the move that's voted highest by the players
-func (demo *DemocracyPlayer) BestMove(board *TopoBoard, debug bool) TopoSpot {
+func (demo *DemocracyPlayer) BestMove(
+	board *TopoBoard, debug bool) (TopoSpot, float64) {
 	if demo.Color() != board.GetToMove() {
 		log.Fatal("not our turn to move")
 	}
 
 	bestMove, bestWeight, _, totalWeight := demo.findBestMove(board)
+	score := bestWeight / (totalWeight + 0.0001)
 
 	// If we don't have any move, go to fallback
 	if bestMove == NotASpot {
@@ -200,7 +202,7 @@ func (demo *DemocracyPlayer) BestMove(board *TopoBoard, debug bool) TopoSpot {
 			100.0 * bestWeight / totalWeight)
 	}
 
-	return bestMove
+	return bestMove, score
 }
 
 // Drop the player with the least weight

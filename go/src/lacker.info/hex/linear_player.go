@@ -90,16 +90,17 @@ func (player *LinearPlayer) Reset() {
 }
 
 // Returns the best move to make.
-func (player *LinearPlayer) BestMove(board *TopoBoard, debug bool) TopoSpot {
+func (player *LinearPlayer) BestMove(
+	board *TopoBoard, debug bool) (TopoSpot, float64) {
 	for player.index < len(player.ranking) {
 		spot := player.ranking[player.index].Spot
 		if board.Get(spot) == Empty {
-			return spot
+			return spot, 1.0
 		}
 		player.index++
 	}
 
-	return NotASpot
+	return NotASpot, 0.0
 }
 
 // Encodes the spot-ranking as a string
@@ -188,4 +189,8 @@ func (player *LinearPlayer) Debug() {
 		log.Printf("(%d, %d) scores %.1f\n",
 			scoredSpot.Spot.Row(), scoredSpot.Spot.Col(), scoredSpot.Score)
 	}
+}
+
+func (player *LinearPlayer) Confidence() float64 {
+	return 1.0
 }

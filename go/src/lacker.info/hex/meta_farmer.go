@@ -103,7 +103,7 @@ func (mf *MetaFarmer) PlayOneCycle(debug bool) {
 		return
 	}
 
-	// TODO: flip once it works
+	// TODO: flip true -> false once it works
 	var quick QuickPlayer
 	if true {
 		quick = NewLinearPlayerFromPlayout(evolver.startingPosition,
