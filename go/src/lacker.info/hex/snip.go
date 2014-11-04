@@ -1,6 +1,7 @@
 package hex
 
 import (
+	"container/heap"
 	"fmt"
 	"log"
 )
@@ -36,13 +37,46 @@ func (s Snip) String() string {
 // A snip list scored by how likely it is to be the winner.
 // The higher the score, the less likely.
 type ScoredSnipList struct {
-	// TODO
+	score int
+	snipList []Snip
 }
 
 // A SnipListHeap keeps a bunch of snip lists scored by how likely
 // they are to be a winner. The higher the score, the less likely.
-type SnipListHeap struct {
-	// TODO
+type SnipListHeap []ScoredSnipList
+
+func (h SnipListHeap) Len() int {
+	return len(h)
+}
+
+func (h SnipListHeap) Less(i, j int) bool {
+	return h[i].score < h[j].score
+}
+
+func (h SnipListHeap) Swap(i, j int) {
+	h[i], h[j] = h[j], h[i]
+}
+
+func (h *SnipListHeap) Push(x interface{}) {
+	*h = append(*h, x.(ScoredSnipList))
+}
+
+func (h *SnipListHeap) Pop() interface{} {
+	old := *h
+	n := len(old)
+	x := old[n-1]
+	*h = old[0 : n-1]
+	return x
+}
+
+// The PopScoredSnipList and PushScoredSnipList are the ones we would call.
+// The methods above are just to implement the heap interface.
+func (h *SnipListHeap) PopSnipList() ScoredSnipList {
+	return heap.Pop(h).(ScoredSnipList)
+}
+
+func (h *SnipListHeap) PushSnipList(x ScoredSnipList) {
+	heap.Push(h, x)
 }
 
 // Finds a list of Snips in chronological order that will let player
