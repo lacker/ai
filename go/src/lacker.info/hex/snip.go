@@ -80,13 +80,27 @@ func (h *SnipListHeap) PushSnipList(x ScoredSnipList) {
 }
 
 // Finds a list of Snips in chronological order that will let player
-// beat opponent.
+// beat opponent, using heuristic search.
 // player and opponent both need to be deterministic for this to work.
 // mainLine should be a board showing the position where player lost
 // to opponent.
 // If it's impossible to find a winning snip list, this returns nils.
 // Returns the winning snip list along with the ending position.
 func FindWinningSnipList(
+	player QuickPlayer, opponent QuickPlayer, mainLine *TopoBoard,
+	debug bool) ([]Snip, *TopoBoard) {
+	panic("TODO: implement")
+}
+
+// Finds a list of Snips in chronological order that will let player
+// beat opponent, using breadth-first search.
+// player and opponent both need to be deterministic for this to work.
+// mainLine should be a board showing the position where player lost
+// to opponent.
+// If it's impossible to find a winning snip list, this returns nils.
+// Returns the winning snip list along with the ending position.
+// TODO: deprecate this
+func FindWinningSnipListBFS(
 	player QuickPlayer, opponent QuickPlayer, mainLine *TopoBoard,
 	debug bool) ([]Snip, *TopoBoard) {
 
