@@ -89,7 +89,89 @@ func (h *SnipListHeap) PushSnipList(x ScoredSnipList) {
 func FindWinningSnipList(
 	player QuickPlayer, opponent QuickPlayer, mainLine *TopoBoard,
 	debug bool) ([]Snip, *TopoBoard) {
-	panic("TODO: implement")
+	// Sanity checks
+	if player.Color() == opponent.Color() {
+		log.Fatal("both player and opponent are the same color")
+	}
+	board := player.StartingPosition()
+	if board != opponent.StartingPosition() {
+		log.Fatal("starting positions do not match")
+	}
+	if mainLine.Winner != opponent.Color() {
+		log.Fatal("mainLine is supposed to have player losing to opponent")
+	}
+
+	// The frontier heap keeps a bunch of snip lists that we have not tried yet.
+	// Lower scores are more promising snip lists.
+	frontier := make(SnipListHeap, 0)
+
+	// Current is a snip list that has already been tried, at the point
+	// where our main loop begins.
+	current := ScoredSnipList{
+		score: 0.0,
+		snipList: make([]Snip, 0),
+	}
+
+	// ending is the ending position we get with the current snip list.
+	ending := mainLine
+
+	// Every viable ply is at least beginPly a la STL iterators
+	beginPly := len(player.StartingPosition().History)
+
+	for {
+		// The current snip list failed to defeat the opponent.
+
+		// We want to add new possible snip lists to the heap.
+		// TODO: have a nice heuristic here
+
+		// Figure out the first ply to consider a snip at.
+		// Snips must be in order in the snip list, so we can start at the
+		// previous one.
+		var startPly int
+		if len(current.snipList) == 0 {
+			// There are no snips in current, so the first ply to consider a
+			// snip at is the player's first move after the starting
+			// position.
+			if player.StartingPosition().GetToMove() == player.Color() {
+				startPly = beginPly
+			} else {
+				startPly = beginPly + 1
+			}
+		} else {
+			startPly = current.snipList[len(current.snipList) - 1].ply + 2
+		}
+
+		// Figure out which ply to snip at
+		for snipPly := startPly; snipPly < len(ending.History); snipPly += 2 {
+			// Figure out what moves to insert with what scores
+			panic("TODO: how do we get a score here")
+		}
+
+		// So we added new snip lists to the frontier. That means we are
+		// done with current. It is time to play a new game with the next
+		// snip list.
+		if len(frontier) == 0 {
+			// We can't find a winning snip list. The opponent is
+			// unbeatable.
+			return nil, nil
+		}
+		current = frontier.PopSnipList()
+		ending = PlayoutWithSnipList(player, opponent, current.snipList,
+			false)
+		
+		if ending.Winner == player.Color() {
+			// This snip list made player win!
+			if debug {
+				log.Printf("%s wins with snip list: %+v",
+					player.Color().Name(), current)
+				ending.Debug()
+			}
+			return current.snipList, ending
+		}
+
+		// This snip list also did not succeed. Just continue through to
+		// the next iteration of the loop.
+	}
 }
 
 // Finds a list of Snips in chronological order that will let player
