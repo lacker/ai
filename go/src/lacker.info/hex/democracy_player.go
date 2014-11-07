@@ -68,6 +68,18 @@ func (demo *DemocracyPlayer) Debug() {
 	}
 }
 
+// Returns a heuristic map of spots to how good they ever are to play.
+func (demo *DemocracyPlayer) SpotScoreList() [NumTopoSpots]float64 {
+	var scoreList [NumTopoSpots]float64
+	for i, p := range demo.players {
+		player := p.(*GhostPlayer)
+		for _, spot := range player.ghostGame {
+			scoreList[spot] += demo.weights[i]
+		}
+	}
+	return scoreList
+}
+
 // Makes the weights sum to 10,000 because that's a nice number.
 // If there is no weight this is just a no-op.
 func (demo *DemocracyPlayer) NormalizeWeights() {

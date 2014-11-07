@@ -120,10 +120,9 @@ func FindWinningSnipList(
 
 	for {
 		// The current snip list failed to defeat the opponent.
-
+		//
 		// We want to add new possible snip lists to the heap.
-		// TODO: have a nice heuristic here
-
+		//
 		// Figure out the first ply to consider a snip at.
 		// Snips must be in order in the snip list, so we can start at the
 		// previous one.
@@ -144,7 +143,7 @@ func FindWinningSnipList(
 		// Figure out which ply to snip at
 		for snipPly := startPly; snipPly < len(ending.History); snipPly += 2 {
 			// Figure out what moves to insert with what scores
-			panic("TODO: how do we get a score here")
+			panic("TODO: how do we get a score here? use SpotScoreList")
 		}
 
 		// So we added new snip lists to the frontier. That means we are
