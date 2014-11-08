@@ -69,6 +69,7 @@ func (demo *DemocracyPlayer) Debug() {
 }
 
 // Returns a heuristic map of spots to how good they ever are to play.
+// TODO: reverse this so that high = bad
 func (demo *DemocracyPlayer) SpotScoreList() [NumTopoSpots]float64 {
 	var scoreList [NumTopoSpots]float64
 	for i, p := range demo.players {

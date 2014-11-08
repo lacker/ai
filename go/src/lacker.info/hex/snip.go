@@ -37,7 +37,7 @@ func (s Snip) String() string {
 // A snip list scored by how likely it is to be the winner.
 // The higher the score, the less likely.
 type ScoredSnipList struct {
-	score int
+	score float64
 	snipList []Snip
 }
 
@@ -79,6 +79,15 @@ func (h *SnipListHeap) PushSnipList(x ScoredSnipList) {
 	heap.Push(h, x)
 }
 
+// scoreMap[spot] should be a penalty-score for unlikeliness of a move.
+func (h *SnipListHeap) ExpandFrontier(current ScoredSnipList,
+	scoreList [NumTopoSpots]float64, ply int, spot TopoSpot) {
+	h.PushSnipList(ScoredSnipList{
+		score: scoreList[spot] + current.score,
+		snipList: append(current.snipList, Snip{ply: ply, spot: spot}),
+	})
+}
+
 // Finds a list of Snips in chronological order that will let player
 // beat opponent, using heuristic search.
 // player and opponent both need to be deterministic for this to work.
@@ -100,6 +109,8 @@ func FindWinningSnipList(
 	if mainLine.Winner != opponent.Color() {
 		log.Fatal("mainLine is supposed to have player losing to opponent")
 	}
+
+	scoreList := player.(*DemocracyPlayer).SpotScoreList()
 
 	// The frontier heap keeps a bunch of snip lists that we have not tried yet.
 	// Lower scores are more promising snip lists.
@@ -143,7 +154,22 @@ func FindWinningSnipList(
 		// Figure out which ply to snip at
 		for snipPly := startPly; snipPly < len(ending.History); snipPly += 2 {
 			// Figure out what moves to insert with what scores
-			panic("TODO: how do we get a score here? use SpotScoreList")
+			// There are two sorts of moves we can pick: moves that were
+			// chosen later on in this game, and moves that were never
+			// chosen in this game.
+
+			// First, try the moves that were chosen later on in this game.
+			for ply := snipPly + 1; ply < len(ending.History); ply++ {
+				frontier.ExpandFrontier(current, scoreList, snipPly,
+					ending.History[ply])
+			}
+
+			// Second, try the moves that were never chosen in this game.
+			for spot := TopLeftCorner; spot <= BottomRightCorner; spot++ {
+				if ending.Get(spot) == Empty {
+					frontier.ExpandFrontier(current, scoreList, snipPly, spot)
+				}
+			}
 		}
 
 		// So we added new snip lists to the frontier. That means we are
