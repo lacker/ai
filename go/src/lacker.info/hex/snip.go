@@ -79,11 +79,13 @@ func (h *SnipListHeap) PushSnipList(x ScoredSnipList) {
 	heap.Push(h, x)
 }
 
-// scoreMap[spot] should be a penalty-score for unlikeliness of a move.
+// costList[spot] is how much adding each spot in a snip "costs".
+// This frontier-expansion algorithm will find the cheapest solution
+// and generally search in order of cheapness.
 func (h *SnipListHeap) ExpandFrontier(current ScoredSnipList,
-	scoreList [NumTopoSpots]float64, ply int, spot TopoSpot) {
+	costList [NumTopoSpots]float64, ply int, spot TopoSpot) {
 	h.PushSnipList(ScoredSnipList{
-		score: scoreList[spot] + current.score,
+		score: costList[spot] + current.score,
 		snipList: append(current.snipList, Snip{ply: ply, spot: spot}),
 	})
 }
@@ -110,7 +112,7 @@ func FindWinningSnipList(
 		log.Fatal("mainLine is supposed to have player losing to opponent")
 	}
 
-	scoreList := player.(*DemocracyPlayer).SpotScoreList()
+	costList := player.(*DemocracyPlayer).CostList()
 
 	// The frontier heap keeps a bunch of snip lists that we have not tried yet.
 	// Lower scores are more promising snip lists.
@@ -160,14 +162,14 @@ func FindWinningSnipList(
 
 			// First, try the moves that were chosen later on in this game.
 			for ply := snipPly + 1; ply < len(ending.History); ply++ {
-				frontier.ExpandFrontier(current, scoreList, snipPly,
+				frontier.ExpandFrontier(current, costList, snipPly,
 					ending.History[ply])
 			}
 
 			// Second, try the moves that were never chosen in this game.
 			for spot := TopLeftCorner; spot <= BottomRightCorner; spot++ {
 				if ending.Get(spot) == Empty {
-					frontier.ExpandFrontier(current, scoreList, snipPly, spot)
+					frontier.ExpandFrontier(current, costList, snipPly, spot)
 				}
 			}
 		}

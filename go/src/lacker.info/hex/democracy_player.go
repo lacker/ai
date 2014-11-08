@@ -68,17 +68,24 @@ func (demo *DemocracyPlayer) Debug() {
 	}
 }
 
-// Returns a heuristic map of spots to how good they ever are to play.
-// TODO: reverse this so that high = bad
-func (demo *DemocracyPlayer) SpotScoreList() [NumTopoSpots]float64 {
-	var scoreList [NumTopoSpots]float64
+// Returns how much each spot costs in a heuristic search for winning moves.
+// A spot that never gets played costs 10000.
+// A spot that every subplayer sometimes plays costs about 1.
+func (demo *DemocracyPlayer) CostList() [NumTopoSpots]float64 {
+	// First just sum up the weights from subplayers
+	var costList [NumTopoSpots]float64
 	for i, p := range demo.players {
 		player := p.(*GhostPlayer)
 		for _, spot := range player.ghostGame {
-			scoreList[spot] += demo.weights[i]
+			costList[spot] += demo.weights[i]
 		}
 	}
-	return scoreList
+
+	for spot, totalWeight := range costList {
+		// This takes 0 -> 10000, 10000 -> ~1
+		costList[spot] = 10000.0 / (1.0 + totalWeight)
+	}
+	return costList
 }
 
 // Makes the weights sum to 10,000 because that's a nice number.
