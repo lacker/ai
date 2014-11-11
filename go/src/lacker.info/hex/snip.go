@@ -79,13 +79,13 @@ func (h *SnipListHeap) PushSnipList(x ScoredSnipList) {
 	heap.Push(h, x)
 }
 
-// costList[spot] is how much adding each spot in a snip "costs".
+// extraCost is how much adding this spot in a snip "costs".
 // This frontier-expansion algorithm will find the cheapest solution
 // and generally search in order of cheapness.
 func (h *SnipListHeap) ExpandFrontier(current ScoredSnipList,
-	costList [NumTopoSpots]float64, ply int, spot TopoSpot) {
+	extraCost float64, ply int, spot TopoSpot) {
 	h.PushSnipList(ScoredSnipList{
-		score: costList[spot] + current.score,
+		score: extraCost + current.score,
 		snipList: append(current.snipList, Snip{ply: ply, spot: spot}),
 	})
 }
@@ -162,14 +162,13 @@ func FindWinningSnipList(
 
 			// First, try the moves that were chosen later on in this game.
 			for ply := snipPly + 1; ply < len(ending.History); ply++ {
-				frontier.ExpandFrontier(current, costList, snipPly,
-					ending.History[ply])
+				frontier.ExpandFrontier(current, 1.0, snipPly, ending.History[ply])
 			}
 
 			// Second, try the moves that were never chosen in this game.
 			for spot := TopLeftCorner; spot <= BottomRightCorner; spot++ {
 				if ending.Get(spot) == Empty {
-					frontier.ExpandFrontier(current, costList, snipPly, spot)
+					frontier.ExpandFrontier(current, 3.0 + costList[spot], snipPly, spot)
 				}
 			}
 		}
