@@ -25,9 +25,6 @@ Moves correctly on ladder, manyBridges but does not totally solve
 Moves correctly on needle, simpleBlock
 */
 
-// Test til we can switch this to true
-const GhostMode = false
-
 type MetaFarmer struct {
 	Seconds float64
 	Quiet bool
@@ -97,11 +94,7 @@ func (mf *MetaFarmer) PlayOneCycle(debug bool) {
 
 	// Create a miniplayer that beats the opponent
 	var ending *TopoBoard
-	if GhostMode {
-		_, ending = FindWinningSnipList(evolver, opponent, mf.mainLine, debug)
-	} else {
-		_, ending = FindWinningSnipListBFS(evolver, opponent, mf.mainLine, debug)
-	}
+	_, ending = FindWinningSnipList(evolver, opponent, mf.mainLine, debug)
 	if ending == nil {
 		if debug {
 			log.Printf("It's over. %s is unbeatable.\n", opponent.Color().Name())
@@ -111,13 +104,8 @@ func (mf *MetaFarmer) PlayOneCycle(debug bool) {
 	}
 
 	var quick QuickPlayer
-	if GhostMode {
-		quick = NewGhostPlayer(evolver.startingPosition, evolver.Color(),
-			ending)
-	} else {
-		quick = NewLinearPlayerFromPlayout(evolver.startingPosition,
-			evolver.Color(), ending)
-	}
+	quick = NewLinearPlayerFromPlayout(evolver.startingPosition,
+		evolver.Color(), ending)
 
 	// Simplify the evolver a bit if it's too complicated
 	if len(evolver.weights) >= 100 {

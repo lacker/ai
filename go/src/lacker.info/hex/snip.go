@@ -97,7 +97,7 @@ func (h *SnipListHeap) ExpandFrontier(current ScoredSnipList,
 // to opponent.
 // If it's impossible to find a winning snip list, this returns nils.
 // Returns the winning snip list along with the ending position.
-func FindWinningSnipList(
+func FindWinningSnipListExhaustive(
 	player QuickPlayer, opponent QuickPlayer, mainLine *TopoBoard,
 	debug bool) ([]Snip, *TopoBoard) {
 	// Sanity checks
@@ -205,10 +205,11 @@ func FindWinningSnipList(
 // player and opponent both need to be deterministic for this to work.
 // mainLine should be a board showing the position where player lost
 // to opponent.
+// One critical problem with this function is that it might miss an
+// existing solution.
 // If it's impossible to find a winning snip list, this returns nils.
 // Returns the winning snip list along with the ending position.
-// TODO: deprecate this
-func FindWinningSnipListBFS(
+func FindWinningSnipList(
 	player QuickPlayer, opponent QuickPlayer, mainLine *TopoBoard,
 	debug bool) ([]Snip, *TopoBoard) {
 
