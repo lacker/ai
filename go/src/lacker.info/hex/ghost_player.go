@@ -14,8 +14,9 @@ conformity goes down, so the strength of moves reported goes down.
 */
 
 // For each move that differs from the ghost game, conformity goes
-// down this much
-const DivergencePenalty = 0.9
+// down this much.
+// 0.99 is supposed to be just enough to break out of ties.
+const DivergencePenalty = 0.99
 
 type GhostPlayer struct {
 	// Quickplayers always go from the same starting position
