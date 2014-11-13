@@ -230,6 +230,13 @@ func (demo *DemocracyPlayer) BestMove(
 	return bestMove, score
 }
 
+// Maybe simplify this player
+func (demo *DemocracyPlayer) MaybeSimplify(debug bool) {
+	if len(demo.weights) >= 100 {
+		demo.DropLightestPlayer(debug)
+	}
+}
+
 // Drop the player with the least weight
 func (demo *DemocracyPlayer) DropLightestPlayer(debug bool) {
 	if len(demo.weights) == 0 {

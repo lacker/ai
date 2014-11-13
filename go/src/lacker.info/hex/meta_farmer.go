@@ -107,10 +107,7 @@ func (mf *MetaFarmer) PlayOneCycle(debug bool) {
 	quick = NewLinearPlayerFromPlayout(evolver.startingPosition,
 		evolver.Color(), ending)
 
-	// Simplify the evolver a bit if it's too complicated
-	if len(evolver.weights) >= 100 {
-		evolver.DropLightestPlayer(debug)
-	}
+	evolver.MaybeSimplify(debug)
 
 	// Merge the quickplayer into the evolver to evolve it
 	evolver.MergeForTheWin(quick, ending.History, debug)
