@@ -20,12 +20,14 @@ type DeltaNeuron struct {
 	// The board we are using for this specific playout.
 	board *TopoBoard
 
-	// The spot heap we are using for this specific playout.
-	// spotHeap *SpotHeap
+	// The map of spots to scores that will determine moves.
+	// This is specific to one playout.
+	spotPicker *[NumTopoSpots]float64
 }
 
 // Get ready for a new playout on a new board.
 // This board should always be a fresh clone of the same state.
-func (*DeltaNeuron) ResetForBoard(board *TopoBoard) {
+func (*DeltaNeuron) ResetForBoard(board *TopoBoard,
+	spotPicker *[NumTopoSpots]float64) {
 	panic("TODO: some listener stuff. also use a spot heap")
 }
