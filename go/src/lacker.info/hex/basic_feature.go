@@ -10,3 +10,5 @@ type BasicFeature struct {
 	Color Color
 	Spot TopoSpot
 }
+
+
