@@ -34,6 +34,10 @@ type DeltaNeuron struct {
 	// Whether this neuron has been activated.
 	// Specific to one playout.
 	active bool
+
+	// The registry for moves.
+	// Specific to one playout.
+	registry *SpotRegistry
 }
 
 // See if we should become active.
@@ -70,6 +74,12 @@ func (dn *DeltaNeuron) ContinueActivation() {
 // Get ready for a new playout on a new board.
 // This board should always be a fresh clone of the same state.
 func (dn *DeltaNeuron) ResetForBoard(board *TopoBoard,
-	spotPicker *[NumTopoSpots]float64) {
-	panic("TODO: some listener stuff. also use a spot heap")
+	spotPicker *[NumTopoSpots]float64, registry *SpotRegistry) {
+	dn.active = false
+	dn.board = board
+	dn.featureIndex = 0
+	dn.spotPicker = spotPicker
+	dn.registry = registry
+
+	dn.ContinueActivation()
 }
