@@ -66,9 +66,11 @@ func (dn *DeltaNeuron) ContinueActivation() {
 		}
 	}
 
-	// Activate
+	// Activate! This bumps scores in the spot picker.
 	dn.active = true
-	panic("TODO: do something when activating")
+	for _, scoredSpot := range dn.output {
+		dn.spotPicker[scoredSpot.Spot] += scoredSpot.Score
+	}
 }
 
 // Get ready for a new playout on a new board.
