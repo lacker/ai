@@ -16,11 +16,15 @@ type SpotRegistry struct {
 
 // Create a new spot registry with no listeners
 func NewSpotRegistry() {
-	panic("TODO")
 }
 
 func (sr *SpotRegistry) Listen(spot TopoSpot, dn *DeltaNeuron) {
-	panic("TODO")
+	if sr.listeners[spot] == nil {
+		sr.listeners[spot] = make([]*DeltaNeuron, 1)
+		sr.listeners[spot][0] = dn
+	} else {
+		sr.listeners[spot] = append(sr.listeners[spot], dn)
+	}
 }
 
 func (sr *SpotRegistry) Notify(bf BasicFeature) {
