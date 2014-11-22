@@ -15,7 +15,8 @@ type SpotRegistry struct {
 }
 
 // Create a new spot registry with no listeners
-func NewSpotRegistry() {
+func NewSpotRegistry() *SpotRegistry {
+	return &SpotRegistry{}
 }
 
 // Add a new listener for a spot.
