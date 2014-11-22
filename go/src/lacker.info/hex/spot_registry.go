@@ -18,6 +18,7 @@ type SpotRegistry struct {
 func NewSpotRegistry() {
 }
 
+// Add a new listener for a spot.
 func (sr *SpotRegistry) Listen(spot TopoSpot, dn *DeltaNeuron) {
 	if sr.listeners[spot] == nil {
 		sr.listeners[spot] = make([]*DeltaNeuron, 1)
@@ -27,6 +28,9 @@ func (sr *SpotRegistry) Listen(spot TopoSpot, dn *DeltaNeuron) {
 	}
 }
 
-func (sr *SpotRegistry) Notify(bf BasicFeature) {
-	panic("TODO")
+// This doesn't clear the listeners list. It could, though.
+func (sr *SpotRegistry) Notify(spot TopoSpot) {
+	for _, dn := range sr.listeners[spot] {
+		dn.ContinueActivation()
+	}
 }
