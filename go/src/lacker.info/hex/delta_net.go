@@ -44,3 +44,8 @@ func (net *DeltaNet) Debug() {
 func (net *DeltaNet) Color() Color {
 	return net.color
 }
+
+func (net *DeltaNet) BestMove(board *TopoBoard, debug bool) (TopoSpot,
+	float64) {
+	panic("TODO")
+}
