@@ -47,5 +47,13 @@ func (net *DeltaNet) Color() Color {
 
 func (net *DeltaNet) BestMove(board *TopoBoard, debug bool) (TopoSpot,
 	float64) {
-	panic("TODO")
+	bestSpot := NotASpot
+	bestScore := -1000000.0
+	for spot := TopLeftCorner; spot <= BottomRightCorner; spot++ {
+		if net.spotPicker[spot] > bestScore {
+			bestSpot = spot
+			bestScore = net.spotPicker[spot]
+		}
+	}
+	return bestSpot, bestScore
 }
