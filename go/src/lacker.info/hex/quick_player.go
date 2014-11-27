@@ -54,37 +54,7 @@ func PlayoutWithSnipList(
 	player1 QuickPlayer, player2 QuickPlayer,
 	snipList []Snip, debug bool) *TopoBoard {
 
-	if player1.Color() == player2.Color() {
-		log.Fatal("both players are the same color")
-	}
-
-	if player1.StartingPosition() != player2.StartingPosition() {
-		log.Fatal("starting positions don't match")
-	}
-
-	// Prepare for the game.
-	// Run the playout on a copy so that we don't alter the original
-	board := player1.StartingPosition().ToTopoBoard()
-	player1.Reset()
-	player2.Reset()
-	snipListIndex := 0
-
-	// Play the playout
-	for board.Winner == Empty {
-		if snipList != nil && len(snipList) > snipListIndex &&
-			snipList[snipListIndex].ply == len(board.History) {
-			// The snip list overrides the player
-			board.MakeMove(snipList[snipListIndex].spot)
-			snipListIndex++
-		} else if player1.Color() == board.GetToMove() {
-			MakeBestMove(player1, board, debug)
-		} else {
-			MakeBestMove(player2, board, debug)
-		}
-	}
-
-	if debug {
-		log.Printf("%s wins the playout", board.Winner.Name())
-	}
-	return board
+	game := NewQuickGame(player1, player2, debug)
+	game.SnipList = snipList
+	return game.Playout()
 }
