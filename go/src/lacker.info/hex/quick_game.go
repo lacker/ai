@@ -11,6 +11,12 @@ type QuickGame struct {
 	player1 QuickPlayer
 	player2 QuickPlayer
 	debug bool
+
+	// An optional override to control what the players do.
+	SnipList []Snip
+
+	// An optional registry to notify when moves are made.
+	Registry *SpotRegistry
 }
 
 func NewQuickGame(p1 QuickPlayer, p2 QuickPlayer, debug bool) *QuickGame {
@@ -19,4 +25,10 @@ func NewQuickGame(p1 QuickPlayer, p2 QuickPlayer, debug bool) *QuickGame {
 		player2: p2,
 		debug: debug,
 	}
+}
+
+// Plays out the game and returns the final board state.
+// You are only supposed to call Playout once per QuickGame.
+func (game *QuickGame) Playout() *TopoBoard {
+	panic("TODO")
 }
