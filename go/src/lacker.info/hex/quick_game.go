@@ -14,5 +14,9 @@ type QuickGame struct {
 }
 
 func NewQuickGame(p1 QuickPlayer, p2 QuickPlayer, debug bool) *QuickGame {
-	panic("TODO")
+	return &QuickGame{
+		player1: p1,
+		player2: p2,
+		debug: debug,
+	}
 }
