@@ -13,6 +13,9 @@ type QuickGame struct {
 	player2 QuickPlayer
 	debug bool
 
+	// The board to run the playout on
+	board *TopoBoard
+
 	// An optional override to control what the players do.
 	SnipList []Snip
 
@@ -29,11 +32,17 @@ func NewQuickGame(p1 QuickPlayer, p2 QuickPlayer, debug bool) *QuickGame {
 		log.Fatal("starting positions don't match")
 	}
 
-	return &QuickGame{
+	game := QuickGame{
 		player1: p1,
 		player2: p2,
 		debug: debug,
 	}
+
+	game.board = game.player1.StartingPosition().ToTopoBoard()
+	game.player1.Reset()
+	game.player2.Reset()
+
+	return &game
 }
 
 // A helper for playouts
@@ -53,31 +62,26 @@ func MakeBestMove(player QuickPlayer, board *TopoBoard, debug bool) {
 // Plays out the game and returns the final board state.
 // You are only supposed to call Playout once per QuickGame.
 func (game *QuickGame) Playout() *TopoBoard {
-	// Prepare for the game.
-	// Run the playout on a copy so that we don't alter the original
-	board := game.player1.StartingPosition().ToTopoBoard()
-	game.player1.Reset()
-	game.player2.Reset()
 	snipListIndex := 0
 
 	// Play the playout
-	for board.Winner == Empty {
+	for game.board.Winner == Empty {
 		if game.SnipList != nil && len(game.SnipList) > snipListIndex &&
-			game.SnipList[snipListIndex].ply == len(board.History) {
+			game.SnipList[snipListIndex].ply == len(game.board.History) {
 			// The snip list overrides the player
-			board.MakeMove(game.SnipList[snipListIndex].spot)
+			game.board.MakeMove(game.SnipList[snipListIndex].spot)
 			snipListIndex++
-		} else if game.player1.Color() == board.GetToMove() {
-			MakeBestMove(game.player1, board, game.debug)
+		} else if game.player1.Color() == game.board.GetToMove() {
+			MakeBestMove(game.player1, game.board, game.debug)
 		} else {
-			MakeBestMove(game.player2, board, game.debug)
+			MakeBestMove(game.player2, game.board, game.debug)
 		}
 	}
 
 	if game.debug {
-		log.Printf("%s wins the playout", board.Winner.Name())
+		log.Printf("%s wins the playout", game.board.Winner.Name())
 	}
-	return board
+	return game.board
 }
 
 // A helper for QuickGame.Playout
