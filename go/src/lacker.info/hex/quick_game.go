@@ -45,6 +45,14 @@ func NewQuickGame(p1 QuickPlayer, p2 QuickPlayer, debug bool) *QuickGame {
 	return &game
 }
 
+// Makes the provided move and signals on the registry
+func (game *QuickGame) MakeMove(spot TopoSpot) {
+	game.board.MakeMove(spot)
+	if game.Registry != nil {
+		game.Registry.Notify(spot)
+	}
+}
+
 // A helper for playouts
 // TODO: refactor to be a member function
 func MakeBestMove(player QuickPlayer, board *TopoBoard, debug bool) {
