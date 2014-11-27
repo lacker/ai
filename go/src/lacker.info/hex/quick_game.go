@@ -17,10 +17,10 @@ type QuickGame struct {
 	board *TopoBoard
 
 	// An optional override to control what the players do.
-	SnipList []Snip
+	snipList []Snip
 
 	// An optional registry to notify when moves are made.
-	Registry *SpotRegistry
+	registry *SpotRegistry
 }
 
 func NewQuickGame(p1 QuickPlayer, p2 QuickPlayer, debug bool) *QuickGame {
@@ -48,8 +48,8 @@ func NewQuickGame(p1 QuickPlayer, p2 QuickPlayer, debug bool) *QuickGame {
 // Makes the provided move and signals on the registry
 func (game *QuickGame) MakeMove(spot TopoSpot) {
 	game.board.MakeMove(spot)
-	if game.Registry != nil {
-		game.Registry.Notify(spot)
+	if game.registry != nil {
+		game.registry.Notify(spot)
 	}
 }
 
@@ -74,10 +74,10 @@ func (game *QuickGame) Playout() *TopoBoard {
 
 	// Play the playout
 	for game.board.Winner == Empty {
-		if game.SnipList != nil && len(game.SnipList) > snipListIndex &&
-			game.SnipList[snipListIndex].ply == len(game.board.History) {
+		if game.snipList != nil && len(game.snipList) > snipListIndex &&
+			game.snipList[snipListIndex].ply == len(game.board.History) {
 			// The snip list overrides the player
-			game.board.MakeMove(game.SnipList[snipListIndex].spot)
+			game.board.MakeMove(game.snipList[snipListIndex].spot)
 			snipListIndex++
 		} else if game.player1.Color() == game.board.GetToMove() {
 			MakeBestMove(game.player1, game.board, game.debug)
@@ -107,7 +107,7 @@ func PlayoutWithSnipList(
 	snipList []Snip, debug bool) *TopoBoard {
 
 	game := NewQuickGame(player1, player2, debug)
-	game.SnipList = snipList
+	game.snipList = snipList
 	return game.Playout()
 }
 
