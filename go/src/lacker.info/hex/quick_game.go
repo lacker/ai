@@ -53,15 +53,18 @@ func (game *QuickGame) MakeMove(spot TopoSpot) {
 	}
 }
 
-// A helper for playouts
-// TODO: refactor to be a member function
-func MakeBestMove(player QuickPlayer, board *TopoBoard, debug bool) {
-	if player.Color() != board.GetToMove() {
-		log.Fatal("not the right player's turn")
+// Makes the move that the current player would make
+func (game *QuickGame) MakeMoveForCurrentPlayer() {
+	var player QuickPlayer
+	if game.player1.Color() == game.board.GetToMove() {
+		player = game.player1
+	} else {
+		player = game.player2
 	}
-	spot, score := player.BestMove(board, debug)
-	board.MakeMove(spot)
-	if debug {
+
+	spot, score := player.BestMove(game.board, game.debug)
+	game.MakeMove(spot)
+	if game.debug {
 		log.Printf("%s moves %s with score %.2f",
 			player.Color().Name(), spot.String(), score)
 	}
@@ -77,12 +80,10 @@ func (game *QuickGame) Playout() *TopoBoard {
 		if game.snipList != nil && len(game.snipList) > snipListIndex &&
 			game.snipList[snipListIndex].ply == len(game.board.History) {
 			// The snip list overrides the player
-			game.board.MakeMove(game.snipList[snipListIndex].spot)
+			game.MakeMove(game.snipList[snipListIndex].spot)
 			snipListIndex++
-		} else if game.player1.Color() == game.board.GetToMove() {
-			MakeBestMove(game.player1, game.board, game.debug)
 		} else {
-			MakeBestMove(game.player2, game.board, game.debug)
+			game.MakeMoveForCurrentPlayer()
 		}
 	}
 
