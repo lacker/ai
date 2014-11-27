@@ -42,19 +42,3 @@ func MakeBestMove(player QuickPlayer, board *TopoBoard, debug bool) {
 	}
 }
 
-// Plays out a game and returns the final board state.
-func Playout(
-	player1 QuickPlayer, player2 QuickPlayer, debug bool) *TopoBoard {
-	return PlayoutWithSnipList(player1, player2, nil, debug)
-}
-
-// Plays out a game, overriding the players whenever mandated to by
-// the snip list. Returns the final board state.
-func PlayoutWithSnipList(
-	player1 QuickPlayer, player2 QuickPlayer,
-	snipList []Snip, debug bool) *TopoBoard {
-
-	game := NewQuickGame(player1, player2, debug)
-	game.SnipList = snipList
-	return game.Playout()
-}
