@@ -1,6 +1,7 @@
 package hex
 
 import (
+	"log"
 )
 
 // A QuickGame object keeps around all the details of a single playout.
@@ -20,6 +21,14 @@ type QuickGame struct {
 }
 
 func NewQuickGame(p1 QuickPlayer, p2 QuickPlayer, debug bool) *QuickGame {
+	if p1.Color() == p2.Color() {
+		log.Fatal("both players are the same color")
+	}
+
+	if p1.StartingPosition() != p2.StartingPosition() {
+		log.Fatal("starting positions don't match")
+	}
+
 	return &QuickGame{
 		player1: p1,
 		player2: p2,
@@ -30,5 +39,29 @@ func NewQuickGame(p1 QuickPlayer, p2 QuickPlayer, debug bool) *QuickGame {
 // Plays out the game and returns the final board state.
 // You are only supposed to call Playout once per QuickGame.
 func (game *QuickGame) Playout() *TopoBoard {
-	panic("TODO")
+	// Prepare for the game.
+	// Run the playout on a copy so that we don't alter the original
+	board := game.player1.StartingPosition().ToTopoBoard()
+	game.player1.Reset()
+	game.player2.Reset()
+	snipListIndex := 0
+
+	// Play the playout
+	for board.Winner == Empty {
+		if game.SnipList != nil && len(game.SnipList) > snipListIndex &&
+			game.SnipList[snipListIndex].ply == len(board.History) {
+			// The snip list overrides the player
+			board.MakeMove(game.SnipList[snipListIndex].spot)
+			snipListIndex++
+		} else if game.player1.Color() == board.GetToMove() {
+			MakeBestMove(game.player1, board, game.debug)
+		} else {
+			MakeBestMove(game.player2, board, game.debug)
+		}
+	}
+
+	if game.debug {
+		log.Printf("%s wins the playout", board.Winner.Name())
+	}
+	return board
 }
