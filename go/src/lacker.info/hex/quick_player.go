@@ -1,7 +1,6 @@
 package hex
 
 import (
-	"log"
 )
 
 // QuickPlayer is an interface for a hex player that is designed to
@@ -28,17 +27,5 @@ type QuickPlayer interface {
 
 	// Gets what color the player is
 	Color() Color
-}
-
-func MakeBestMove(player QuickPlayer, board *TopoBoard, debug bool) {
-	if player.Color() != board.GetToMove() {
-		log.Fatal("not the right player's turn")
-	}
-	spot, score := player.BestMove(board, debug)
-	board.MakeMove(spot)
-	if debug {
-		log.Printf("%s moves %s with score %.2f",
-			player.Color().Name(), spot.String(), score)
-	}
 }
 

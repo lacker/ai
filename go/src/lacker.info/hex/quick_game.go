@@ -36,6 +36,20 @@ func NewQuickGame(p1 QuickPlayer, p2 QuickPlayer, debug bool) *QuickGame {
 	}
 }
 
+// A helper for playouts
+// TODO: refactor to be a member function
+func MakeBestMove(player QuickPlayer, board *TopoBoard, debug bool) {
+	if player.Color() != board.GetToMove() {
+		log.Fatal("not the right player's turn")
+	}
+	spot, score := player.BestMove(board, debug)
+	board.MakeMove(spot)
+	if debug {
+		log.Printf("%s moves %s with score %.2f",
+			player.Color().Name(), spot.String(), score)
+	}
+}
+
 // Plays out the game and returns the final board state.
 // You are only supposed to call Playout once per QuickGame.
 func (game *QuickGame) Playout() *TopoBoard {
