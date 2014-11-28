@@ -29,3 +29,11 @@ type QuickPlayer interface {
 	Color() Color
 }
 
+// EvolvingPlayer is an interface for a QuickPlayer that the
+// MetaFarmer can train two opposing players on.
+
+type EvolvingPlayer interface {
+	QuickPlayer
+
+	EvolveToPlay(ending *TopoBoard, debug bool)
+}

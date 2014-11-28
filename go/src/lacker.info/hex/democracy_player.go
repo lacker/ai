@@ -171,6 +171,15 @@ func (demo *DemocracyPlayer) MergeForTheWin(
 	demo.NormalizeWeights()
 }
 
+// Given a game where this side wins, evolve this player until it
+// plays that game.
+func (demo *DemocracyPlayer) EvolveToPlay(ending *TopoBoard, debug bool) {
+	linear := NewLinearPlayerFromPlayout(demo.startingPosition,
+		demo.Color(), ending)
+	demo.MaybeSimplify(debug)
+	demo.MergeForTheWin(linear, ending.History, debug)
+}
+
 // Find the move that most of the players like.
 // Returns the best move, the weight on it, the array of weights, and
 // the total weight.

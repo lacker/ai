@@ -30,8 +30,8 @@ type MetaFarmer struct {
 	Quiet bool
 
 	// The players we are farming
-	whitePlayer *DemocracyPlayer
-	blackPlayer *DemocracyPlayer
+	whitePlayer EvolvingPlayer
+	blackPlayer EvolvingPlayer
 
 	// What you get when the white player and black player play each
 	// other
@@ -82,8 +82,8 @@ func (mf *MetaFarmer) PlayOneCycle(debug bool) {
 
 	// The plan is to evolve the player who loses the main line.
 	// Find who loses the main line
-	var evolver *DemocracyPlayer
-	var opponent *DemocracyPlayer
+	var evolver EvolvingPlayer
+	var opponent EvolvingPlayer
 	if mf.mainLine.Winner == White {
 		opponent = mf.whitePlayer
 		evolver = mf.blackPlayer
@@ -103,14 +103,7 @@ func (mf *MetaFarmer) PlayOneCycle(debug bool) {
 		return
 	}
 
-	var quick QuickPlayer
-	quick = NewLinearPlayerFromPlayout(evolver.startingPosition,
-		evolver.Color(), ending)
-
-	evolver.MaybeSimplify(debug)
-
-	// Merge the quickplayer into the evolver to evolve it
-	evolver.MergeForTheWin(quick, ending.History, debug)
+	evolver.EvolveToPlay(ending, debug)
 
 	// At this point, evolver should defeat the opponent with the game
 	// ending.History. If that isn't the case this algorithm will subtly
