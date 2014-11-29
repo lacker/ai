@@ -40,13 +40,21 @@ type MetaFarmer struct {
 	// other
 	mainLine *TopoBoard
 
+	// The type of quickplayer to use.
+	QuickType string
+
 	// Whether the game is solved
 	gameSolved bool
 }
 
 func (mf *MetaFarmer) init(b *TopoBoard) {
-	mf.whitePlayer = NewDemocracyPlayer(b, White)
-	mf.blackPlayer = NewDemocracyPlayer(b, Black)
+	switch mf.QuickType {
+	case "democracy":
+		mf.whitePlayer = NewDemocracyPlayer(b, White)
+		mf.blackPlayer = NewDemocracyPlayer(b, Black)
+	default:
+		log.Fatalf("invalid QuickType: %s", mf.QuickType)
+	}
 	mf.mainLine = Playout(mf.whitePlayer, mf.blackPlayer, false)
 }
 

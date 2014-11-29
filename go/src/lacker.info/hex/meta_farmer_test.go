@@ -7,13 +7,13 @@ import (
 
 func TestMetaFarmerInit(t *testing.T) {
 	board := NewTopoBoard()
-	mf := &MetaFarmer{Seconds:-1, Quiet:true}
+	mf := &MetaFarmer{Seconds:-1, Quiet:true, QuickType:"democracy"}
 	mf.init(board)
 }
 
 func TestMetaFarmerIntegration(t *testing.T) {
 	board := PuzzleMap["doomed1"].Board.ToTopoBoard()
-	mf := &MetaFarmer{Seconds:-1, Quiet:true}
+	mf := &MetaFarmer{Seconds:-1, Quiet:true, QuickType:"democracy"}
 	mf.init(board)
 	mf.PlayOneCycle(false)
 	mf.PlayOneCycle(false)
