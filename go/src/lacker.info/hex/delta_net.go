@@ -57,3 +57,8 @@ func (net *DeltaNet) BestMove(board *TopoBoard, debug bool) (TopoSpot,
 	}
 	return bestSpot, bestScore
 }
+
+// The learning function
+func (net *DeltaNet) EvolveToPlay(ending *TopoBoard, debug bool) {
+	panic("TODO")
+}
