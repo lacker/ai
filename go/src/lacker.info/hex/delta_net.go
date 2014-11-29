@@ -37,12 +37,17 @@ func NewDeltaNet(board *TopoBoard, color Color) *DeltaNet {
 }
 
 func (net *DeltaNet) Reset(game *QuickGame) {
+	net.ResetWithBoardAndRegistry(game.board, game.Registry())
+}
+
+func (net *DeltaNet) ResetWithBoardAndRegistry(board *TopoBoard,
+	registry *SpotRegistry) {
 	for i, _ := range net.spotPicker {
 		net.spotPicker[i] = net.defaultScores[i]
 	}
 
 	for _, neuron := range net.neurons {
-		neuron.ResetForBoard(game.board, &net.spotPicker, game.Registry())
+		neuron.ResetForBoard(board, &net.spotPicker, registry)
 	}
 }
 
@@ -92,6 +97,15 @@ func (net *DeltaNet) EvolveToPlay(ending *TopoBoard, debug bool) {
 		net.overrideSpot = NotASpot
 	}
 
-	// Do neuronal learning
+	// Do neuronal learning.
+	// The strategy is that we iterate through the game, and every time
+	// when we should do the right move, but we don't, we update some
+	// features.
+
+	board := net.startingPosition.ToTopoBoard()
+	registry := NewSpotRegistry()
+
+	net.ResetWithBoardAndRegistry(board, registry)
+
 	panic("TODO")
 }
