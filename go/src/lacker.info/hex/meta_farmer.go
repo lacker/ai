@@ -9,7 +9,7 @@ import (
 )
 
 /*
-The meta farmer keeps two opposing democracy players. It repeatedly
+The meta farmer keeps two opposing quickplayers. It repeatedly
 finds a way for the loser to slightly alter its ways to beat the
 winner, with the hope that this converges towards the ideal way to
 play.
@@ -18,11 +18,14 @@ One cycle is finding a quick player that can defeat the winner, and
 then merging this new quick player into the loser hard enough so that
 it now wins.
 
-The meta farmer:
+The meta farmer with democracy players:
 Solves doomed1, doomed2, doomed3
 Cannot solve doomed4, triangleBlock
 Moves correctly on ladder, manyBridges but does not totally solve
 Moves correctly on needle, simpleBlock
+
+The meta farmer with delta nets:
+TODO
 */
 
 type MetaFarmer struct {
