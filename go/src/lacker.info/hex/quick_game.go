@@ -32,17 +32,25 @@ func NewQuickGame(p1 QuickPlayer, p2 QuickPlayer, debug bool) *QuickGame {
 		log.Fatal("starting positions don't match")
 	}
 
-	game := QuickGame{
+	game := &QuickGame{
 		player1: p1,
 		player2: p2,
 		debug: debug,
 	}
 
 	game.board = game.player1.StartingPosition().ToTopoBoard()
-	game.player1.Reset()
-	game.player2.Reset()
+	game.player1.Reset(game)
+	game.player2.Reset(game)
 
-	return &game
+	return game
+}
+
+// Gets the registry, or creates it if it isn't made yet.
+func (game *QuickGame) Registry() *SpotRegistry {
+	if game.registry == nil {
+		game.registry = NewSpotRegistry()
+	}
+	return game.registry
 }
 
 // Makes the provided move and signals on the registry

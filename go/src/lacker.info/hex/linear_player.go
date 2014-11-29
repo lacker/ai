@@ -85,7 +85,7 @@ func (player *LinearPlayer) StartingPosition() *TopoBoard {
 }
 
 // Prepare for a new playout
-func (player *LinearPlayer) Reset() {
+func (player *LinearPlayer) Reset(game *QuickGame) {
 	player.index = 0
 }
 

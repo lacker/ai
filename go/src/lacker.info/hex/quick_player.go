@@ -7,8 +7,8 @@ import (
 // run playouts many times per move of a real game.
 
 type QuickPlayer interface {
-	// Resets to the starting board position
-	Reset()
+	// Resets to the starting board position for a new game
+	Reset(game *QuickGame)
 
 	// Gets what the starting position is
 	// Typically all quick players instantiated at the same point should

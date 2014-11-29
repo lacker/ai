@@ -128,7 +128,7 @@ func (demo *DemocracyPlayer) MergeForTheWin(
 	
 	// We are going to do a playout on a copy.
 	board := quick.StartingPosition().ToTopoBoard()
-	demo.Reset()
+	demo.Reset(nil)
 
 	// Play the playout
 	for board.Winner == Empty {
@@ -277,9 +277,9 @@ func (demo *DemocracyPlayer) DropLightestPlayer(debug bool) {
 }
 
 // Prepare for a new playout
-func (demo *DemocracyPlayer) Reset() {
+func (demo *DemocracyPlayer) Reset(game *QuickGame) {
 	for _, player := range demo.players {
-		player.Reset()
+		player.Reset(game)
 	}
 	demo.fallbackSpot = TopLeftCorner
 }

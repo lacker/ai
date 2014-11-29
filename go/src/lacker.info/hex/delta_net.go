@@ -25,7 +25,6 @@ type DeltaNet struct {
 	overrideSpot TopoSpot
 
 	spotPicker [NumTopoSpots]float64
-	registry *SpotRegistry
 }
 
 func NewDeltaNet(board *TopoBoard, color Color) *DeltaNet {
@@ -34,18 +33,16 @@ func NewDeltaNet(board *TopoBoard, color Color) *DeltaNet {
 		color: color,
 		neurons: make(map[BasicFeature]DeltaNeuron),
 		overrideSpot: NotASpot,
-		registry: NewSpotRegistry(),
 	}
 }
 
-func (net *DeltaNet) Reset() {
+func (net *DeltaNet) Reset(game *QuickGame) {
 	for i, _ := range net.spotPicker {
 		net.spotPicker[i] = net.defaultScores[i]
 	}
-	net.registry = NewSpotRegistry()
 
 	for _, neuron := range net.neurons {
-		neuron.ResetForBoard(net.startingPosition, &net.spotPicker, net.registry)
+		neuron.ResetForBoard(game.board, &net.spotPicker, game.Registry())
 	}
 }
 

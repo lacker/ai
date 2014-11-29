@@ -49,7 +49,7 @@ func NewGhostPlayer(b *TopoBoard, c Color, ending *TopoBoard) *GhostPlayer {
 		startingPosition: b,
 		color: c,
 	}
-	gp.Reset()
+	gp.Reset(nil)
 	return gp
 }
 
@@ -61,7 +61,7 @@ func (player *GhostPlayer) StartingPosition() *TopoBoard {
 	return player.startingPosition
 }
 
-func (player *GhostPlayer) Reset() {
+func (player *GhostPlayer) Reset(game *QuickGame) {
 	player.conformity = 1.0
 	player.index = 0
 }
