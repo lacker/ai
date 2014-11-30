@@ -128,6 +128,10 @@ func (net *DeltaNet) EvolveToPlay(ending *TopoBoard, debug bool) {
 			bestMove, bestScore := net.BestMove(board, debug)
 			if bestMove != nextMove {
 				// We do need to train.
+				missingWeight := bestScore - net.spotPicker[nextMove]
+				if missingWeight < 0 {
+					log.Fatal("negative missing weight")
+				}
 				log.Fatalf("TODO %f", bestScore)
 			}
 		}
