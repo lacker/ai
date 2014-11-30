@@ -10,7 +10,7 @@ type DeltaNet struct {
 	color Color
 
 	// This stores the neurons that just operate on a single basic feature
-	neurons map[BasicFeature]DeltaNeuron
+	neurons map[BasicFeature]*DeltaNeuron
 
 	// This stores the default scores for spots.
 	// This could be stored as a delta neuron with an empty input list,
@@ -31,7 +31,7 @@ func NewDeltaNet(board *TopoBoard, color Color) *DeltaNet {
 	return &DeltaNet{
 		startingPosition: board,
 		color: color,
-		neurons: make(map[BasicFeature]DeltaNeuron),
+		neurons: make(map[BasicFeature]*DeltaNeuron),
 		overrideSpot: NotASpot,
 	}
 }
@@ -42,7 +42,7 @@ func (net *DeltaNet) Reset(game *QuickGame) {
 
 func (net *DeltaNet) ResetWithBoardAndRegistry(board *TopoBoard,
 	registry *SpotRegistry) {
-	for i, _ := range net.spotPicker {
+	for i := range net.spotPicker {
 		net.spotPicker[i] = net.defaultScores[i]
 	}
 
@@ -60,6 +60,18 @@ func (net *DeltaNet) Debug() {
 
 func (net *DeltaNet) Color() Color {
 	return net.color
+}
+
+func (net *DeltaNet) GetNeuron(spot TopoSpot,
+	color Color) *DeltaNeuron {
+	feature := BasicFeature{Spot:spot, Color:color}
+	neuron, ok := net.neurons[feature]
+	if ok {
+		return neuron
+	}
+	neuron = NewDeltaNeuron([]BasicFeature{feature})
+	net.neurons[feature] = neuron
+	return neuron
 }
 
 func (net *DeltaNet) BestMove(board *TopoBoard, debug bool) (TopoSpot,

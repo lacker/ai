@@ -10,8 +10,6 @@ import (
 // inactive. If all of its input features are active, it becomes
 // active. If there's a conflicting feature so that it can never
 // become active, it deactivates.
-//
-// The creator of a DeltaNeuron should call Init on the neuron.
 type DeltaNeuron struct {
 	// Inputs that lead this neuron to be active.
 	// This persists across playouts.
@@ -42,10 +40,11 @@ type DeltaNeuron struct {
 	registry *SpotRegistry
 }
 
-// Initialize the neuron's state.
-func (dn *DeltaNeuron) Init(spot TopoSpot, color Color) {
-	dn.input = []BasicFeature{BasicFeature{Spot:spot, Color:color}}
-	dn.output = []ScoredSpot{}
+func NewDeltaNeuron(features []BasicFeature) *DeltaNeuron {
+	return &DeltaNeuron{
+		input: features,
+		output: []ScoredSpot{},
+	}
 }
 
 // See if we should become active.
