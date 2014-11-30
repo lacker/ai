@@ -107,5 +107,7 @@ func (net *DeltaNet) EvolveToPlay(ending *TopoBoard, debug bool) {
 
 	net.ResetWithBoardAndRegistry(board, registry)
 
-	panic("TODO")
+	for i := begin; i < end; i++ {
+		panic("TODO")
+	}
 }

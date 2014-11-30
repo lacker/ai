@@ -10,6 +10,8 @@ import (
 // inactive. If all of its input features are active, it becomes
 // active. If there's a conflicting feature so that it can never
 // become active, it deactivates.
+//
+// The creator of a DeltaNeuron should call Init on the neuron.
 type DeltaNeuron struct {
 	// Inputs that lead this neuron to be active.
 	// This persists across playouts.
@@ -38,6 +40,12 @@ type DeltaNeuron struct {
 	// The registry for moves.
 	// Specific to one playout.
 	registry *SpotRegistry
+}
+
+// Initialize the neuron's state.
+func (dn *DeltaNeuron) Init(spot TopoSpot, color Color) {
+	dn.input = []BasicFeature{BasicFeature{Spot:spot, Color:color}}
+	dn.output = []ScoredSpot{}
 }
 
 // See if we should become active.
@@ -84,4 +92,14 @@ func (dn *DeltaNeuron) ResetForBoard(board *TopoBoard,
 	dn.registry = registry
 
 	dn.ContinueActivation()
+}
+
+func (dn *DeltaNeuron) Bump(spot TopoSpot, score float64) {
+	for i, scoredSpot := range dn.output {
+		if scoredSpot.Spot == spot {
+			dn.output[i].Score += score
+			return
+		}
+	}
+	dn.output = append(dn.output, ScoredSpot{Spot:spot, Score:score})
 }
