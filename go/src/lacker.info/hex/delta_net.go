@@ -1,6 +1,7 @@
 package hex
 
 import (
+	"log"
 )
 
 // A delta net is a quickplayer that decides what to play by using a bunch
@@ -120,6 +121,21 @@ func (net *DeltaNet) EvolveToPlay(ending *TopoBoard, debug bool) {
 	net.ResetWithBoardAndRegistry(board, registry)
 
 	for i := begin; i < end; i++ {
-		panic("TODO")
+		nextMove := ending.History[i]
+
+		if board.GetToMove() == net.color {
+			// Check if we need to train.
+			bestMove, bestScore := net.BestMove(board, debug)
+			if bestMove != nextMove {
+				// We do need to train.
+				log.Fatalf("TODO %f", bestScore)
+			}
+		}
+		board.MakeMove(nextMove)
+		registry.Notify(nextMove)
+	}
+
+	if board.Winner != net.color {
+		log.Fatal("ended the game history but we didn't win")
 	}
 }
