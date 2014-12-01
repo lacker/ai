@@ -63,9 +63,7 @@ func (net *DeltaNet) Color() Color {
 	return net.color
 }
 
-func (net *DeltaNet) GetNeuron(spot TopoSpot,
-	color Color) *DeltaNeuron {
-	feature := BasicFeature{Spot:spot, Color:color}
+func (net *DeltaNet) GetNeuron(feature BasicFeature) *DeltaNeuron {
 	neuron, ok := net.neurons[feature]
 	if ok {
 		return neuron
@@ -132,7 +130,19 @@ func (net *DeltaNet) EvolveToPlay(ending *TopoBoard, debug bool) {
 				if missingWeight < 0 {
 					log.Fatal("negative missing weight")
 				}
-				log.Fatalf("TODO %f", bestScore)
+
+				// Find the neurons that are learnable here
+				learnable := []*DeltaNeuron{}
+				for lookback := 1; lookback <= 2; lookback++ {
+					index := i - lookback
+					if index < begin {
+						break
+					}
+					feature := ending.FeatureForHistoryIndex(index)
+					learnable = append(learnable, net.GetNeuron(feature))
+				}
+
+				log.Fatalf("TODO: actually use learnable. %f", bestScore)
 			}
 		}
 		board.MakeMove(nextMove)
