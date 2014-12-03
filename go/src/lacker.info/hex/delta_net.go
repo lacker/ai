@@ -142,6 +142,9 @@ func (net *DeltaNet) EvolveToPlay(ending *TopoBoard, debug bool) {
 					learnable = append(learnable, net.GetNeuron(feature))
 				}
 
+				if len(learnable) == 0 {
+					log.Fatal("no learnable neurons")
+				}
 				log.Fatalf("TODO: actually use learnable. %f", bestScore)
 			}
 		}
