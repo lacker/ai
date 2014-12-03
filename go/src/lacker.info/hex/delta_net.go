@@ -145,7 +145,11 @@ func (net *DeltaNet) EvolveToPlay(ending *TopoBoard, debug bool) {
 				if len(learnable) == 0 {
 					log.Fatal("no learnable neurons")
 				}
-				log.Fatalf("TODO: actually use learnable. %f", bestScore)
+
+				bumpSize := (1.0 + missingWeight) / float64(len(learnable))
+				for _, neuron := range learnable {
+					neuron.Bump(nextMove, bumpSize)
+				}
 			}
 		}
 		board.MakeMove(nextMove)
