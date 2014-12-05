@@ -65,6 +65,7 @@ func (dn *DeltaNeuron) ContinueActivation() {
 		case Empty:
 			// We need to keep listening for changes here
 			dn.registry.Listen(feature.Spot, dn)
+			return
 		case -feature.Color:
 			// Deactivate
 			return
