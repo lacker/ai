@@ -52,7 +52,7 @@ func (mf *MetaFarmer) init(b *TopoBoard) {
 	case "democracy":
 		mf.whitePlayer = NewDemocracyPlayer(b, White)
 		mf.blackPlayer = NewDemocracyPlayer(b, Black)
-	case "delta":
+	case "deltanet":
 		mf.whitePlayer = NewDeltaNet(b, White)
 		mf.blackPlayer = NewDeltaNet(b, Black)
 	default:

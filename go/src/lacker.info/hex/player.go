@@ -38,6 +38,8 @@ func GetPlayer(s string) Player {
 		return SpotSorter{Seconds:5, Quiet:false}
 	case "mf5":
 		return MetaFarmer{Seconds:5, Quiet:false, QuickType:"democracy"}
+	case "dn5":
+		return MetaFarmer{Seconds:5, Quiet:false, QuickType:"deltanet"}
 	default:
 		log.Fatalf("unknown player type: %s", s)
 		return nil
