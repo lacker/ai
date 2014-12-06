@@ -79,7 +79,7 @@ func (net *DeltaNet) GetNeuron(feature BasicFeature) *DeltaNeuron {
 
 func (net *DeltaNet) BestMove(board *TopoBoard, debug bool) (TopoSpot,
 	float64) {
-	if net.overrideSpot != NotASpot && board.Get(net.overrideSpot) != Empty {
+	if net.overrideSpot != NotASpot && board.Get(net.overrideSpot) == Empty {
 		return net.overrideSpot, 1337.0
 	}
 
@@ -140,7 +140,7 @@ func (net *DeltaNet) EvolveToPlay(ending *TopoBoard, debug bool) {
 	for i := begin; i < end; i++ {
 		nextMove := ending.History[i]
 
-		if board.GetToMove() == net.color {
+		if board.ColorForHistoryIndex(i) == net.color {
 			// Check if we need to train.
 			bestMove, bestScore := net.BestMove(board, debug)
 			if bestMove != nextMove {
