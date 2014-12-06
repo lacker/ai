@@ -117,6 +117,15 @@ func (mf *MetaFarmer) PlayOneCycle(debug bool) {
 		return
 	}
 
+	if debug {
+		log.Printf("New main line:")
+		for i := len(evolver.StartingPosition().History);
+		i < len(ending.History); i++ {
+			log.Printf("%v %d: %v", ending.ColorForHistoryIndex(i),
+				i, ending.History[i])
+		}
+	}
+
 	evolver.EvolveToPlay(ending, debug)
 
 	// At this point, evolver should defeat the opponent with the game
@@ -143,8 +152,10 @@ func (mf MetaFarmer) Play(b Board) (NaiveSpot, float64) {
 	if Debug {
 		keepPlaying := true
 
-		log.Printf("Initial position:\n")
+		log.Printf("Initial position:")
 		mf.StartingPosition().Debug()
+		log.Printf("Initial main line:")
+		mf.mainLine.Debug()
 
 		for keepPlaying {
 			// Read a debugger command

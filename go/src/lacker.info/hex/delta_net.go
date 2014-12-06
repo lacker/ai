@@ -57,9 +57,13 @@ func (net *DeltaNet) StartingPosition() *TopoBoard {
 }
 
 func (net *DeltaNet) Debug() {
+	// TODO: show default scores in some way
+	if net.overrideSpot != NotASpot {
+		log.Printf("override: %v", net.overrideSpot)
+	}
 	log.Printf("%d neurons:", len(net.neurons))
-	for feature, neuron := range net.neurons {
-		log.Printf("%s => %s", feature.String(), neuron.String())
+	for _, neuron := range net.neurons {
+		log.Printf("%v", neuron)
 	}
 }
 
@@ -110,7 +114,12 @@ func (net *DeltaNet) EvolveToPlay(ending *TopoBoard, debug bool) {
 
 	// Improve default scores
 	for i := begin; i < end; i++ {
-		net.defaultScores[ending.History[i]] += 1.0
+		spot := ending.History[i]
+		net.defaultScores[spot] += 1.0
+		if debug {
+			log.Printf("default score for %v := %.1f", spot,
+				net.defaultScores[spot])
+		}
 	}
 
 	// Set the override spot
@@ -140,9 +149,10 @@ func (net *DeltaNet) EvolveToPlay(ending *TopoBoard, debug bool) {
 	for i := begin; i < end; i++ {
 		nextMove := ending.History[i]
 
-		if board.ColorForHistoryIndex(i) == net.color {
+		if board.GetToMove() == net.color {
 			// Check if we need to train.
 			bestMove, bestScore := net.BestMove(board, debug)
+
 			if bestMove != nextMove {
 				// We do need to train.
 				if debug {
