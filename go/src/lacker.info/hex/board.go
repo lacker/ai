@@ -49,6 +49,10 @@ func (c Color) Name() string {
 	panic("bad color")
 }
 
+func (c Color) String() string {
+	return c.Name()
+}
+
 func PrintInfo() {
 	fmt.Printf("Playing hex on a size-%d board.\n", BoardSize)
 }
