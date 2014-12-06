@@ -430,15 +430,16 @@ func AssertHistoriesEqual(h1 []TopoSpot, h2 []TopoSpot) {
 	}
 }
 
-func (b *TopoBoard) FeatureForHistoryIndex(index int) BasicFeature {
-	var color Color
+func (b *TopoBoard) ColorForHistoryIndex(index int) Color {
 	if (len(b.History) - index) % 2 == 0 {
-		color = b.GetToMove()
-	} else {
-		color = -b.GetToMove()
+		return b.GetToMove()
 	}
+	return -b.GetToMove()
+}
+
+func (b *TopoBoard) FeatureForHistoryIndex(index int) BasicFeature {
 	return BasicFeature{
 		Spot: b.History[index],
-		Color: color,
+		Color: b.ColorForHistoryIndex(index),
 	}
 }
