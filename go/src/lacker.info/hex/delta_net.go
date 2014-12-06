@@ -57,6 +57,10 @@ func (net *DeltaNet) StartingPosition() *TopoBoard {
 }
 
 func (net *DeltaNet) Debug() {
+	log.Printf("Neurons:")
+	for feature, neuron := range net.neurons {
+		log.Printf("%s => %s", feature.String(), neuron.String())
+	}
 }
 
 func (net *DeltaNet) Color() Color {

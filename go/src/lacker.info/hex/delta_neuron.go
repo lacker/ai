@@ -1,6 +1,7 @@
 package hex
 
 import (
+	"fmt"
 	"log"
 )
 
@@ -102,4 +103,8 @@ func (dn *DeltaNeuron) Bump(spot TopoSpot, score float64) {
 		}
 	}
 	dn.output = append(dn.output, ScoredSpot{Spot:spot, Score:score})
+}
+
+func (dn *DeltaNeuron) String() string {
+	return fmt.Sprintf("[input:%v, output:%v]", dn.input, dn.output)
 }

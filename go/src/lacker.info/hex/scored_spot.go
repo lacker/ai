@@ -1,6 +1,7 @@
 package hex
 
 import (
+	"fmt"
 )
 
 /*
@@ -34,4 +35,8 @@ func (ss ScoredSpot) Row() int {
 
 func (ss ScoredSpot) Col() int {
 	return ss.Spot.NaiveSpot().Col()
+}
+
+func (ss ScoredSpot) String() string {
+	return fmt.Sprintf("%s=%.1f", ss.Spot.String(), ss.Score)
 }
