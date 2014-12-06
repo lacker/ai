@@ -82,10 +82,14 @@ func (net *DeltaNet) BestMove(board *TopoBoard, debug bool) (TopoSpot,
 	bestSpot := NotASpot
 	bestScore := -1000000.0
 	for spot := TopLeftCorner; spot <= BottomRightCorner; spot++ {
-		if net.spotPicker[spot] > bestScore && board.Get(spot) != Empty {
+		if net.spotPicker[spot] > bestScore && board.Get(spot) == Empty {
 			bestSpot = spot
 			bestScore = net.spotPicker[spot]
 		}
+	}
+	
+	if bestSpot == NotASpot {
+		log.Fatal("best spot should not be NotASpot")
 	}
 	return bestSpot, bestScore
 }
