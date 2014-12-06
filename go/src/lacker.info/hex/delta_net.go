@@ -57,7 +57,7 @@ func (net *DeltaNet) StartingPosition() *TopoBoard {
 }
 
 func (net *DeltaNet) Debug() {
-	log.Printf("Neurons:")
+	log.Printf("%d neurons:", len(net.neurons))
 	for feature, neuron := range net.neurons {
 		log.Printf("%s => %s", feature.String(), neuron.String())
 	}
@@ -100,6 +100,10 @@ func (net *DeltaNet) BestMove(board *TopoBoard, debug bool) (TopoSpot,
 
 // The learning function
 func (net *DeltaNet) EvolveToPlay(ending *TopoBoard, debug bool) {
+	if debug {
+		log.Printf("evolving %s DeltaNet", net.Color().Name())
+	}
+
 	// The range of moves we'll be scanning over
 	begin := len(net.startingPosition.History)
 	end := len(ending.History)
@@ -111,7 +115,14 @@ func (net *DeltaNet) EvolveToPlay(ending *TopoBoard, debug bool) {
 
 	// Set the override spot
 	if net.startingPosition.GetToMove() == net.color {
-		net.overrideSpot = ending.History[begin]
+		newOverrideSpot := ending.History[begin]
+		if net.overrideSpot != newOverrideSpot {
+			if debug {
+				log.Printf("changing override spot: %v -> %v",
+					net.overrideSpot, newOverrideSpot)
+			}
+			net.overrideSpot = newOverrideSpot
+		}
 	} else {
 		net.overrideSpot = NotASpot
 	}
@@ -156,6 +167,10 @@ func (net *DeltaNet) EvolveToPlay(ending *TopoBoard, debug bool) {
 
 				bumpSize := (1.0 + missingWeight) / float64(len(learnable))
 				for _, neuron := range learnable {
+					if debug {
+						log.Printf("bumping %v => %v by %.1f",
+							neuron, nextMove, bumpSize)
+					}
 					neuron.Bump(nextMove, bumpSize)
 				}
 			}

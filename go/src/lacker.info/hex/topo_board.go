@@ -90,6 +90,9 @@ func (s TopoSpot) Col() int {
 }
 
 func (s TopoSpot) String() string {
+	if s == NotASpot {
+		return "NotASpot"
+	}
 	return fmt.Sprintf("(%d, %d)", s.Row(), s.Col())
 }
 
