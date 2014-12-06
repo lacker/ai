@@ -16,6 +16,7 @@ type DeltaNet struct {
 	// This stores the default scores for spots.
 	// This could be stored as a delta neuron with an empty input list,
 	// but this seems simpler.
+	// This should cap out at 10 for each spot.
 	defaultScores [NumTopoSpots]float64
 
 	// Always move to this spot if it's available.
@@ -113,6 +114,9 @@ func (net *DeltaNet) EvolveToPlay(ending *TopoBoard, debug bool) {
 	end := len(ending.History)
 
 	// Improve default scores
+	for spot := range net.defaultScores {
+		net.defaultScores[spot] *= 0.9
+	}
 	for i := begin; i < end; i++ {
 		spot := ending.History[i]
 		net.defaultScores[spot] += 1.0
