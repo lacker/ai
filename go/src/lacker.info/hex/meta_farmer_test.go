@@ -32,3 +32,14 @@ func TestMetaFarmerIntegration(t *testing.T) {
 		log.Fatal("main line got corrupted")
 	}
 }
+
+func BenchmarkDeltaNetDoomed3(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		player := GetPlayer("dn5")
+		puzzle := GetPuzzle("doomed3")
+		_, conf := player.Play(puzzle.Board)
+		if conf != 0.0 {
+			log.Fatal("the player doesn't even realize doomed3 is doomed")
+		}
+	}
+}
