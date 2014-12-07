@@ -45,6 +45,9 @@ type MetaFarmer struct {
 
 	// Whether the game is solved
 	gameSolved bool
+
+	// The number of evolution cycles that have run
+	cycles int
 }
 
 func (mf *MetaFarmer) init(b *TopoBoard) {
@@ -64,7 +67,7 @@ func (mf *MetaFarmer) init(b *TopoBoard) {
 func (mf *MetaFarmer) Debug() {
 	mf.whitePlayer.Debug()
 	mf.blackPlayer.Debug()
-	log.Printf("Main line:\n")
+	log.Printf("%d cycles have been played. Main line:", mf.cycles)
 	mf.mainLine.Debug()
 }
 
@@ -88,6 +91,7 @@ func (mf *MetaFarmer) WinProbability() float64 {
 }
 
 func (mf *MetaFarmer) PlayOneCycle(debug bool) {
+	mf.cycles++
 	if mf.gameSolved {
 		if debug {
 			log.Printf("The game is solved but we can try anyway.")
@@ -179,7 +183,9 @@ func (mf MetaFarmer) Play(b Board) (NaiveSpot, float64) {
 				// Print overall status
 				mf.Debug()
 			case "1":
+				start := time.Now()
 				mf.PlayOneCycle(true)
+				log.Printf("one cycle took %.2f seconds", SecondsSince(start))
 			case "10", "100", "1000", "10000", "100000", "1000000":
 				// Run many cycles
 				numCycles, err := strconv.ParseInt(command, 10, 32)

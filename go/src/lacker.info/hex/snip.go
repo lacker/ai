@@ -237,6 +237,7 @@ func FindWinningSnipList(
 	// Every viable ply is at least beginPly a la STL iterators
 	beginPly := len(player.StartingPosition().History)
 
+	attempts := 0
 	for {
 		// The current snip list failed to defeat the opponent.
 
@@ -282,12 +283,13 @@ func FindWinningSnipList(
 		current = frontier[0]
 		frontier = frontier[1:]
 		ending = PlayoutWithSnipList(player, opponent, current, false)
+		attempts++
 
 		if ending.Winner == player.Color() {
 			// This snip list made player win!
 			if debug {
-				log.Printf("%s wins with snip list: %+v",
-					player.Color().Name(), current)
+				log.Printf("after %d attempts, %s wins with snip list: %+v",
+					attempts, player.Color().Name(), current)
 				ending.Debug()
 			}
 			return current, ending
