@@ -20,7 +20,7 @@ type Snip struct {
 	// The ply is how far deep in the game to apply this snip with.
 	// 0 = the first move in the game
 	// 1 = the second player's first move
-	// 2 = th first player's second move
+	// 2 = the first player's second move
 	// This is also an index into History. After playing a game with
 	// this snip, checking the plyth element of History should reflect
 	// this snip.
