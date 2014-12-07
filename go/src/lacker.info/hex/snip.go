@@ -33,6 +33,12 @@ func (s Snip) String() string {
 	return fmt.Sprintf("%d => %s", s.ply, s.spot)
 }
 
+func FindWinningSnipListRecursive(
+	player QuickPlayer, opponent QuickPlayer,
+	startingSnipList []Snip, startingLine *TopoBoard) ([]Snip, *TopoBoard) {
+	panic("TODO")
+}
+
 // Finds a list of Snips in chronological order that will let player
 // beat opponent, using breadth-first search.
 // player and opponent both need to be deterministic for this to work.
