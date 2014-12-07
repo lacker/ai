@@ -33,10 +33,66 @@ func (s Snip) String() string {
 	return fmt.Sprintf("%d => %s", s.ply, s.spot)
 }
 
-func FindWinningSnipListRecursive(
-	player QuickPlayer, opponent QuickPlayer,
-	startingSnipList []Snip, startingLine *TopoBoard) ([]Snip, *TopoBoard) {
-	panic("TODO")
+// Figures out if it's possible to win from a given position.
+// The position is defined by the snip list to get here, plus the
+// index of the move we are considering alternatives for.
+// For convenience we also have a playout for this position.
+// If we find a win, returns the snip list and topo board that
+// correspond to the win.
+// If we do not find a win, returns a count of the number of times
+// each spot is used to defeat us.
+// This does a depth-first search so that it can be implemented
+// recursively.
+func FindWinFromPosition(
+	player QuickPlayer, opponent QuickPlayer, playout *TopoBoard,
+	snipList []Snip, moveIndex int) (
+		[]Snip, *TopoBoard, [NumTopoSpots]int) {
+	// Base case: if the game is already over at moveIndex, then there's
+	// no win from this position.
+	if moveIndex >= len(playout.History) {
+		var allZero [NumTopoSpots]int
+		return nil, nil, allZero
+	}
+
+	// See if we can solve this game by first playing what player
+	// recommends.
+	answer1, answer2, defeatCount := FindWinFromPosition(
+		player, opponent, playout, snipList, moveIndex + 2)
+	if answer1 != nil {
+		// Found a win
+		return answer1, answer2, defeatCount
+	}
+
+	// To make defeatCount correct for this node, we have to add in the
+	// move that was used to immediately respond to our default move.
+	defeatCount[playout.History[moveIndex + 1]]++
+
+	// We will recurse with different alternatives for this move.
+	// So, keep track of which positions we recursively try.
+	// So far, we have only tried the default move.
+	var tried [NumTopoSpots]bool
+	tried[playout.History[moveIndex]] = true
+
+	for {
+		// Find an alternative move for this spot.
+		// Pick the highest defeatCount move that we haven't tried yet.
+		bestSpot, bestCount := NotASpot, 0
+		for spot := TopLeftCorner; spot <= BottomRightCorner; spot++ {
+			count := defeatCount[spot]
+			if !tried[spot] && count > bestCount {
+				bestSpot = spot
+				bestCount = count
+			}
+		}
+
+		if bestSpot == NotASpot {
+			// There are no spots left to be tried.
+			return nil, nil, defeatCount
+		}
+		
+		// Try snipping to bestSpot.
+		panic("TODO: try snipping to bestSpot at moveIndex")
+	}
 }
 
 // Finds a list of Snips in chronological order that will let player
