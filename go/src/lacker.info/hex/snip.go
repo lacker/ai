@@ -101,7 +101,25 @@ func FindWinFromPosition(
 			return newSnipList, newPlayout, defeatCount
 		}
 
-		panic("TODO: what now after snipping to bestSpot at moveIndex?")
+		// Try recursing on this new snip list.
+		answer1, answer2, newDefeatCount := FindWinFromPosition(
+			player, opponent, newPlayout, newSnipList, moveIndex + 1)
+
+		// Add in the defeats to make defeatCount correct.
+		for spot := TopLeftCorner; spot <= BottomRightCorner; spot++ {
+			defeatCount[spot] += newDefeatCount[spot]
+		}
+		// We also need the move that was used to immediately respond to
+		// our default move.
+		defeatCount[newPlayout.History[moveIndex + 1]]++
+
+		if answer1 != nil {
+			// Found a win
+			return answer1, answer2, defeatCount
+		}
+
+		// There's no win with this snip, so continue through the loop to
+		// look again.
 	}
 }
 
