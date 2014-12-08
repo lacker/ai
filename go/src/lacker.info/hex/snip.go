@@ -39,8 +39,8 @@ func (s Snip) String() string {
 // For convenience we also have a playout for this position.
 // If we find a win, returns the snip list and topo board that
 // correspond to the win.
-// If we do not find a win, returns a count of the number of times
-// each spot is used to defeat us.
+// This always returns a count of the number of times each spot was
+// used to defeat us in the search rooted at this position.
 // This does a depth-first search so that it can be implemented
 // recursively.
 func FindWinFromPosition(
@@ -90,8 +90,18 @@ func FindWinFromPosition(
 			return nil, nil, defeatCount
 		}
 		
-		// Try snipping to bestSpot.
-		panic("TODO: try snipping to bestSpot at moveIndex")
+		// Try snipping to bestSpot at moveIndex.
+		newSnipList := append(snipList,
+			Snip{ply:moveIndex, spot:bestSpot})
+		newPlayout := PlayoutWithSnipList(player, opponent, newSnipList,
+			false)
+		tried[bestSpot] = true
+		if newPlayout.Winner == player.Color() {
+			// Found a win
+			return newSnipList, newPlayout, defeatCount
+		}
+
+		panic("TODO: what now after snipping to bestSpot at moveIndex?")
 	}
 }
 
