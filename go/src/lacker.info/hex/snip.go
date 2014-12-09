@@ -128,13 +128,15 @@ func FindWinFromPosition(
 // player and opponent both need to be deterministic for this to work.
 // mainLine should be a board showing the position where player lost
 // to opponent.
+// snipLimit is the maximum length of snip list to search for, or 0
+// for no limit.
 // One critical problem with this function is that it might miss an
 // existing solution.
 // If it's impossible to find a winning snip list, this returns nils.
 // Returns the winning snip list along with the ending position.
 func FindWinningSnipList(
 	player QuickPlayer, opponent QuickPlayer, mainLine *TopoBoard,
-	debug bool) ([]Snip, *TopoBoard) {
+	snipLimit int, debug bool) ([]Snip, *TopoBoard) {
 
 	// Sanity checks
 	if player.Color() == opponent.Color() {
@@ -164,35 +166,38 @@ func FindWinningSnipList(
 	for {
 		// The current snip list failed to defeat the opponent.
 
-		// We want to add new snip lists to the frontier.
-		// We use the heuristic that the only reasonable snips are the moves
-		// that the opponent plays in a game after the snip point.
-		// We use breadth-first search on top of this heuristic.
-		// A more nuanced heuristic might be better.
+		if snipLimit == 0 || snipLimit > len(current) {
+			// We want to add new snip lists to the frontier.
 
-		// Figure out the first ply to consider a snip at.
-		// Snips must be in order in the snip list, so we can start at the
-		// previous one.
-		var startPly int
-		if len(current) == 0 {
-			// There are no snips in current, so the first ply to consider a
-			// snip at is the player's first move after the starting
-			// position.
-			if player.StartingPosition().GetToMove() == player.Color() {
-				startPly = beginPly
+			// We use the heuristic that the only reasonable snips are the moves
+			// that the opponent plays in a game after the snip point.
+			// We use breadth-first search on top of this heuristic.
+			// A more nuanced heuristic might be better.
+
+			// Figure out the first ply to consider a snip at.
+			// Snips must be in order in the snip list, so we can start at the
+			// previous one.
+			var startPly int
+			if len(current) == 0 {
+				// There are no snips in current, so the first ply to consider a
+				// snip at is the player's first move after the starting
+				// position.
+				if player.StartingPosition().GetToMove() == player.Color() {
+					startPly = beginPly
+				} else {
+					startPly = beginPly + 1
+				}
 			} else {
-				startPly = beginPly + 1
+				startPly = current[len(current) - 1].ply + 2
 			}
-		} else {
-			startPly = current[len(current) - 1].ply + 2
-		}
 
-		// Figure out which ply to snip at
-		for snipPly := startPly; snipPly < len(ending.History); snipPly += 2 {
-			// Figure out which move to insert
-			for oppoPly := snipPly + 1; oppoPly < len(ending.History); oppoPly += 2 {
-				snip := Snip{ply: snipPly, spot: ending.History[oppoPly]}
-				frontier = append(frontier, append(current, snip))
+			// Figure out which ply to snip at
+			for snipPly := startPly; snipPly < len(ending.History); snipPly += 2 {
+				// Figure out which move to insert
+				for oppoPly := snipPly + 1; oppoPly < len(ending.History); oppoPly += 2 {
+					snip := Snip{ply: snipPly, spot: ending.History[oppoPly]}
+					frontier = append(frontier, append(current, snip))
+				}
 			}
 		}
 

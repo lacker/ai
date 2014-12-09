@@ -26,7 +26,7 @@ func TestFindWinningSnipList(t *testing.T) {
 		log.Fatal("expected 10, 1 to be empty")
 	}
 
-	snipList, ending := FindWinningSnipList(white, black, mainLine, false)
+	snipList, ending := FindWinningSnipList(white, black, mainLine, 0, false)
 	if len(snipList) != 1 || snipList[0].String() != "1 => (10, 0)" {
 		log.Fatal("unexpected snip list")
 	}
@@ -58,7 +58,7 @@ func TestSolvingDoubleBridgeViaSnipList(t *testing.T) {
 		log.Fatal("expected White to defend the bridges")
 	}
 	
-	snipList, _ := FindWinningSnipList(black, white, mainLine, false)
+	snipList, _ := FindWinningSnipList(black, white, mainLine, 0, false)
 	if len(snipList) != 2 {
 		log.Fatal("expected two snips for a bridge")
 	}
