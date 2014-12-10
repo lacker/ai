@@ -112,7 +112,7 @@ func (mf *MetaFarmer) PlayOneCycle(debug bool) {
 
 	// Create a miniplayer that beats the opponent
 	var ending *TopoBoard
-	_, ending = FindWinningSnipList(evolver, opponent, mf.mainLine, 0, debug)
+	ending = evolver.FindNewMainLine(opponent, mf.mainLine, debug)
 	if ending == nil {
 		if debug {
 			log.Printf("It's over. %s is unbeatable.\n", opponent.Color().Name())

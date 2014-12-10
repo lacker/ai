@@ -201,3 +201,9 @@ func (net *DeltaNet) EvolveToPlay(ending *TopoBoard, debug bool) {
 		log.Fatal("ended the game history but we didn't win")
 	}
 }
+
+// Finds a game that evolves from this one
+func (net *DeltaNet) FindNewMainLine(opponent EvolvingPlayer,
+	oldMainLine *TopoBoard, debug bool) *TopoBoard {
+	panic("TODO")
+}

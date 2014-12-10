@@ -39,6 +39,13 @@ func (demo *DemocracyPlayer) StartingPosition() *TopoBoard {
 	return demo.startingPosition
 }
 
+func (demo *DemocracyPlayer) FindNewMainLine(opponent EvolvingPlayer,
+	oldMainLine *TopoBoard, debug bool) *TopoBoard {
+	_, ending := FindWinningSnipList(demo, opponent, oldMainLine, 0,
+		debug)
+	return ending
+}
+
 func (demo *DemocracyPlayer) Add(quick QuickPlayer) {
 	demo.AddWithWeight(quick, 1.0)
 }
