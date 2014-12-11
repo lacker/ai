@@ -205,5 +205,19 @@ func (net *DeltaNet) EvolveToPlay(ending *TopoBoard, debug bool) {
 // Finds a game that evolves from this one
 func (net *DeltaNet) FindNewMainLine(opponent EvolvingPlayer,
 	oldMainLine *TopoBoard, debug bool) *TopoBoard {
-	panic("TODO")
+	// Check if there is a single snip that works
+	snipList, ending := FindWinningSnipList(
+		net, opponent, oldMainLine, 1, debug)
+	if snipList != nil {
+		return ending
+	}
+
+	// Fall back to exhaustive
+	if debug {
+		log.Printf("No single-snip solution found.")
+	}
+	
+	snipList, ending, _ = FindWinFromPosition(
+		net, opponent, oldMainLine, []Snip{}, len(oldMainLine.History))
+	return ending
 }
