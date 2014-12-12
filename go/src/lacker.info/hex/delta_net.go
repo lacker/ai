@@ -62,7 +62,7 @@ func (net *DeltaNet) Debug() {
 	if net.overrideSpot != NotASpot {
 		log.Printf("override: %v", net.overrideSpot)
 	}
-	log.Printf("%d neurons:", len(net.neurons))
+	log.Printf("%s has %d neurons:", net.color, len(net.neurons))
 	for _, neuron := range net.neurons {
 		log.Printf("%v", neuron)
 	}
@@ -217,7 +217,14 @@ func (net *DeltaNet) FindNewMainLine(opponent EvolvingPlayer,
 		log.Printf("No single-snip solution found.")
 	}
 	
+	// Figure out what is the first index we play at
+	moveIndex := len(net.startingPosition.History)
+	if net.startingPosition.ColorForHistoryIndex(moveIndex) != net.Color() {
+		moveIndex++
+	}
+
 	snipList, ending, _ = FindWinFromPosition(
-		net, opponent, oldMainLine, []Snip{}, len(oldMainLine.History))
+		net, opponent, oldMainLine, []Snip{},
+		len(net.startingPosition.History))
 	return ending
 }

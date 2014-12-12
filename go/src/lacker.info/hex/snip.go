@@ -36,7 +36,9 @@ func (s Snip) String() string {
 // Figures out if it's possible to win from a given position.
 // The position is defined by the snip list to get here, plus the
 // index of the move we are considering alternatives for.
+// moveIndex should always be player's turn.
 // For convenience we also have a playout for this position.
+//
 // If we find a win, returns the snip list and topo board that
 // correspond to the win.
 // This always returns a count of the number of times each spot was
@@ -47,6 +49,10 @@ func FindWinFromPosition(
 	player QuickPlayer, opponent QuickPlayer, playout *TopoBoard,
 	snipList []Snip, moveIndex int) (
 		[]Snip, *TopoBoard, [NumTopoSpots]int) {
+	if playout.ColorForHistoryIndex(moveIndex) != player.Color() {
+		log.Fatal("moveIndex should always be player's move")
+	}
+
 	// Base case: if the game is already over at moveIndex, then there's
 	// no win from this position.
 	if moveIndex >= len(playout.History) {
