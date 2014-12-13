@@ -11,7 +11,7 @@ func TestMetaFarmerInit(t *testing.T) {
 	mf.init(board)
 }
 
-func TestMetaFarmerIntegration(t *testing.T) {
+func TestMetaFarmerWithDemocracyOnDoomed1(t *testing.T) {
 	board := PuzzleMap["doomed1"].Board.ToTopoBoard()
 	mf := &MetaFarmer{Seconds:-1, Quiet:true, QuickType:"democracy"}
 	mf.init(board)
@@ -31,6 +31,15 @@ func TestMetaFarmerIntegration(t *testing.T) {
 		realMainLine.Debug()
 		log.Fatal("main line got corrupted")
 	}
+}
+
+func TestMetaFarmerWithDeltaNetOnDoomed3(t *testing.T) {
+	board := PuzzleMap["doomed3"].Board.ToTopoBoard()
+	mf := &MetaFarmer{Seconds:-1, Quiet:true, QuickType:"deltanet"}
+	mf.init(board)
+	mf.PlayOneCycle(false)
+	mf.PlayOneCycle(false)
+	mf.PlayOneCycle(true)
 }
 
 func BenchmarkDeltaNetDoomed3(b *testing.B) {

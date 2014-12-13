@@ -224,7 +224,6 @@ func (net *DeltaNet) FindNewMainLine(opponent EvolvingPlayer,
 	}
 
 	snipList, ending, _ = FindWinFromPosition(
-		net, opponent, oldMainLine, []Snip{},
-		len(net.startingPosition.History))
+		net, opponent, oldMainLine, []Snip{}, moveIndex)
 	return ending
 }

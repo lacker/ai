@@ -50,7 +50,8 @@ func FindWinFromPosition(
 	snipList []Snip, moveIndex int) (
 		[]Snip, *TopoBoard, [NumTopoSpots]int) {
 	if playout.ColorForHistoryIndex(moveIndex) != player.Color() {
-		log.Fatal("moveIndex should always be player's move")
+		log.Fatalf("moveIndex (%d) should always be player's (%s's) move",
+			moveIndex, player.Color())
 	}
 
 	// Base case: if the game is already over at moveIndex, then there's
