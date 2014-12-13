@@ -39,7 +39,7 @@ func TestMetaFarmerWithDeltaNetOnDoomed3(t *testing.T) {
 	mf.init(board)
 	mf.PlayOneCycle(false)
 	mf.PlayOneCycle(false)
-	mf.PlayOneCycle(true)
+	mf.PlayOneCycle(false)
 }
 
 func BenchmarkDeltaNetDoomed3(b *testing.B) {

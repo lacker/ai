@@ -49,6 +49,8 @@ func FindWinFromPosition(
 	player QuickPlayer, opponent QuickPlayer, playout *TopoBoard,
 	snipList []Snip, moveIndex int) (
 		[]Snip, *TopoBoard, [NumTopoSpots]int) {
+	// log.Printf("FWFP(%s, %v, %d)", player.Color(), snipList, moveIndex)
+
 	if playout.ColorForHistoryIndex(moveIndex) != player.Color() {
 		log.Fatalf("moveIndex (%d) should always be player's (%s's) move",
 			moveIndex, player.Color())
@@ -110,7 +112,7 @@ func FindWinFromPosition(
 
 		// Try recursing on this new snip list.
 		answer1, answer2, newDefeatCount := FindWinFromPosition(
-			player, opponent, newPlayout, newSnipList, moveIndex + 1)
+			player, opponent, newPlayout, newSnipList, moveIndex + 2)
 
 		// Add in the defeats to make defeatCount correct.
 		for spot := TopLeftCorner; spot <= BottomRightCorner; spot++ {
