@@ -68,6 +68,9 @@ func (mf *MetaFarmer) Debug() {
 	mf.whitePlayer.Debug()
 	mf.blackPlayer.Debug()
 	log.Printf("%d cycles have been played. Main line:", mf.cycles)
+	for i, spot := range mf.mainLine.History {
+		log.Printf("%s: %v", mf.mainLine.ColorForHistoryIndex(i), spot)
+	}
 	mf.mainLine.Debug()
 }
 
