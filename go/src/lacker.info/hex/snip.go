@@ -38,17 +38,19 @@ func (s Snip) String() string {
 // index of the move we are considering alternatives for.
 // moveIndex should always be player's turn.
 // For convenience we also have a playout for this position.
+// limit controls the maximum number of playouts this runs.
 //
 // If we find a win, returns the snip list and topo board that
 // correspond to the win.
 // This always returns a count of the number of times each spot was
 // used to defeat us in the search rooted at this position.
+// This also returns the count of searches that happened, total.
 // This does a depth-first search so that it can be implemented
 // recursively.
 func FindWinFromPosition(
 	player QuickPlayer, opponent QuickPlayer, playout *TopoBoard,
-	snipList []Snip, moveIndex int) (
-		[]Snip, *TopoBoard, [NumTopoSpots]int) {
+	snipList []Snip, moveIndex int, limit int) (
+		[]Snip, *TopoBoard, [NumTopoSpots]int, int) {
 	// log.Printf("FWFP(%s, %v, %d)", player.Color(), snipList, moveIndex)
 
 	if playout.ColorForHistoryIndex(moveIndex) != player.Color() {
@@ -60,16 +62,20 @@ func FindWinFromPosition(
 	// no win from this position.
 	if moveIndex >= len(playout.History) {
 		var allZero [NumTopoSpots]int
-		return nil, nil, allZero
+		return nil, nil, allZero, 0
 	}
 
 	// See if we can solve this game by first playing what player
 	// recommends.
-	answer1, answer2, defeatCount := FindWinFromPosition(
-		player, opponent, playout, snipList, moveIndex + 2)
+	answer1, answer2, defeatCount, numPlayouts := FindWinFromPosition(
+		player, opponent, playout, snipList, moveIndex + 2, limit)
 	if answer1 != nil {
 		// Found a win
-		return answer1, answer2, defeatCount
+		return answer1, answer2, defeatCount, numPlayouts
+	}
+	if numPlayouts >= limit {
+		// Ran into the limit
+		return nil, nil, defeatCount, numPlayouts
 	}
 
 	// To make defeatCount correct for this node, we have to add in the
@@ -96,7 +102,7 @@ func FindWinFromPosition(
 
 		if bestSpot == NotASpot {
 			// There are no spots left to be tried.
-			return nil, nil, defeatCount
+			return nil, nil, defeatCount, numPlayouts
 		}
 		
 		// Try snipping to bestSpot at moveIndex.
@@ -104,15 +110,21 @@ func FindWinFromPosition(
 			Snip{ply:moveIndex, spot:bestSpot})
 		newPlayout := PlayoutWithSnipList(player, opponent, newSnipList,
 			false)
+		numPlayouts++
 		tried[bestSpot] = true
 		if newPlayout.Winner == player.Color() {
 			// Found a win
-			return newSnipList, newPlayout, defeatCount
+			return newSnipList, newPlayout, defeatCount, numPlayouts
+		}
+		if numPlayouts >= limit {
+			// Ran into the limit
+			return nil, nil, defeatCount, numPlayouts
 		}
 
 		// Try recursing on this new snip list.
-		answer1, answer2, newDefeatCount := FindWinFromPosition(
-			player, opponent, newPlayout, newSnipList, moveIndex + 2)
+		answer1, answer2, newDefeatCount, newNumPlayouts := FindWinFromPosition(
+			player, opponent, newPlayout, newSnipList, moveIndex + 2,
+			limit - numPlayouts)
 
 		// Add in the defeats to make defeatCount correct.
 		for spot := TopLeftCorner; spot <= BottomRightCorner; spot++ {
@@ -122,9 +134,15 @@ func FindWinFromPosition(
 		// our default move.
 		defeatCount[newPlayout.History[moveIndex + 1]]++
 
+		numPlayouts += newNumPlayouts
+
 		if answer1 != nil {
 			// Found a win
-			return answer1, answer2, defeatCount
+			return answer1, answer2, defeatCount, numPlayouts
+		}
+		if numPlayouts >= limit {
+			// Ran into the limit
+			return nil, nil, defeatCount, numPlayouts
 		}
 
 		// There's no win with this snip, so continue through the loop to

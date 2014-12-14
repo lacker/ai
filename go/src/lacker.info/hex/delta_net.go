@@ -223,7 +223,10 @@ func (net *DeltaNet) FindNewMainLine(opponent EvolvingPlayer,
 		moveIndex++
 	}
 
-	snipList, ending, _ = FindWinFromPosition(
-		net, opponent, oldMainLine, []Snip{}, moveIndex)
+	snipList, ending, _, numPlayouts := FindWinFromPosition(
+		net, opponent, oldMainLine, []Snip{}, moveIndex, 10000)
+	if debug {
+		log.Printf("ran %d recursive playouts", numPlayouts)
+	}
 	return ending
 }
