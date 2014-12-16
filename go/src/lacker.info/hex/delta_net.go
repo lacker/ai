@@ -120,7 +120,7 @@ func (net *DeltaNet) EvolveToPlay(ending *TopoBoard, debug bool) {
 	for i := begin; i < end; i++ {
 		spot := ending.History[i]
 		net.defaultScores[spot] += 1.0
-		if debug {
+		if debug && i - begin < 3 {
 			log.Printf("default score for %v := %.1f", spot,
 				net.defaultScores[spot])
 		}
@@ -160,8 +160,8 @@ func (net *DeltaNet) EvolveToPlay(ending *TopoBoard, debug bool) {
 			if bestMove != nextMove {
 				// We do need to train.
 				if debug {
-					log.Printf("on move %d, %v should play %v instead of %v",
-						i, net.color, nextMove, bestMove)
+					log.Printf("%v's move %d should be %v instead of %v",
+						net.color, i, nextMove, bestMove)
 				}
 				missingWeight := bestScore - net.spotPicker[nextMove]
 				if missingWeight < 0 {
