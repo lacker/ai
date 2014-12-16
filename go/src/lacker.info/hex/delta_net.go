@@ -113,11 +113,14 @@ func (net *DeltaNet) EvolveToPlay(ending *TopoBoard, debug bool) {
 	begin := len(net.startingPosition.History)
 	end := len(ending.History)
 
-	// Improve default scores
+	// Improve default scores for everything our color played
 	for spot := range net.defaultScores {
 		net.defaultScores[spot] *= 0.9
 	}
 	for i := begin; i < end; i++ {
+		if net.startingPosition.ColorForHistoryIndex(i) != net.color {
+			continue
+		}
 		spot := ending.History[i]
 		net.defaultScores[spot] += 1.0
 		if debug && i - begin < 3 {
