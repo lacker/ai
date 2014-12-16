@@ -64,9 +64,7 @@ func (mf *MetaFarmer) init(b *TopoBoard) {
 	mf.mainLine = Playout(mf.whitePlayer, mf.blackPlayer, false)
 }
 
-func (mf *MetaFarmer) Debug() {
-	mf.whitePlayer.Debug()
-	mf.blackPlayer.Debug()
+func (mf *MetaFarmer) DebugMainLine() {
 	log.Printf("%d cycles have been played. Main line:", mf.cycles)
 	for i, spot := range mf.mainLine.History {
 		log.Printf("%s: %v", mf.mainLine.ColorForHistoryIndex(i), spot)
@@ -184,7 +182,7 @@ func (mf MetaFarmer) Play(b Board) (NaiveSpot, float64) {
 				mf.whitePlayer.Debug()
 			case "s":
 				// Print overall status
-				mf.Debug()
+				mf.DebugMainLine()
 			case "1":
 				start := time.Now()
 				mf.PlayOneCycle(true)
