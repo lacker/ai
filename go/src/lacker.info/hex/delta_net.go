@@ -123,7 +123,7 @@ func (net *DeltaNet) EvolveToPlay(ending *TopoBoard, debug bool) {
 		}
 		spot := ending.History[i]
 		net.defaultScores[spot] += 1.0
-		if debug && i - begin < 3 {
+		if debug && i - begin < 10 {
 			log.Printf("default score for %v := %.1f", spot,
 				net.defaultScores[spot])
 		}
