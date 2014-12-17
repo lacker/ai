@@ -205,14 +205,15 @@ func (net *DeltaNet) EvolveToPlay(ending *TopoBoard, debug bool) {
 	}
 }
 
-// Finds a game that evolves from this one
+// Finds a game that evolves from this one.
+// Returns the snip list that gets there, plus the whole playout.
 func (net *DeltaNet) FindNewMainLine(opponent EvolvingPlayer,
-	oldMainLine *TopoBoard, debug bool) *TopoBoard {
+	oldMainLine *TopoBoard, debug bool) ([]Snip, *TopoBoard) {
 	// Check if there is a single snip that works
 	snipList, ending := FindWinningSnipList(
 		net, opponent, oldMainLine, 1, debug)
 	if snipList != nil {
-		return ending
+		return snipList, ending
 	}
 
 	// Fall back to exhaustive
@@ -231,5 +232,5 @@ func (net *DeltaNet) FindNewMainLine(opponent EvolvingPlayer,
 	if debug {
 		log.Printf("ran %d recursive playouts", numPlayouts)
 	}
-	return ending
+	return snipList, ending
 }

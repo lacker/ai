@@ -40,10 +40,9 @@ func (demo *DemocracyPlayer) StartingPosition() *TopoBoard {
 }
 
 func (demo *DemocracyPlayer) FindNewMainLine(opponent EvolvingPlayer,
-	oldMainLine *TopoBoard, debug bool) *TopoBoard {
-	_, ending := FindWinningSnipList(demo, opponent, oldMainLine, 0,
+	oldMainLine *TopoBoard, debug bool) ([]Snip, *TopoBoard) {
+	return FindWinningSnipList(demo, opponent, oldMainLine, 0,
 		debug)
-	return ending
 }
 
 func (demo *DemocracyPlayer) Add(quick QuickPlayer) {

@@ -31,7 +31,7 @@ func TestDeltaNetFindNewMainLine(t *testing.T) {
 		log.Fatal("Black is supposed to win")
 	}
 
-	newMainLine := whitePlayer.FindNewMainLine(blackPlayer,
+	_, newMainLine := whitePlayer.FindNewMainLine(blackPlayer,
 		ending, false)
 	if newMainLine == nil {
 		log.Fatal("newMainLine should not be nil")
