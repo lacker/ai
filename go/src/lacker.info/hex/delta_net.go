@@ -104,7 +104,7 @@ func (net *DeltaNet) BestMove(board *TopoBoard, debug bool) (TopoSpot,
 }
 
 // The learning function
-func (net *DeltaNet) EvolveToPlay(ending *TopoBoard, debug bool) {
+func (net *DeltaNet) EvolveToPlay(snipList []Snip, ending *TopoBoard, debug bool) {
 	if debug {
 		log.Printf("evolving %s DeltaNet", net.Color().Name())
 	}

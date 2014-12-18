@@ -35,7 +35,7 @@ type QuickPlayer interface {
 type EvolvingPlayer interface {
 	QuickPlayer
 
-	EvolveToPlay(ending *TopoBoard, debug bool)
+	EvolveToPlay(snipList []Snip, ending *TopoBoard, debug bool)
 
 	// Finds a game that evolves from this one
 	FindNewMainLine(opponent EvolvingPlayer, oldMainLine *TopoBoard,

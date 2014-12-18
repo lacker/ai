@@ -179,7 +179,7 @@ func (demo *DemocracyPlayer) MergeForTheWin(
 
 // Given a game where this side wins, evolve this player until it
 // plays that game.
-func (demo *DemocracyPlayer) EvolveToPlay(ending *TopoBoard, debug bool) {
+func (demo *DemocracyPlayer) EvolveToPlay(snipList []Snip, ending *TopoBoard, debug bool) {
 	linear := NewLinearPlayerFromPlayout(demo.startingPosition,
 		demo.Color(), ending)
 	demo.MaybeSimplify(debug)
