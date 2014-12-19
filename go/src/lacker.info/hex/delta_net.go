@@ -104,7 +104,8 @@ func (net *DeltaNet) BestMove(board *TopoBoard, debug bool) (TopoSpot,
 }
 
 // The learning function
-func (net *DeltaNet) EvolveToPlay(snipList []Snip, ending *TopoBoard, debug bool) {
+func (net *DeltaNet) EvolveToPlay(snipList []Snip, ending *TopoBoard,
+	debug bool) {
 	if debug {
 		log.Printf("evolving %s DeltaNet", net.Color().Name())
 	}
@@ -153,6 +154,8 @@ func (net *DeltaNet) EvolveToPlay(snipList []Snip, ending *TopoBoard, debug bool
 
 	net.ResetWithBoardAndRegistry(board, registry)
 
+	snipsLeft := snipList[:]
+
 	for i := begin; i < end; i++ {
 		nextMove := ending.History[i]
 
@@ -166,6 +169,14 @@ func (net *DeltaNet) EvolveToPlay(snipList []Snip, ending *TopoBoard, debug bool
 					log.Printf("%v's move %d should be %v instead of %v",
 						net.color, i, nextMove, bestMove)
 				}
+				if len(snipsLeft) == 0 {
+					log.Fatal("evolving on ply %d but no snips left")
+				} else if i != snipsLeft[0].ply {
+					log.Fatal("evolving on ply %d but expected %v", i,
+						snipsLeft[0])
+					// TODO: could also help to check for missing the last one
+				}
+
 				missingWeight := bestScore - net.spotPicker[nextMove]
 				if missingWeight < 0 {
 					log.Fatal("negative missing weight")
