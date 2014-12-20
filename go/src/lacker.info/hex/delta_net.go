@@ -163,18 +163,22 @@ func (net *DeltaNet) EvolveToPlay(snipList []Snip, ending *TopoBoard,
 			// Check if we need to train.
 			bestMove, bestScore := net.BestMove(board, debug)
 
+			evolvable := false
+			if len(snipsLeft) > 0 && snipsLeft[0].ply == i {
+				evolvable = true
+				snipsLeft = snipsLeft[1:]
+			}
+
 			if bestMove != nextMove {
 				// We do need to train.
 				if debug {
 					log.Printf("%v's move %d should be %v instead of %v",
 						net.color, i, nextMove, bestMove)
 				}
-				if len(snipsLeft) == 0 {
-					log.Fatal("evolving on ply %d but no snips left")
-				} else if i != snipsLeft[0].ply {
-					log.Fatal("evolving on ply %d but expected %v", i,
-						snipsLeft[0])
-					// TODO: could also help to check for missing the last one
+				if !evolvable {
+					log.Fatalf(
+						"evolving at ply %d when not evolvable for snipList %v",
+						i, snipList)
 				}
 
 				missingWeight := bestScore - net.spotPicker[nextMove]
@@ -213,6 +217,10 @@ func (net *DeltaNet) EvolveToPlay(snipList []Snip, ending *TopoBoard,
 
 	if board.Winner != net.color {
 		log.Fatal("ended the game history but we didn't win")
+	}
+
+	if len(snipsLeft) != 0 {
+		log.Fatalf("stopped evolution with snipsLeft: %v", snipsLeft)
 	}
 }
 
