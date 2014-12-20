@@ -42,6 +42,20 @@ func TestMetaFarmerWithDeltaNetOnDoomed3(t *testing.T) {
 	mf.PlayOneCycle(false)
 }
 
+func TestMetaFarmerWithDeltaNetOnDoomed6(t *testing.T) {
+	board := PuzzleMap["doomed3"].Board.ToTopoBoard()
+	mf := &MetaFarmer{Seconds:-1, Quiet:true, QuickType:"deltanet"}
+	mf.init(board)
+	mf.PlayOneCycle(false)
+	mf.PlayOneCycle(false)
+	mf.PlayOneCycle(false)
+	mf.PlayOneCycle(false)
+	mf.PlayOneCycle(false)
+	mf.PlayOneCycle(false)
+	mf.PlayOneCycle(false)
+	mf.PlayOneCycle(false)
+}
+
 func BenchmarkDeltaNetDoomed3(b *testing.B) {
 	for i := 0; i < b.N; i++ {
 		player := GetPlayer("dn5")
