@@ -17,9 +17,10 @@ type DeltaNet struct {
 	// This could be stored as a delta neuron with an empty input list,
 	// but this seems simpler.
 	// This should cap out at 10 for each spot.
+	// Currently the learning algorithm neither needs nor uses these.
 	defaultScores [NumTopoSpots]float64
 
-	// Always move to this spot if it's available.
+	// Move to this spot if it's the very first move after startingPosition.
 	// If this is NotASpot, ignore it.
 	// This is useful just to override the first move so that we don't
 	// overlearn it. It might help to expand this notion into a whole
@@ -84,7 +85,8 @@ func (net *DeltaNet) GetNeuron(feature BasicFeature) *DeltaNeuron {
 
 func (net *DeltaNet) BestMove(board *TopoBoard, debug bool) (TopoSpot,
 	float64) {
-	if net.overrideSpot != NotASpot && board.Get(net.overrideSpot) == Empty {
+	if net.overrideSpot != NotASpot &&
+		len(board.History) == len(net.startingPosition.History) {
 		return net.overrideSpot, 1337.0
 	}
 
@@ -113,22 +115,6 @@ func (net *DeltaNet) EvolveToPlay(snipList []Snip, ending *TopoBoard,
 	// The range of moves we'll be scanning over
 	begin := len(net.startingPosition.History)
 	end := len(ending.History)
-
-	// Improve default scores for everything our color played
-	for spot := range net.defaultScores {
-		net.defaultScores[spot] *= 0.9
-	}
-	for i := begin; i < end; i++ {
-		if net.startingPosition.ColorForHistoryIndex(i) != net.color {
-			continue
-		}
-		spot := ending.History[i]
-		net.defaultScores[spot] += 1.0
-		if debug && i - begin < 10 {
-			log.Printf("default score for %v := %.1f", spot,
-				net.defaultScores[spot])
-		}
-	}
 
 	// Set the override spot
 	if net.startingPosition.GetToMove() == net.color {
