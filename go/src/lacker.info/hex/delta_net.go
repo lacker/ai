@@ -16,7 +16,6 @@ type DeltaNet struct {
 	// This stores the default scores for spots.
 	// This could be stored as a delta neuron with an empty input list,
 	// but this seems simpler.
-	// This should cap out at 10 for each spot.
 	// Currently the learning algorithm neither needs nor uses these.
 	defaultScores [NumTopoSpots]float64
 
