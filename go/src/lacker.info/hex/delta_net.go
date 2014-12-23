@@ -186,7 +186,7 @@ func (net *DeltaNet) EvolveToPlay(snipList []Snip, ending *TopoBoard,
 					log.Fatal("no learnable neurons")
 				}
 
-				bumpSize := (1.0 + missingWeight) / float64(len(learnable))
+				bumpSize := (10.0 + missingWeight) / float64(len(learnable))
 				for _, neuron := range learnable {
 					if debug {
 						log.Printf("bumping %v => %v by %.1f",
