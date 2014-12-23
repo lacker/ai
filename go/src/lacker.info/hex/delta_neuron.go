@@ -11,6 +11,11 @@ import (
 // inactive. If all of its input features are active, it becomes
 // active. If there's a conflicting feature so that it can never
 // become active, it deactivates.
+// When it activates it bumps scores for a set of spots so that in the
+// end, one particular spot will score the best.
+// Thus, the DeltaNeuron constructs a sort of net that can predict
+// which spot is the best spot to move, but cannot predict who is
+// eventually likely to win the game.
 type DeltaNeuron struct {
 	// Inputs that lead this neuron to be active.
 	// This persists across playouts.
@@ -80,6 +85,10 @@ func (dn *DeltaNeuron) ContinueActivation() {
 	for _, scoredSpot := range dn.output {
 		dn.spotPicker[scoredSpot.Spot] += scoredSpot.Score
 	}
+}
+
+func (dn *DeltaNeuron) HandleNotification(spot TopoSpot) {
+	dn.ContinueActivation()
 }
 
 // Get ready for a new playout on a new board.

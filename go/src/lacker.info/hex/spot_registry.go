@@ -8,10 +8,8 @@ import (
 // affiliated to one spot, and notify
 // them when the contents of that spot change.
 type SpotRegistry struct {
-	// For now, all listeners are delta neurons, but this might be
-	// useful to extend.
 	// The first key is the spot. The second is the list of listeners.
-	listeners [NumTopoSpots][]*DeltaNeuron
+	listeners [NumTopoSpots][]Listener
 }
 
 // Create a new spot registry with no listeners
@@ -20,18 +18,18 @@ func NewSpotRegistry() *SpotRegistry {
 }
 
 // Add a new listener for a spot.
-func (sr *SpotRegistry) Listen(spot TopoSpot, dn *DeltaNeuron) {
+func (sr *SpotRegistry) Listen(spot TopoSpot, x Listener) {
 	if sr.listeners[spot] == nil {
-		sr.listeners[spot] = make([]*DeltaNeuron, 1)
-		sr.listeners[spot][0] = dn
+		sr.listeners[spot] = make([]Listener, 1)
+		sr.listeners[spot][0] = x
 	} else {
-		sr.listeners[spot] = append(sr.listeners[spot], dn)
+		sr.listeners[spot] = append(sr.listeners[spot], x)
 	}
 }
 
 // This doesn't clear the listeners list. It could, though.
 func (sr *SpotRegistry) Notify(spot TopoSpot) {
-	for _, dn := range sr.listeners[spot] {
-		dn.ContinueActivation()
+	for _, x := range sr.listeners[spot] {
+		x.HandleNotification(spot)
 	}
 }
