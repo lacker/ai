@@ -57,12 +57,3 @@ func NewQNet(board *TopoBoard, color Color) *QNet {
 	return qnet
 }
 
-// Runs an epsilon-greedy playout.
-func (qnet *QNet) Playout(epsilon float64) *QPlayout {
-	panic("TODO: implement")
-}
-
-// Creates a new qnet that is trained on the provided list of playouts.
-func TrainNewQNet(board *TopoBoard, playouts []*QPlayout) *QNet {
-	panic("TODO: implement")
-}
