@@ -14,16 +14,31 @@ import (
 // maps onto probabilities - negative for Black winning, positive for
 // White winning.
 //
-// TODO: define the formula that maps additive real to
-// probability. Logistic, or something simpler?
-//
 // The QNet is a neural network that operates on a Hex board, and
 // incrementally updates with each move to maintain state without
 // recalculating the state of each neuron every time.
-// The main neural network approximates V(s).
-// Also, it maintains Q(s, a) - V(s) for all a in the deltaV
-// array. This makes it fast to calculate ideal actions - you don't
-// have to run the neural net for every possible action.
+//
+// Each QNet corresponds to a particular color. That means it's used
+// to decide where that color should play. A QNet tracks two
+// things for a particular state:
+// A real value baseV
+// An array of offsets for each possible action, deltaV[a]
+// Q(s, a) is defined as baseV + deltaV(a).
+// This makes it easy to choose the best action just by picking the a
+// with the highest deltaV.
+// Q(s, a) maps to the odds of winning the game.
+//
+// Another interpretation is that the neural net is calculating a
+// function V(s), where it's the value of a state if it's the *other*
+// player's turn to move. deltaV is then just tracking how the neural
+// network would change with a particular move by this player. This
+// explains how the neurons work - they don't add their output values
+// directly to baseV; instead when they get one feature away from
+// triggering they add their output values to deltaV.
+//
+// TODO: define how the Q(s, a) -> probability mapping
+// works. logistic, or something simpler?
+
 
 type QNet struct {
 	startingPosition *TopoBoard
