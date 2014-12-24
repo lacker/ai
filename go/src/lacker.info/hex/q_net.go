@@ -1,7 +1,7 @@
 package hex
 
 import (
-
+	"log"
 )
 
 // In reinforcement learning, there are two common functions to learn.
@@ -57,3 +57,23 @@ func NewQNet(board *TopoBoard, color Color) *QNet {
 	return qnet
 }
 
+func (qnet *QNet) StartingPosition() *TopoBoard {
+	return qnet.startingPosition
+}
+
+func (qnet *QNet) Color() Color {
+	return qnet.color
+}
+
+func (qnet *QNet) Debug() {
+	log.Printf("TODO: real qnet debug info")
+}
+
+func (qnet *QNet) Reset(game *QuickGame) {
+	panic("TODO")
+}
+
+func (qnet *QNet) BestMove(board *TopoBoard, debug bool) (TopoSpot,
+	float64) {
+	panic("TODO")
+}
