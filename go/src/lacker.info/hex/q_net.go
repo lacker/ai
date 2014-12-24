@@ -42,15 +42,17 @@ import (
 
 type QNet struct {
 	startingPosition *TopoBoard
+	color Color
 
 	deltaV [NumTopoSpots]float64
 }
 
 // Creates a new qnet that has no values on any features and thus just
 // plays random playouts.
-func NewQNet(board *TopoBoard) *QNet {
+func NewQNet(board *TopoBoard, color Color) *QNet {
 	qnet := &QNet{
 		startingPosition: board,
+		color: color,
 	}
 	return qnet
 }
