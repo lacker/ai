@@ -45,7 +45,7 @@ import (
 
 type QNeuron struct {
 	// When all of these features activate, weight is added to V
-	features []BasicFeature
+	features []QFeature
 
 	weight float64
 
