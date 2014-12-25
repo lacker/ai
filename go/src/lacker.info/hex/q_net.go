@@ -38,13 +38,34 @@ import (
 //
 // TODO: define how the Q(s, a) -> probability mapping
 // works. logistic, or something simpler?
+//
+// The main component of the QNet is the QNeuron, which represents a
+// set of basic features that add a particular weight to V if all of
+// them trigger.
 
+type QNeuron struct {
+	// When all of these features activate, weight is added to V
+	features []BasicFeature
+
+	weight float64
+
+	// A bit mask for which of the features are active
+	active uint8
+}
 
 type QNet struct {
 	startingPosition *TopoBoard
 	color Color
 
+	// The extra output that would come from activated neurons if each
+	// particular action were taken by this color
 	deltaV [NumTopoSpots]float64
+
+	// The output solely from the activated neurons
+	baseV float64
+
+	// The neurons that make up this net
+	neurons []QNeuron
 }
 
 // Creates a new qnet that has no values on any features and thus just
@@ -69,8 +90,13 @@ func (qnet *QNet) Debug() {
 	log.Printf("TODO: real qnet debug info")
 }
 
-func (qnet *QNet) Reset(game *QuickGame) {
+func (qnet *QNet) Reset() {
 	panic("TODO")
+}
+
+// Updates the qnet to observe a new feature.
+func (qnet *QNet) ObserveNewFeature(feature BasicFeature) {
+
 }
 
 func (qnet *QNet) BestMove(board *TopoBoard, debug bool) (TopoSpot,
