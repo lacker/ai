@@ -63,7 +63,7 @@ func MakeQNeuron(features []QFeature, weight float64) QNeuron {
 type QNet struct {
 	startingPosition *TopoBoard
 	color Color
-
+	
 	// The extra output that would come from activated neurons if each
 	// particular action were taken by this color
 	deltaV [NumTopoSpots]float64
@@ -73,6 +73,11 @@ type QNet struct {
 
 	// The neurons that make up this net
 	neurons []QNeuron
+
+	// The empty spots in the starting position.
+	// This is useful for iterating on the spots in random order, which
+	// seeds more intelligently than lexicographical spot order.
+	emptySpots []TopoSpot
 }
 
 // Creates a new qnet that has no values on any features and thus just
@@ -81,7 +86,9 @@ func NewQNet(board *TopoBoard, color Color) *QNet {
 	qnet := &QNet{
 		startingPosition: board,
 		color: color,
+		neurons: []QNeuron{},
 	}
+	// TODO: init empty spots
 	return qnet
 }
 
@@ -103,7 +110,7 @@ func (qnet *QNet) Reset() {
 
 // Updates the qnet to observe a new feature.
 func (qnet *QNet) ObserveNewFeature(feature BasicFeature) {
-
+	panic("TODO")
 }
 
 func (qnet *QNet) BestMove(board *TopoBoard, debug bool) (TopoSpot,
