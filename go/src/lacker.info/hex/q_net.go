@@ -53,6 +53,13 @@ type QNeuron struct {
 	active uint8
 }
 
+func MakeQNeuron(features []QFeature, weight float64) QNeuron {
+	if len(features) > 8 {
+		panic("we can only handle 8 features because we use a bit mask")
+	}
+	return QNeuron{features:features, weight:weight}
+}
+
 type QNet struct {
 	startingPosition *TopoBoard
 	color Color
