@@ -87,8 +87,8 @@ func NewQNet(board *TopoBoard, color Color) *QNet {
 		startingPosition: board,
 		color: color,
 		neurons: []QNeuron{},
+		emptySpots: board.PossibleTopoSpotMoves(),
 	}
-	// TODO: init empty spots
 	return qnet
 }
 
