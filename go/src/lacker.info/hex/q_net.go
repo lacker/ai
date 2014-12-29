@@ -134,7 +134,13 @@ func (qnet *QNet) Reset() {
 	panic("TODO")
 }
 
+// Acts on the board to make a move.
+// This does not update any neurons directly.
 func (qnet *QNet) Act(board *TopoBoard) QAction {
+	if qnet.color != board.GetToMove() {
+		panic("wrong color to move")
+	}
+
 	action := QAction{
 		actor: qnet.color,
 	}
@@ -177,7 +183,10 @@ func (qnet *QNet) Act(board *TopoBoard) QAction {
 		action.explorationCost = 0.0
 	}
 
-	panic("TODO: fill up action. see if we won or not")
+	// Actually make the move
+	board.MakeMove(action.spot)
+	action.winner = board.Winner
+
 	return action
 }
 
