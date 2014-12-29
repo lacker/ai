@@ -2,6 +2,8 @@ package hex
 
 import (
 	"log"
+	"math"
+	"math/rand"
 )
 
 // In reinforcement learning, there are two common functions to learn.
@@ -60,6 +62,29 @@ func MakeQNeuron(features []QFeature, weight float64) QNeuron {
 	return QNeuron{features:features, weight:weight}
 }
 
+// Data surrounding a particular action. Enough to be used for Q-learning.
+type QAction struct {
+	// Which player took the action
+	actor Color
+
+	// What spot was moved in
+	spot TopoSpot
+
+	// Q(s, a) for the player taking the action
+	Q float64
+
+	// The weight difference of Q(s, a_optimal) - Q(s, a).
+	// In most cases this is zero because the player took the optimal
+	// action according to them.
+	// If this action ended the game then this will be the value
+	// produced by the neural net rather than infinity which is arguably
+	// more correct.
+	explorationCost float64
+
+	// What player won as a result of this action, or Empty if neither did
+	winner Color
+}
+
 type QNet struct {
 	startingPosition *TopoBoard
 	color Color
@@ -105,16 +130,63 @@ func (qnet *QNet) Color() Color {
 	return qnet.color
 }
 
-func (qnet *QNet) Debug() {
-	log.Printf("TODO: real qnet debug info")
-}
-
 func (qnet *QNet) Reset() {
 	panic("TODO")
 }
 
+func (qnet *QNet) Act(board *TopoBoard) QAction {
+	action := QAction{
+		actor: qnet.color,
+	}
+
+	// Figure out which move to make.
+	// We loop to figure out the first possible move, and the best
+	// move.
+	firstPossibleMove := NotASpot
+	firstPossibleDeltaV := math.Inf(-1)
+	bestMove := NotASpot
+	bestDeltaV := math.Inf(-1)
+	for _, spot := range qnet.emptySpots {
+		if board.Get(spot) != Empty {
+			continue
+		}
+
+		if firstPossibleMove == NotASpot {
+			firstPossibleMove = spot
+			firstPossibleDeltaV = qnet.deltaV[spot]
+		}
+
+		if qnet.deltaV[spot] > bestDeltaV {
+			bestMove = spot
+			bestDeltaV = qnet.deltaV[spot]
+		}
+	}
+	if firstPossibleMove == NotASpot {
+		panic("no empty spot found in Act")
+	}
+
+	if rand.Float64() < qnet.epsilon {
+		// Explore
+		action.spot = firstPossibleMove
+		action.Q = qnet.baseV + firstPossibleDeltaV
+		action.explorationCost = bestDeltaV - firstPossibleDeltaV
+	} else {
+		// Exploit
+		action.spot = bestMove
+		action.Q = qnet.baseV + bestDeltaV
+		action.explorationCost = 0.0
+	}
+
+	panic("TODO: fill up action. see if we won or not")
+	return action
+}
+
+func (qnet *QNet) Debug() {
+	log.Printf("TODO: real qnet debug info")
+}
+
 // Updates the qnet to observe a new feature.
-func (qnet *QNet) ObserveNewFeature(feature BasicFeature) {
+func (qnet *QNet) AddFeature(feature QFeature) {
 	panic("TODO")
 }
 
