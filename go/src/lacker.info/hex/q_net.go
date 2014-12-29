@@ -78,6 +78,10 @@ type QNet struct {
 	// This is useful for iterating on the spots in random order, which
 	// seeds more intelligently than lexicographical spot order.
 	emptySpots []TopoSpot
+
+	// The fraction of the time we intentionally go off-policy in order
+	// to explore.
+	epsilon float64
 }
 
 // Creates a new qnet that has no values on any features and thus just
@@ -88,6 +92,7 @@ func NewQNet(board *TopoBoard, color Color) *QNet {
 		color: color,
 		neurons: []QNeuron{},
 		emptySpots: board.PossibleTopoSpotMoves(),
+		epsilon: 0.05,
 	}
 	return qnet
 }
