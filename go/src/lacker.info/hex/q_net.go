@@ -80,9 +80,6 @@ type QAction struct {
 	// produced by the neural net rather than infinity which is arguably
 	// more correct.
 	explorationCost float64
-
-	// What player won as a result of this action, or Empty if neither did
-	winner Color
 }
 
 func (action QAction) Feature() QFeature {
@@ -189,13 +186,8 @@ func (qnet *QNet) Act(board *TopoBoard) QAction {
 
 	// Actually make the move
 	board.MakeMove(action.spot)
-	action.winner = board.Winner
 
 	return action
-}
-
-func (qnet *QNet) Debug() {
-	log.Printf("TODO: real qnet debug info")
 }
 
 // Updates the qnet to observe a new feature.
@@ -203,7 +195,6 @@ func (qnet *QNet) AddFeature(feature QFeature) {
 	panic("TODO")
 }
 
-func (qnet *QNet) BestMove(board *TopoBoard, debug bool) (TopoSpot,
-	float64) {
-	panic("TODO")
+func (qnet *QNet) Debug() {
+	log.Printf("TODO: real qnet debug info")
 }
