@@ -23,6 +23,9 @@ func NewQPlayout(player1 *QNet, player2 *QNet) *QPlayout {
 		winner: Empty,
 	}
 
+	player1.Reset()
+	player2.Reset()
+
 	board := player1.StartingPosition().ToTopoBoard()
 	for board.Winner == Empty {
 		// player is the player whose move it is
@@ -38,6 +41,10 @@ func NewQPlayout(player1 *QNet, player2 *QNet) *QPlayout {
 
 		action := player.Act(board)
 		playout.actions = append(playout.actions, action)
+
+		feature := MakeQFeature(action.color, action.spot)
+		player1.AddFeature(feature)
+		player2.AddFeature(feature)
 	}
 
 	playout.winner = board.Winner

@@ -131,10 +131,6 @@ func (qnet *QNet) Color() Color {
 	return qnet.color
 }
 
-func (qnet *QNet) Reset() {
-	panic("TODO")
-}
-
 // Acts on the board to make a move.
 // This does not update any neurons directly.
 func (qnet *QNet) Act(board *TopoBoard) QAction {
@@ -188,6 +184,10 @@ func (qnet *QNet) Act(board *TopoBoard) QAction {
 	board.MakeMove(action.spot)
 
 	return action
+}
+
+func (qnet *QNet) Reset() {
+	panic("TODO")
 }
 
 // Updates the qnet to observe a new feature.
