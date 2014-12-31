@@ -65,7 +65,7 @@ func MakeQNeuron(features []QFeature, weight float64) QNeuron {
 // Data surrounding a particular action. Enough to be used for Q-learning.
 type QAction struct {
 	// Which player took the action
-	actor Color
+	color Color
 
 	// What spot was moved in
 	spot TopoSpot
@@ -83,6 +83,10 @@ type QAction struct {
 
 	// What player won as a result of this action, or Empty if neither did
 	winner Color
+}
+
+func (action QAction) Feature() QFeature {
+	return MakeQFeature(action.color, action.spot)
 }
 
 type QNet struct {
@@ -142,7 +146,7 @@ func (qnet *QNet) Act(board *TopoBoard) QAction {
 	}
 
 	action := QAction{
-		actor: qnet.color,
+		color: qnet.color,
 	}
 
 	// Figure out which move to make.
