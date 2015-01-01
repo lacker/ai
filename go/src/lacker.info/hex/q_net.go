@@ -187,6 +187,8 @@ func (qnet *QNet) Act(board *TopoBoard) QAction {
 }
 
 func (qnet *QNet) Reset() {
+	ShuffleTopoSpots(qnet.emptySpots)
+
 	panic("TODO")
 }
 
