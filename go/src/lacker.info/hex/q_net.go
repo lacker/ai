@@ -40,26 +40,18 @@ import (
 //
 // TODO: define how the Q(s, a) -> probability mapping
 // works. logistic, or something simpler?
-//
+
+
 // The main component of the QNet is the QNeuron, which represents a
 // set of basic features that add a particular weight to V if all of
 // them trigger.
-
 type QNeuron struct {
-	// When all of these features activate, weight is added to V
 	features []QFeature
 
 	weight float64
 
-	// A bit mask for which of the features are active
+	// A count of how many of the features are active.
 	active uint8
-}
-
-func MakeQNeuron(features []QFeature, weight float64) QNeuron {
-	if len(features) > 8 {
-		panic("we can only handle 8 features because we use a bit mask")
-	}
-	return QNeuron{features:features, weight:weight}
 }
 
 // Data surrounding a particular action. Enough to be used for Q-learning.
@@ -97,8 +89,16 @@ type QNet struct {
 	// The output solely from the activated neurons
 	baseV float64
 
-	// The neurons that make up this net
-	neurons []QNeuron
+	// A neuron with no features
+	bias QNeuron
+
+	// Neurons with one feature
+	mono [NumQFeatures]QNeuron
+
+	// Neurons with two features.
+	// By convention, we only access the features in sorted order,
+	// so this is half empty.
+	duo [NumQFeatures][NumQFeatures]QNeuron
 
 	// The empty spots in the starting position.
 	// This is useful for iterating on the spots in random order, which
@@ -116,10 +116,20 @@ func NewQNet(board *TopoBoard, color Color) *QNet {
 	qnet := &QNet{
 		startingPosition: board,
 		color: color,
-		neurons: []QNeuron{},
 		emptySpots: board.PossibleTopoSpotMoves(),
 		epsilon: 0.05,
+		bias: QNeuron{},
 	}
+
+	for feature := MinQFeature; feature <= MaxQFeature; feature++ {
+		qnet.mono[feature].features = []QFeature{feature}
+	}
+	for f1 := MinQFeature; f1 <= MaxQFeature; f1++ {
+		for f2 := f1 + 1; f2 < MaxQFeature; f2++ {
+			qnet.duo[f1][f2].features = []QFeature{f1, f2}
+		}
+	}
+
 	return qnet
 }
 
@@ -189,7 +199,24 @@ func (qnet *QNet) Act(board *TopoBoard) QAction {
 func (qnet *QNet) Reset() {
 	ShuffleTopoSpots(qnet.emptySpots)
 
-	panic("TODO")
+	qnet.baseV = qnet.bias.weight
+
+	// Make mono-neurons contribute to deltaV, while also deactivating
+	// them.
+	for f, neuron := range qnet.mono {
+		feature := QFeature(f)
+		neuron.active = 0
+		if feature.Color() == qnet.color {
+			qnet.deltaV[feature.Spot()] = neuron.weight
+		}
+	}
+
+	// Deactivate duo-neurons
+	for _, arr := range qnet.duo {
+		for _, neuron := range arr {
+			neuron.active = 0
+		}
+	}
 }
 
 // Updates the qnet to observe a new feature.

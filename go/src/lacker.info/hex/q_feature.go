@@ -4,15 +4,21 @@ import (
 	"fmt"
 )
 
-// QFeature is a concise way of representing a spot plus a nonempty color.
-// The first bit is color (0=black, 1=white) and the last 7 bits are spot.
+// QFeature is a spot plus a nonempty color, packed into one byte.
 type QFeature uint8
 
-// Since 0 isn't a valid spot, 0 can be used as "not a feature".
-const NotAFeature QFeature = 0
+// Assuming BoardSize is 11:
+// 0-120: black features
+// 121-241: white features
+// 242: not-a-feature
+const MinQFeature QFeature = 0
+const MaxQFeature QFeature = BoardSize * BoardSize - 1
+const NumQFeatures QFeature = MaxQFeature + 1
+const NotAFeature QFeature = NumQFeatures
+
 
 func (qf QFeature) Color() Color {
-	switch qf >> 7 {
+	switch qf / (BoardSize * BoardSize) {
 	case 0:
 		return Black
 	case 1:
@@ -22,11 +28,11 @@ func (qf QFeature) Color() Color {
 }
 
 func (qf QFeature) Spot() TopoSpot {
-	return TopoSpot(qf & 127)
+	return TopoSpot(qf % (BoardSize * BoardSize)) + TopLeftCorner
 }
 
 func (qf QFeature) String() string {
-	if qf == 0 {
+	if qf == NotAFeature {
 		return "NotAFeature"
 	}
 	return fmt.Sprintf("%v%v", qf.Color(), qf.Spot())
@@ -39,9 +45,9 @@ func MakeQFeature(color Color, spot TopoSpot) QFeature {
 	if color == Empty {
 		panic("cannot make qfeature from empty color")
 	}
-	answer := QFeature(spot)
+	answer := QFeature(spot - TopLeftCorner)
 	if color == White {
-		answer += 128
+		answer += BoardSize * BoardSize
 	}
 	return answer
 }
