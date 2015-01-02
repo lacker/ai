@@ -219,9 +219,42 @@ func (qnet *QNet) Reset() {
 	}
 }
 
+// A helper function to get a neuron from duo
+func (qnet *QNet) GetNeuron(f1 QFeature, f2 QFeature) *QNeuron {
+	if f1 == f2 {
+		panic("no duo neuron for symmetric (f, f) feature pairs")
+	}
+	if f1 < f2 {
+		return &qnet.duo[f1][f2]
+	}
+	return &qnet.duo[f2][f1]
+}
+
 // Updates the qnet to observe a new feature.
 func (qnet *QNet) AddFeature(feature QFeature) {
-	panic("TODO")
+	qnet.deltaV[feature] = 0.0
+	
+	qnet.baseV += qnet.mono[feature].weight
+
+	// Handle duo neurons
+	for feature2 := MinQFeature; feature2 <= MaxQFeature; feature2++ {
+		if feature == feature2 {
+			continue
+		}
+		neuron := qnet.GetNeuron(feature, feature2)
+		neuron.active++
+
+		switch neuron.active {
+		case 1:
+			if feature2.Color() == qnet.color {
+				qnet.deltaV[feature2] += neuron.weight
+			}
+		case 2:
+			qnet.baseV += neuron.weight
+		default:
+			panic("unexpected neuron activity count")
+		}
+	}
 }
 
 func (qnet *QNet) Debug() {
