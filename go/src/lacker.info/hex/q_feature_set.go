@@ -17,4 +17,4 @@ const MinSingleFeature QFeatureSet = EmptyFeatureSet + 1
 const MaxSingleFeature QFeatureSet = MinSingleFeature +
 	QFeatureSet(MaxQFeature)
 
-
+// TODO: handle double features
