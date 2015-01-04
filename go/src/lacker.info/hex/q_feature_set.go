@@ -27,5 +27,36 @@ const MaxSingleton QFeatureSet = MinSingleton + NumSingletons - 1
 const MinDoubleton QFeatureSet = MaxSingleton + 1
 const NumDoubletons QFeatureSet = NumSingletons * (NumSingletons - 1) / 2
 const MaxDoubleton QFeatureSet = MinDoubleton + NumDoubletons - 1
+const NumFeatureSets QFeatureSet = MaxDoubleton + 1
+const NotAFeatureSet QFeatureSet = NumFeatureSets
 
-// TODO: handle double features
+func (fs QFeatureSet) IsEmpty() bool {
+	return fs == EmptyFeatureSet
+}
+
+func (fs QFeatureSet) IsSingleton() bool {
+	return fs >= MinSingleton && fs <= MaxSingleton
+}
+
+func (fs QFeatureSet) IsDoubleton() bool {
+	return fs >= MinDoubleton && fs <= MaxDoubleton
+}
+
+func (fs QFeatureSet) SingletonFeature() QFeature {
+	return QFeature(fs - MinSingleton)
+}
+
+func MakeSingleton(f QFeature) QFeatureSet {
+	return QFeatureSet(f) + MinSingleton
+}
+
+// Returns NotAFeature once we run out
+func (fs QFeatureSet) Features() (QFeature, QFeature) {
+	if fs.IsEmpty() {
+		return NotAFeature, NotAFeature
+	}
+	if fs.IsSingleton() {
+		return fs.SingletonFeature(), NotAFeature
+	}
+	panic("TODO")
+}
