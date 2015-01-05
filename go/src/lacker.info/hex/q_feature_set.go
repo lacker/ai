@@ -13,12 +13,9 @@ type QFeatureSet uint16
 // 1-242: single features (1 + qfeature)
 // 243-29403: double features
 //
-// The packing logic is basically, with features f1..f242:
-// 243: (f1, f2)
-// 244, 245: (f1, f3), (f2, f3)
-// 246, 247, 248: (f1, f4), (f2, f4), (f3, f4)
-// etc.
 // There are (242)(242-1)/2 = 29161 double features.
+// To see how they are packed into the space, it's best just to check
+// the code for MakeDoubleton and Features.
 
 const EmptyFeatureSet QFeatureSet = 0
 const MinSingleton QFeatureSet = EmptyFeatureSet + 1
@@ -48,6 +45,10 @@ func (fs QFeatureSet) SingletonFeature() QFeature {
 
 func MakeSingleton(f QFeature) QFeatureSet {
 	return QFeatureSet(f) + MinSingleton
+}
+
+func MakeDoubleton(f1 QFeature, f2 QFeature) QFeatureSet {
+	panic("TODO")
 }
 
 // Returns NotAFeature once we run out
