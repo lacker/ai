@@ -11,10 +11,10 @@ type QFeature uint8
 // 0-120: black features
 // 121-241: white features
 // 242: not-a-feature
-const MinQFeature QFeature = 0
-const MaxQFeature QFeature = BoardSize * BoardSize - 1
-const NumQFeatures QFeature = MaxQFeature + 1
-const NotAFeature QFeature = NumQFeatures
+const MinFeature QFeature = 0
+const MaxFeature QFeature = 2 * BoardSize * BoardSize - 1
+const NumFeatures QFeature = MaxFeature + 1
+const NotAFeature QFeature = NumFeatures
 
 
 func (qf QFeature) Color() Color {

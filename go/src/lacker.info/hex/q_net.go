@@ -93,12 +93,12 @@ type QNet struct {
 	bias QNeuron
 
 	// Neurons with one feature
-	mono [NumQFeatures]QNeuron
+	mono [NumFeatures]QNeuron
 
 	// Neurons with two features.
 	// By convention, we only access the features in sorted order,
 	// so this is half empty.
-	duo [NumQFeatures][NumQFeatures]QNeuron
+	duo [NumFeatures][NumFeatures]QNeuron
 
 	// The empty spots in the starting position.
 	// This is useful for iterating on the spots in random order, which
@@ -121,11 +121,11 @@ func NewQNet(board *TopoBoard, color Color) *QNet {
 		bias: QNeuron{},
 	}
 
-	for feature := MinQFeature; feature <= MaxQFeature; feature++ {
+	for feature := MinFeature; feature <= MaxFeature; feature++ {
 		qnet.mono[feature].features = []QFeature{feature}
 	}
-	for f1 := MinQFeature; f1 <= MaxQFeature; f1++ {
-		for f2 := f1 + 1; f2 < MaxQFeature; f2++ {
+	for f1 := MinFeature; f1 <= MaxFeature; f1++ {
+		for f2 := f1 + 1; f2 < MaxFeature; f2++ {
 			qnet.duo[f1][f2].features = []QFeature{f1, f2}
 		}
 	}
@@ -237,7 +237,7 @@ func (qnet *QNet) AddFeature(feature QFeature) {
 	qnet.baseV += qnet.mono[feature].weight
 
 	// Handle duo neurons
-	for feature2 := MinQFeature; feature2 <= MaxQFeature; feature2++ {
+	for feature2 := MinFeature; feature2 <= MaxFeature; feature2++ {
 		if feature == feature2 {
 			continue
 		}

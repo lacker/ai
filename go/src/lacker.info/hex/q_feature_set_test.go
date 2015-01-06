@@ -7,8 +7,8 @@ import (
 func TestQFeatureSetConversion(t *testing.T) {
 	var covered [NumFeatureSets]bool
 
-	for f1 := MinQFeature; f1 <= MaxQFeature; f1++ {
-		for f2 := f1 + 1; f2 <= MaxQFeature; f2++ {
+	for f1 := MinFeature; f1 <= MaxFeature; f1++ {
+		for f2 := f1 + 1; f2 <= MaxFeature; f2++ {
 			fs := MakeDoubleton(f1, f2)
 			fs2 := MakeDoubleton(f2, f1)
 			if fs != fs2 {
