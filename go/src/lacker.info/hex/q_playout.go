@@ -50,3 +50,12 @@ func NewQPlayout(player1 *QNet, player2 *QNet) *QPlayout {
 	playout.winner = board.Winner
 	return playout
 }
+
+// Each playout defines a gradient, of the direction Q should go in
+// order to improve its accuracy according to Q-learning.
+// See q_net.go for details on the Q function.
+// AddGradient adds scalar times the gradient to addend.
+func (playout *QPlayout) AddGradient(scalar float64,
+	addend *[NumFeatures]float64) {
+	panic("TODO")
+}

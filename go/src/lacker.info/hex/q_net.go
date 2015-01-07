@@ -38,8 +38,10 @@ import (
 // directly to baseV; instead when they get one feature away from
 // triggering they add their output values to deltaV.
 //
-// TODO: define how the Q(s, a) -> probability mapping
-// works. logistic, or something simpler?
+// Q(s, a) returns a logit. The probability for white winning is
+// p(Q) = e^Q / (e^Q + 1)
+// So a Q of positive infinity corresponds to a 100% chance that white
+// wins.
 
 
 // The main component of the QNet is the QNeuron, which represents a
