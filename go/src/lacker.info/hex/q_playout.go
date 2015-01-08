@@ -146,7 +146,47 @@ type QLearningInstance struct {
 // This uses dynamic programming on a list of QLearningInstances.
 func (playout *QPlayout) AddGradient(color Color, scalar float64,
 	addend *[NumFeatures]float64) {
-	// First, we do a pass to populate the data we will need to learn.
+	// We gather the data we will need to learn, in 'instances'.
+	instances := []QLearningInstance{}
+
+	// In activeFeatures we accumulate all features that activate during
+	// the game.
+	activeFeatures := []QFeature{}
+
+	// The newest instance that is being constructed. This accumulates
+	// feature sets.
+	instance := QLearningInstance{
+		newFeatureSets: []QFeatureSet{EmptyFeatureSet},
+	}
+	instances = append(instances, instance)
+
+	for _, action := range playout.actions {
+		// Each new action also is a new feature.
+		newFeature := action.Feature()
+
+		// Add a singleton feature set for the new feature.
+		instance.newFeatureSets = append(instance.newFeatureSets,
+			MakeSingleton(newFeature))
+
+		// Add a feature set for each feature pair you can make with the
+		// new feature.
+		for _, oldFeature := range activeFeatures {
+			instance.newFeatureSets = append(instance.newFeatureSets,
+				MakeDoubleton(oldFeature, newFeature))
+		}
+
+		// Accumulate features
+		activeFeatures = append(activeFeatures, newFeature)
+
+		if action.color == color {
+			// We should create a new learning instance for this action
+			panic("TODO")
+		}
+	}
+
+	// The last learning instance corresponds to the end of the game
+	panic("TODO")
+
 	// Then, we do a backward pass to construct the gradient.
 	panic("TODO")
 }
