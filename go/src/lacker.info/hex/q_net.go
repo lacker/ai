@@ -70,9 +70,9 @@ type QAction struct {
 	// The weight difference of Q(s, a_optimal) - Q(s, a).
 	// In most cases this is zero because the player took the optimal
 	// action according to them.
-	// If this action ended the game then this will be the value
-	// produced by the neural net rather than infinity which is arguably
-	// more correct.
+	// This is useful because if the exploration cost is high, it
+	// indicates this move was an "exploration" move, so if it screwed
+	// us we shouldn't necessarily penalize earlier decisions.
 	explorationCost float64
 }
 
