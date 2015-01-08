@@ -146,5 +146,7 @@ type QLearningInstance struct {
 // This uses dynamic programming on a list of QLearningInstances.
 func (playout *QPlayout) AddGradient(color Color, scalar float64,
 	addend *[NumFeatures]float64) {
+	// First, we do a pass to populate the data we will need to learn.
+	// Then, we do a backward pass to construct the gradient.
 	panic("TODO")
 }
