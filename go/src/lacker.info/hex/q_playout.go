@@ -167,7 +167,7 @@ func (playout *QPlayout) AddGradient(color Color, scalar float64,
 	instance := NewQLearningInstance()
 
 	// We gather the data we will need to learn, in 'instances'.
-	instances := []*QLearningInstance{instance}
+	instances := []*QLearningInstance{}
 
 	// This holds the last thing that 'instance' did, for updating
 	// target Q.
@@ -194,18 +194,32 @@ func (playout *QPlayout) AddGradient(color Color, scalar float64,
 		if action.color == color {
 			// 'instance' should apply to this action
 			instance.calculatedQ = action.Q
+			instances = append(instances, instance)
+
+			// Figure out the target value for the last learning instance
+			// from this action's data
 			if lastInstance != nil {
 				lastInstance.targetQ = action.Q + action.explorationCost
 			}
+
 			lastInstance = instance
 			instance = NewQLearningInstance()
-			instances = append(instances, instance)
 		}
 	}
 
-	// The last learning instance corresponds to the end of the game
+	if lastInstance == nil {
+		// We never made a move this entire playout. We must just be
+		// losing immediately to an opponent's move.
+		return
+	}
+
+	// We accumulated some feature sets in 'instance' but there was
+	// never another action we used them for. So we can forget about
+	// 'instance' - we won't need to learn things about this feature
+	// set. However, we can set the target Q for the lastInstance based
+	// on the actual outcome.
 	panic("TODO")
 
-	// Then, we do a backward pass to construct the gradient.
+	// We do a backward pass to construct the gradient.
 	panic("TODO")
 }

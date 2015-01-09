@@ -78,6 +78,16 @@ type QAction struct {
 	explorationCost float64
 }
 
+// Turns a q-value into a probability.
+func Logistic(q float64) float64 {
+	return 1.0 - 1.0 / (1.0 + math.Exp(q))
+}
+
+// Turns a probability into a q-value.
+func Logit(prob float64) float64 {
+	return math.Log(prob / (1.0 - prob))
+}
+
 func (action QAction) Feature() QFeature {
 	return MakeQFeature(action.color, action.spot)
 }
