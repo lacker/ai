@@ -86,9 +86,9 @@ func NewQPlayout(player1 *QNet, player2 *QNet) *QPlayout {
 // Now we can calculate what gradient this principle defines.
 // (Insert real math here, left as an exercise for the reader.)
 // 
-// If the real probability was p_real and we predicted p, then the
+// If the target probability was p_target and we predicted p_calc, then the
 // gradient on the logit is just the probability difference:
-// p_real - p
+// p_target - p_calc
 // in every feature that the QNet sums to the logit for Q(s, a).
 //
 // Here it's convenient that the logit is just the sum of a bunch of
@@ -132,7 +132,14 @@ func NewQPlayout(player1 *QNet, player2 *QNet) *QPlayout {
 // single step of this dynamic programming.
 // learning for a particular action.
 type QLearningInstance struct {
-	// The difference in probabilities, p_real - p.
+	// The Q-value we used when deciding to take this action.
+	calculatedQ float64
+
+	// The Q-value that would have been ideal, based on the Q-learning
+	// rule.
+	targetQ float64
+
+	// The difference in probabilities, p_target - p_calc.
 	probabilityDifference float64
 
 	// The feature sets that were active for this decision, but not any
@@ -140,25 +147,31 @@ type QLearningInstance struct {
 	newFeatureSets []QFeatureSet
 }
 
+func NewQLearningInstance() *QLearningInstance {
+	return &QLearningInstance{
+		newFeatureSets: []QFeatureSet{EmptyFeatureSet},
+	}
+}
 
 // AddGradient adds scalar times the gradient to addend, using the
 // gradient for the provided color's decisions.
 // This uses dynamic programming on a list of QLearningInstances.
 func (playout *QPlayout) AddGradient(color Color, scalar float64,
 	addend *[NumFeatures]float64) {
-	// We gather the data we will need to learn, in 'instances'.
-	instances := []QLearningInstance{}
-
 	// In activeFeatures we accumulate all features that activate during
 	// the game.
 	activeFeatures := []QFeature{}
 
 	// The newest instance that is being constructed. This accumulates
 	// feature sets.
-	instance := QLearningInstance{
-		newFeatureSets: []QFeatureSet{EmptyFeatureSet},
-	}
-	instances = append(instances, instance)
+	instance := NewQLearningInstance()
+
+	// We gather the data we will need to learn, in 'instances'.
+	instances := []*QLearningInstance{instance}
+
+	// This holds the last thing that 'instance' did, for updating
+	// target Q.
+	var lastInstance *QLearningInstance
 
 	for _, action := range playout.actions {
 		// Each new action also is a new feature.
@@ -179,8 +192,14 @@ func (playout *QPlayout) AddGradient(color Color, scalar float64,
 		activeFeatures = append(activeFeatures, newFeature)
 
 		if action.color == color {
-			// We should create a new learning instance for this action
-			panic("TODO")
+			// 'instance' should apply to this action
+			instance.calculatedQ = action.Q
+			if lastInstance != nil {
+				lastInstance.targetQ = action.Q + action.explorationCost
+			}
+			lastInstance = instance
+			instance = NewQLearningInstance()
+			instances = append(instances, instance)
 		}
 	}
 

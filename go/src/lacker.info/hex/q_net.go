@@ -13,8 +13,8 @@ import (
 //
 // In the case of playing Hex, we are defining "value" to be the
 // probability of winning. The network outputs a real number that
-// maps onto probabilities - negative for Black winning, positive for
-// White winning.
+// maps onto probabilities - positive for this player winning,
+// negative for the opponent winning.
 //
 // The QNet is a neural network that operates on a Hex board, and
 // incrementally updates with each move to maintain state without
@@ -38,10 +38,10 @@ import (
 // directly to baseV; instead when they get one feature away from
 // triggering they add their output values to deltaV.
 //
-// Q(s, a) returns a logit. The probability for white winning is
+// Q(s, a) returns a logit. The probability for our color winning is
 // p(Q) = e^Q / (e^Q + 1)
-// So a Q of positive infinity corresponds to a 100% chance that white
-// wins.
+// So a Q of positive infinity corresponds to a 100% chance that our
+// color wins.
 
 
 // The main component of the QNet is the QNeuron, which represents a
@@ -73,6 +73,8 @@ type QAction struct {
 	// This is useful because if the exploration cost is high, it
 	// indicates this move was an "exploration" move, so if it screwed
 	// us we shouldn't necessarily penalize earlier decisions.
+	// Specifically, Q + explorationCost is the "target Q" that we use
+	// to train previous moves.
 	explorationCost float64
 }
 
