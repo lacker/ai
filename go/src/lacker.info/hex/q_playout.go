@@ -1,6 +1,7 @@
 package hex
 
 import (
+	"math"
 )
 
 // A playout between two QNets.
@@ -218,7 +219,11 @@ func (playout *QPlayout) AddGradient(color Color, scalar float64,
 	// 'instance' - we won't need to learn things about this feature
 	// set. However, we can set the target Q for the lastInstance based
 	// on the actual outcome.
-	panic("TODO")
+	if playout.winner == color {
+		lastInstance.targetQ = math.Inf(+1)
+	} else {
+		lastInstance.targetQ = math.Inf(-1)
+	}
 
 	// We do a backward pass to construct the gradient.
 	panic("TODO")
