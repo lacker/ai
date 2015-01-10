@@ -140,9 +140,6 @@ type QLearningInstance struct {
 	// rule.
 	targetQ float64
 
-	// The difference in probabilities, p_target - p_calc.
-	probabilityDifference float64
-
 	// The feature sets that were active for this decision, but not any
 	// prior decision.
 	newFeatureSets []QFeatureSet
@@ -226,5 +223,19 @@ func (playout *QPlayout) AddGradient(color Color, scalar float64,
 	}
 
 	// We do a backward pass to construct the gradient.
-	panic("TODO")
+	magnitude := 0.0
+	for i := len(instances) - 1; i >= 0; i-- {
+		instance := instances[i]
+
+		probDiff := Logistic(instance.targetQ) - Logistic(instance.calculatedQ)
+
+		// Magnitude accumulates gradient magnitudes for each Q-learning
+		// instance.
+		magnitude += probDiff
+
+		// Going backwards, this is the last learning instance that will
+		// apply to these feature sets, so we can apply the current
+		// accumulated magnitude to them.
+		panic("TODO")		
+	}
 }
