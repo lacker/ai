@@ -142,12 +142,12 @@ type QLearningInstance struct {
 
 	// The feature sets that were active for this decision, but not any
 	// prior decision.
-	newFeatureSets []QFeatureSet
+	featureSets []QFeatureSet
 }
 
 func NewQLearningInstance() *QLearningInstance {
 	return &QLearningInstance{
-		newFeatureSets: []QFeatureSet{EmptyFeatureSet},
+		featureSets: []QFeatureSet{},
 	}
 }
 
@@ -155,7 +155,7 @@ func NewQLearningInstance() *QLearningInstance {
 // gradient for the provided color's decisions.
 // This uses dynamic programming on a list of QLearningInstances.
 func (playout *QPlayout) AddGradient(color Color, scalar float64,
-	addend *[NumFeatures]float64) {
+	addend *[NumFeatureSets]float64) {
 	// In activeFeatures we accumulate all features that activate during
 	// the game.
 	activeFeatures := []QFeature{}
@@ -163,6 +163,7 @@ func (playout *QPlayout) AddGradient(color Color, scalar float64,
 	// The newest instance that is being constructed. This accumulates
 	// feature sets.
 	instance := NewQLearningInstance()
+	instance.featureSets = append(instance.featureSets, EmptyFeatureSet)
 
 	// We gather the data we will need to learn, in 'instances'.
 	instances := []*QLearningInstance{}
@@ -176,13 +177,13 @@ func (playout *QPlayout) AddGradient(color Color, scalar float64,
 		newFeature := action.Feature()
 
 		// Add a singleton feature set for the new feature.
-		instance.newFeatureSets = append(instance.newFeatureSets,
+		instance.featureSets = append(instance.featureSets,
 			MakeSingleton(newFeature))
 
 		// Add a feature set for each feature pair you can make with the
 		// new feature.
 		for _, oldFeature := range activeFeatures {
-			instance.newFeatureSets = append(instance.newFeatureSets,
+			instance.featureSets = append(instance.featureSets,
 				MakeDoubleton(oldFeature, newFeature))
 		}
 
@@ -223,19 +224,21 @@ func (playout *QPlayout) AddGradient(color Color, scalar float64,
 	}
 
 	// We do a backward pass to construct the gradient.
-	magnitude := 0.0
+	gradientMagnitude := 0.0
 	for i := len(instances) - 1; i >= 0; i-- {
 		instance := instances[i]
 
 		probDiff := Logistic(instance.targetQ) - Logistic(instance.calculatedQ)
 
-		// Magnitude accumulates gradient magnitudes for each Q-learning
-		// instance.
-		magnitude += probDiff
+		// gradientMagnitude accumulates gradient magnitudes for each
+		// Q-learning instance.
+		gradientMagnitude += probDiff
 
 		// Going backwards, this is the last learning instance that will
 		// apply to these feature sets, so we can apply the current
 		// accumulated magnitude to them.
-		panic("TODO")		
+		for _, fs := range instance.featureSets {
+			(*addend)[fs] += scalar * gradientMagnitude
+		}
 	}
 }
