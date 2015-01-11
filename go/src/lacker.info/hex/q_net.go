@@ -271,6 +271,20 @@ func (qnet *QNet) AddFeature(feature QFeature) {
 	}
 }
 
+// Updates the weights on the qnet according to a gradient.
+func (qnet *QNet) ApplyGradient(gradient *[NumFeatureSets]float64) {
+	qnet.bias.weight += (*gradient)[EmptyFeatureSet]
+
+	for fs := MinSingleton; fs <= MaxSingleton; fs++ {
+		qnet.mono[fs.SingletonFeature()].weight += (*gradient)[fs]
+	}
+
+	for fs := MinDoubleton; fs <= MaxDoubleton; fs++ {
+		f1, f2 := fs.Features()
+		qnet.duo[f1][f2].weight += (*gradient)[fs]
+	}
+}
+
 func (qnet *QNet) Debug() {
 	log.Printf("TODO: real qnet debug info")
 }
