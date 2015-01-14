@@ -41,7 +41,7 @@ func GetPlayer(s string) Player {
 	case "dn5":
 		return MetaFarmer{Seconds:5, Quiet:false, QuickType:"deltanet"}
 	case "qt":
-		return QTrainer{Seconds:5, Quiet:false}
+		return &QTrainer{Seconds:5, Quiet:false}
 	default:
 		log.Fatalf("unknown player type: %s", s)
 		return nil

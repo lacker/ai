@@ -20,6 +20,13 @@ type QTrainer struct {
 	blackNet *QNet
 }
 
-func (trainer QTrainer) Play(b Board) (NaiveSpot, float64) {
+func (trainer *QTrainer) init(b *TopoBoard) {
+	trainer.whiteNet = NewQNet(b, White)
+	trainer.blackNet = NewQNet(b, Black)
+}
+
+func (trainer *QTrainer) Play(b Board) (NaiveSpot, float64) {
+	trainer.init(b.ToTopoBoard())
+
 	panic("TODO")
 }
