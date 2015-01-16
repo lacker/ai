@@ -20,18 +20,19 @@ type QTrainer struct {
 	blackNet *QNet
 
 	// The playouts we have accumulated
-	playouts []QPlayout
+	playouts []*QPlayout
 }
 
 func (trainer *QTrainer) init(b *TopoBoard) {
 	trainer.whiteNet = NewQNet(b, White)
 	trainer.blackNet = NewQNet(b, Black)
-	trainer.playouts = []QPlayout{}
+	trainer.playouts = []*QPlayout{}
 }
 
 // Plays one game and accumulates the playout
-func (Trainer *QTrainer) PlayOneGame(debug bool) {
-	panic("TODO")
+func (trainer *QTrainer) PlayOneGame(debug bool) {
+	playout := NewQPlayout(trainer.whiteNet, trainer.blackNet)
+	trainer.playouts = append(trainer.playouts, playout)
 }
 
 func (trainer *QTrainer) Play(b Board) (NaiveSpot, float64) {
