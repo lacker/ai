@@ -1,7 +1,7 @@
 package hex
 
 import (
-
+	"time"
 )
 
 // The QTrainer creates QNets for a particular position, and
@@ -47,5 +47,15 @@ func (trainer *QTrainer) PlayBatch(batchSize int) {
 func (trainer *QTrainer) Play(b Board) (NaiveSpot, float64) {
 	trainer.init(b.ToTopoBoard())
 
+	if !Debug {
+		start := time.Now()
+		for SecondsSince(start) < trainer.Seconds {
+			trainer.PlayBatch(DefaultBatchSize)
+		}
+	} else {
+		panic("TODO: write debug logic")
+	}
+
+	// Get the best move
 	panic("TODO")
 }
