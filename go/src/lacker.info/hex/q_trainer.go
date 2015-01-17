@@ -35,6 +35,15 @@ func (trainer *QTrainer) PlayOneGame(debug bool) {
 	trainer.playouts = append(trainer.playouts, playout)
 }
 
+const DefaultBatchSize int = 100
+
+// Plays a batch, til we have batchSize games.
+func (trainer *QTrainer) PlayBatch(batchSize int) {
+	for len(trainer.playouts) < DefaultBatchSize {
+		trainer.PlayOneGame(false)
+	}
+}
+
 func (trainer *QTrainer) Play(b Board) (NaiveSpot, float64) {
 	trainer.init(b.ToTopoBoard())
 
