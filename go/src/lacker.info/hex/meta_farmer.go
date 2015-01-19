@@ -171,8 +171,6 @@ func (mf MetaFarmer) Play(b Board) (NaiveSpot, float64) {
 			log.Printf("read command: [%s]", command)
 
 			// Handle the command
-			endGame := false
-
 			switch command {
 			case "b":
 				// Print what black is thinking
@@ -219,9 +217,6 @@ func (mf MetaFarmer) Play(b Board) (NaiveSpot, float64) {
 
 			default:
 				log.Printf("unrecognized command")
-			}
-			if endGame {
-				break
 			}
 		}
 	} else {
