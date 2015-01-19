@@ -1,6 +1,7 @@
 package hex
 
 import (
+	"log"
 	"time"
 )
 
@@ -48,7 +49,8 @@ func (trainer *QTrainer) PlayBatch(batchSize int) {
 }
 
 func (trainer *QTrainer) Play(b Board) (NaiveSpot, float64) {
-	trainer.init(b.ToTopoBoard())
+	board := b.ToTopoBoard()
+	trainer.init(board)
 
 	if !Debug {
 		start := time.Now()
@@ -57,7 +59,16 @@ func (trainer *QTrainer) Play(b Board) (NaiveSpot, float64) {
 			trainer.PlayBatch(DefaultBatchSize)
 		}
 	} else {
-		panic("TODO: write debug logic")
+
+		// Logic for debug mode
+		keepPlaying := true
+
+		log.Printf("Initial position:")
+		board.Debug()
+
+		for keepPlaying {
+			panic("TODO: write debug logic")
+		}
 	}
 
 	// Get the best move
