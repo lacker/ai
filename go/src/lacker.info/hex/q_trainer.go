@@ -26,18 +26,21 @@ type QTrainer struct {
 func (trainer *QTrainer) init(b *TopoBoard) {
 	trainer.whiteNet = NewQNet(b, White)
 	trainer.blackNet = NewQNet(b, Black)
-	trainer.playouts = []*QPlayout{}
 }
 
 // Plays one game and accumulates the playout
 func (trainer *QTrainer) PlayOneGame(debug bool) {
 	playout := NewQPlayout(trainer.whiteNet, trainer.blackNet)
+	if trainer.playouts == nil {
+		trainer.playouts = []*QPlayout{}
+	}
 	trainer.playouts = append(trainer.playouts, playout)
 }
 
 const DefaultBatchSize int = 100
 
 // Plays a batch, til we have batchSize games.
+// This will complete any batch in progress.
 func (trainer *QTrainer) PlayBatch(batchSize int) {
 	for len(trainer.playouts) < DefaultBatchSize {
 		trainer.PlayOneGame(false)
@@ -50,6 +53,7 @@ func (trainer *QTrainer) Play(b Board) (NaiveSpot, float64) {
 	if !Debug {
 		start := time.Now()
 		for SecondsSince(start) < trainer.Seconds {
+			trainer.playouts = nil
 			trainer.PlayBatch(DefaultBatchSize)
 		}
 	} else {
