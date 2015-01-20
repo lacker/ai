@@ -1,7 +1,9 @@
 package hex
 
 import (
+	"bufio"
 	"log"
+	"os"
 	"time"
 )
 
@@ -43,7 +45,7 @@ const DefaultBatchSize int = 100
 // Plays a batch, til we have batchSize games.
 // This will complete any batch in progress.
 func (trainer *QTrainer) PlayBatch(batchSize int) {
-	for len(trainer.playouts) < DefaultBatchSize {
+	for len(trainer.playouts) < batchSize {
 		trainer.PlayOneGame(false)
 	}
 }
@@ -67,10 +69,35 @@ func (trainer *QTrainer) Play(b Board) (NaiveSpot, float64) {
 		board.Debug()
 
 		for keepPlaying {
-			panic("TODO: write debug logic")
+			// Read a debugger command
+			log.Printf("enter command:")
+			bio := bufio.NewReader(os.Stdin)
+			line, _, _ := bio.ReadLine()
+			command := string(line)
+			log.Printf("read command: [%s]", command)
+
+			// Handle the command
+			switch command {
+			case "b":
+				// Print the black net
+				trainer.blackNet.Debug()
+			case "w":
+				// Print what white is thinking
+				trainer.whiteNet.Debug()
+			case "1":
+				trainer.PlayOneGame(true)
+			case "p":
+				trainer.PlayBatch(DefaultBatchSize)
+			case "x":
+				// finish
+				keepPlaying = false
+
+			default:
+				log.Printf("unrecognized command")
+			}
 		}
 	}
 
-	// Get the best move
+	// Get the best move somehow
 	panic("TODO")
 }
