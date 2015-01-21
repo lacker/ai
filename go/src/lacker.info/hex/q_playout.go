@@ -1,6 +1,7 @@
 package hex
 
 import (
+	"log"
 	"math"
 )
 
@@ -16,6 +17,20 @@ type QPlayout struct {
 
 func (playout *QPlayout) AddAction(action QAction) {
 	playout.actions = append(playout.actions, action)
+}
+
+func (playout *QPlayout) FirstMove() TopoSpot {
+	if playout.actions == nil || len(playout.actions) < 1 {
+		log.Fatal("actions must be existent to get FirstMove")
+	}
+	return playout.actions[0].spot
+}
+
+func (playout *QPlayout) FirstColor() Color {
+	if playout.actions == nil || len(playout.actions) < 1 {
+		log.Fatal("actions must be existent to get FirstColor")
+	}
+	return playout.actions[0].color
 }
 
 func NewQPlayout(player1 *QNet, player2 *QNet) *QPlayout {
