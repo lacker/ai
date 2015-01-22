@@ -98,6 +98,27 @@ func (trainer *QTrainer) Play(b Board) (NaiveSpot, float64) {
 		}
 	}
 
-	// Get the best move somehow
-	panic("TODO")
+	// The most frequent move in the last batch should be the best
+	var moveCount [NumTopoSpots]int
+	var winCount [NumTopoSpots]int
+	bestMove := NotASpot
+	bestCount := 0
+	for _, playout := range trainer.playouts {
+		move := playout.FirstMove()
+		moveCount[move]++
+		if playout.FirstColor() == playout.winner {
+			winCount[move]++
+		}
+		if moveCount[move] > bestCount {
+			bestMove = move
+			bestCount = moveCount[move]
+		}
+	}
+
+	if bestMove == NotASpot {
+		log.Fatal("empty batch")
+	}
+
+	winRate := float64(winCount[bestMove]) / float64(moveCount[bestMove])
+	return bestMove.NaiveSpot(), winRate
 }
