@@ -246,7 +246,7 @@ func (qnet *QNet) GetNeuron(f1 QFeature, f2 QFeature) *QNeuron {
 
 // Updates the qnet to observe a new feature.
 func (qnet *QNet) AddFeature(feature QFeature) {
-	qnet.deltaV[feature] = 0.0
+	qnet.deltaV[feature.Spot()] = 0.0
 	
 	qnet.baseV += qnet.mono[feature].weight
 
@@ -261,7 +261,7 @@ func (qnet *QNet) AddFeature(feature QFeature) {
 		switch neuron.active {
 		case 1:
 			if feature2.Color() == qnet.color {
-				qnet.deltaV[feature2] += neuron.weight
+				qnet.deltaV[feature2.Spot()] += neuron.weight
 			}
 		case 2:
 			qnet.baseV += neuron.weight
