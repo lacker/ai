@@ -266,7 +266,7 @@ func (qnet *QNet) AddFeature(feature QFeature) {
 		case 2:
 			qnet.baseV += neuron.weight
 		default:
-			panic("unexpected neuron activity count")
+			log.Fatalf("unexpected neuron activity count: %d", neuron.active)
 		}
 	}
 }
