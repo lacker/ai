@@ -1,5 +1,18 @@
-Torch is required to use this.
+This directory has Lua-based Torch stuff.
 
+How to install dependencies
+
+1. Install Torch
 See the install instructions at:
 http://torch.ch/docs/getting-started.html#_
 
+2. Install ZeroMQ
+brew install zeromq
+brew link zeromq
+
+3. Install ipython
+pip install ipython
+
+3. Install iTorch
+See the install instructions at:
+https://github.com/facebook/iTorch
