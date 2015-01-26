@@ -42,8 +42,6 @@ func NewQPlayout(player1 *QNet, player2 *QNet) *QPlayout {
 	player1.Reset()
 	player2.Reset()
 
-	log.Printf("just reset")
-
 	board := player1.StartingPosition().ToTopoBoard()
 	for board.Winner == Empty {
 		// player is the player whose move it is

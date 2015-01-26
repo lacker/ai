@@ -21,7 +21,7 @@ func TestLogisticMath(t *testing.T) {
 	}
 }
 
-func TestNeuronActivation(t *testing.T) {
+func TestNeuronActivationWithReset(t *testing.T) {
 	spot1 := MakeTopoSpot(1, 1)
 	spot2 := MakeTopoSpot(2, 2)
 	feature1 := MakeQFeature(Black, spot1)
@@ -32,6 +32,12 @@ func TestNeuronActivation(t *testing.T) {
 	net := NewQNet(board, Black)
 	net.AddFeature(feature1)
 	net.AddFeature(feature2)
+	if net.GetNeuron(feature1, feature2).active != 2 {
+		t.Fatal("expected 2")
+	}
 	net.Reset()
+	if net.GetNeuron(feature1, feature2).active != 0 {
+		t.Fatal("expected 0")
+	}
 	net.AddFeature(feature1)
 }

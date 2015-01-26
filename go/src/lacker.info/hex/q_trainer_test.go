@@ -1,7 +1,6 @@
 package hex
 
 import (
-	"log"
 	"math/rand"
 	"testing"
 )
@@ -12,6 +11,5 @@ func TestQTrainerOnDoomed1(t *testing.T) {
 	qt := &QTrainer{Seconds:-1, Quiet:true}
 	qt.init(board)
 	qt.PlayOneGame(false)
-	log.Printf("------------- new game ---------------")
 	qt.PlayOneGame(false)
 }
