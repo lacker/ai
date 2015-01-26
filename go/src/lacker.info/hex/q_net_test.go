@@ -3,6 +3,7 @@ package hex
 import (
 	"log"
 	"math"
+	"math/rand"
 	"testing"
 )
 
@@ -18,5 +19,19 @@ func TestLogisticMath(t *testing.T) {
 	for _, prob := range probs {
 		CheckApproxEq(Logistic(Logit(prob)), prob)
 	}
-		
+}
+
+func TestNeuronActivation(t *testing.T) {
+	spot1 := MakeTopoSpot(1, 1)
+	spot2 := MakeTopoSpot(2, 2)
+	feature1 := MakeQFeature(Black, spot1)
+	feature2 := MakeQFeature(White, spot2)
+
+	rand.Seed(1)
+	board := NewTopoBoard()
+	net := NewQNet(board, Black)
+	net.AddFeature(feature1)
+	net.AddFeature(feature2)
+	net.Reset()
+	net.AddFeature(feature1)
 }

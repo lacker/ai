@@ -246,6 +246,8 @@ func (qnet *QNet) GetNeuron(f1 QFeature, f2 QFeature) *QNeuron {
 
 // Updates the qnet to observe a new feature.
 func (qnet *QNet) AddFeature(feature QFeature) {
+	log.Printf("AddFeature(%v)", feature)
+
 	qnet.deltaV[feature.Spot()] = 0.0
 	
 	qnet.baseV += qnet.mono[feature].weight
