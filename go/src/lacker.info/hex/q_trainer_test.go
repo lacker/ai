@@ -12,4 +12,7 @@ func TestQTrainerOnDoomed1(t *testing.T) {
 	qt.init(board)
 	qt.PlayOneGame(false)
 	qt.PlayOneGame(false)
+	qt.PlayOneGame(false)
+	qt.PlayOneGame(false)
+	qt.PlayOneGame(false)
 }
