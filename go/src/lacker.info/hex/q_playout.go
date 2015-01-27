@@ -168,7 +168,12 @@ func NewQLearningInstance() *QLearningInstance {
 
 // AddGradient adds scalar times the gradient to addend, using the
 // gradient for the provided color's decisions.
+//
 // This uses dynamic programming on a list of QLearningInstances.
+//
+// Note that this uses the Q as calculated at play time, not the Q as
+// calculated by some other network. Thus, this is not appropriate for
+// experience replay.
 func (playout *QPlayout) AddGradient(color Color, scalar float64,
 	addend *[NumFeatureSets]float64) {
 	// In activeFeatures we accumulate all features that activate during

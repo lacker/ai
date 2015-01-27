@@ -24,6 +24,9 @@ type QTrainer struct {
 
 	// The playouts we have accumulated
 	playouts []*QPlayout
+
+	// How many batches we played
+	batches int
 }
 
 func (trainer *QTrainer) init(b *TopoBoard) {
@@ -50,6 +53,13 @@ func (trainer *QTrainer) PlayBatch(batchSize int) {
 	}
 }
 
+// Learns from a batch and resets for the next one.
+func (trainer *QTrainer) LearnFromBatch() {
+	trainer.whiteNet.LearnFromPlayouts(trainer.playouts, 0.1)
+	trainer.blackNet.LearnFromPlayouts(trainer.playouts, 0.1)
+	trainer.batches++
+}
+
 func (trainer *QTrainer) Play(b Board) (NaiveSpot, float64) {
 	board := b.ToTopoBoard()
 	trainer.init(board)
@@ -57,8 +67,8 @@ func (trainer *QTrainer) Play(b Board) (NaiveSpot, float64) {
 	if !Debug {
 		start := time.Now()
 		for SecondsSince(start) < trainer.Seconds {
-			trainer.playouts = nil
 			trainer.PlayBatch(DefaultBatchSize)
+			trainer.LearnFromBatch()
 		}
 	} else {
 
@@ -118,6 +128,8 @@ func (trainer *QTrainer) Play(b Board) (NaiveSpot, float64) {
 	if bestMove == NotASpot {
 		log.Fatal("empty batch")
 	}
+
+	log.Printf("played %d batches", trainer.batches)
 
 	winRate := float64(winCount[bestMove]) / float64(moveCount[bestMove])
 	return bestMove.NaiveSpot(), winRate
