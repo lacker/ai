@@ -44,8 +44,9 @@ func (trainer *QTrainer) PlayOneGame(debug bool) {
 const DefaultBatchSize int = 100
 
 // Plays a batch, til we have batchSize games.
-// This will complete any batch in progress.
+// This will create a new batch if there is anything in progress.
 func (trainer *QTrainer) PlayBatch(batchSize int, debug bool) {
+	trainer.playouts = []*QPlayout{}
 	for len(trainer.playouts) < batchSize {
 		trainer.PlayOneGame(false)
 	}
@@ -84,7 +85,6 @@ func (trainer *QTrainer) LearnFromBatch(debug bool) {
 	trainer.whiteNet.LearnFromPlayouts(trainer.playouts, 0.1)
 	trainer.blackNet.LearnFromPlayouts(trainer.playouts, 0.1)
 	trainer.batches++
-	trainer.playouts = []*QPlayout{}
 }
 
 func (trainer *QTrainer) Debug() {
