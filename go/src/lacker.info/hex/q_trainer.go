@@ -32,14 +32,12 @@ type QTrainer struct {
 func (trainer *QTrainer) init(b *TopoBoard) {
 	trainer.whiteNet = NewQNet(b, White)
 	trainer.blackNet = NewQNet(b, Black)
+	trainer.playouts = []*QPlayout{}
 }
 
 // Plays one game and accumulates the playout
 func (trainer *QTrainer) PlayOneGame(debug bool) {
 	playout := NewQPlayout(trainer.whiteNet, trainer.blackNet)
-	if trainer.playouts == nil {
-		trainer.playouts = []*QPlayout{}
-	}
 	trainer.playouts = append(trainer.playouts, playout)
 }
 
@@ -47,17 +45,50 @@ const DefaultBatchSize int = 100
 
 // Plays a batch, til we have batchSize games.
 // This will complete any batch in progress.
-func (trainer *QTrainer) PlayBatch(batchSize int) {
+func (trainer *QTrainer) PlayBatch(batchSize int, debug bool) {
 	for len(trainer.playouts) < batchSize {
 		trainer.PlayOneGame(false)
 	}
 }
 
+func (trainer *QTrainer) BestMoveAndWinRate() (TopoSpot, float64) {
+	// The most frequent move in the last batch should be the best
+	var moveCount [NumTopoSpots]int
+	var winCount [NumTopoSpots]int
+	bestMove := NotASpot
+	bestCount := 0
+	for _, playout := range trainer.playouts {
+		move := playout.FirstMove()
+		moveCount[move]++
+		if playout.FirstColor() == playout.winner {
+			winCount[move]++
+		}
+		if moveCount[move] > bestCount {
+			bestMove = move
+			bestCount = moveCount[move]
+		}
+	}
+
+	if bestMove == NotASpot {
+		log.Fatal("empty batch")
+	}
+
+	winRate := float64(winCount[bestMove]) /
+		float64(moveCount[bestMove])
+
+	return bestMove, winRate
+}
+
 // Learns from a batch and resets for the next one.
-func (trainer *QTrainer) LearnFromBatch() {
+func (trainer *QTrainer) LearnFromBatch(debug bool) {
 	trainer.whiteNet.LearnFromPlayouts(trainer.playouts, 0.1)
 	trainer.blackNet.LearnFromPlayouts(trainer.playouts, 0.1)
 	trainer.batches++
+	trainer.playouts = []*QPlayout{}
+}
+
+func (trainer *QTrainer) Debug() {
+	log.Printf("played %d batches", trainer.batches)
 }
 
 func (trainer *QTrainer) Play(b Board) (NaiveSpot, float64) {
@@ -67,8 +98,8 @@ func (trainer *QTrainer) Play(b Board) (NaiveSpot, float64) {
 	if !Debug {
 		start := time.Now()
 		for SecondsSince(start) < trainer.Seconds {
-			trainer.PlayBatch(DefaultBatchSize)
-			trainer.LearnFromBatch()
+			trainer.PlayBatch(DefaultBatchSize, false)
+			trainer.LearnFromBatch(false)
 		}
 	} else {
 
@@ -92,12 +123,15 @@ func (trainer *QTrainer) Play(b Board) (NaiveSpot, float64) {
 				// Print the black net
 				trainer.blackNet.Debug()
 			case "w":
-				// Print what white is thinking
+				// Print the white net
 				trainer.whiteNet.Debug()
+			case "d":
+				trainer.Debug()
 			case "1":
 				trainer.PlayOneGame(true)
 			case "p":
-				trainer.PlayBatch(DefaultBatchSize)
+				trainer.PlayBatch(DefaultBatchSize, true)
+				trainer.LearnFromBatch(true)
 			case "x":
 				// finish
 				keepPlaying = false
@@ -108,29 +142,6 @@ func (trainer *QTrainer) Play(b Board) (NaiveSpot, float64) {
 		}
 	}
 
-	// The most frequent move in the last batch should be the best
-	var moveCount [NumTopoSpots]int
-	var winCount [NumTopoSpots]int
-	bestMove := NotASpot
-	bestCount := 0
-	for _, playout := range trainer.playouts {
-		move := playout.FirstMove()
-		moveCount[move]++
-		if playout.FirstColor() == playout.winner {
-			winCount[move]++
-		}
-		if moveCount[move] > bestCount {
-			bestMove = move
-			bestCount = moveCount[move]
-		}
-	}
-
-	if bestMove == NotASpot {
-		log.Fatal("empty batch")
-	}
-
-	log.Printf("played %d batches", trainer.batches)
-
-	winRate := float64(winCount[bestMove]) / float64(moveCount[bestMove])
+	bestMove, winRate := trainer.BestMoveAndWinRate()
 	return bestMove.NaiveSpot(), winRate
 }
