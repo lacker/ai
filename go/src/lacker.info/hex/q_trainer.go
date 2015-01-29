@@ -85,6 +85,12 @@ func (trainer *QTrainer) LearnFromBatch(debug bool) {
 	trainer.whiteNet.LearnFromPlayouts(trainer.playouts, 0.1)
 	trainer.blackNet.LearnFromPlayouts(trainer.playouts, 0.1)
 	trainer.batches++
+
+	if debug {
+		log.Printf("learned from batch #%d", trainer.batches)
+		bestMove, winRate := trainer.BestMoveAndWinRate()
+		log.Printf("best move was %v with win rate %.3f", bestMove, winRate)
+	}
 }
 
 func (trainer *QTrainer) Debug() {
@@ -141,6 +147,8 @@ func (trainer *QTrainer) Play(b Board) (NaiveSpot, float64) {
 			}
 		}
 	}
+
+	log.Printf("ran %d batches", trainer.batches)
 
 	bestMove, winRate := trainer.BestMoveAndWinRate()
 	return bestMove.NaiveSpot(), winRate
