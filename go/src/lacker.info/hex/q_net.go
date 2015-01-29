@@ -158,6 +158,19 @@ func (qnet *QNet) Color() Color {
 // Acts on the board to make a move.
 // This does not update any neurons directly.
 func (qnet *QNet) Act(board *TopoBoard) QAction {
+	action := qnet.IdealAction(board, true)
+
+	// Actually make the move
+	board.MakeMove(action.spot)
+
+	return action
+}
+
+// Returns what this net thinks is the ideal action.
+// explore is whether to add some chance of exploration.
+// Does not actually mutate anything.
+func (qnet *QNet) IdealAction(board *TopoBoard, explore bool) QAction {
+
 	if qnet.color != board.GetToMove() {
 		panic("wrong color to move")
 	}
@@ -192,7 +205,7 @@ func (qnet *QNet) Act(board *TopoBoard) QAction {
 		panic("no empty spot found in Act")
 	}
 
-	if rand.Float64() < qnet.epsilon {
+	if explore && rand.Float64() < qnet.epsilon {
 		// Explore
 		action.spot = firstPossibleMove
 		action.Q = qnet.baseV + firstPossibleDeltaV
@@ -203,9 +216,6 @@ func (qnet *QNet) Act(board *TopoBoard) QAction {
 		action.Q = qnet.baseV + bestDeltaV
 		action.explorationCost = 0.0
 	}
-
-	// Actually make the move
-	board.MakeMove(action.spot)
 
 	return action
 }

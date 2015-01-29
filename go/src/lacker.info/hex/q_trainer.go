@@ -66,7 +66,16 @@ func (trainer *QTrainer) PlayBatch(batchSize int, debug bool) {
 	}
 }
 
+// Finds the best move and win rate according to the neural net
 func (trainer *QTrainer) BestMoveAndWinRate() (TopoSpot, float64) {
+	net := trainer.NetToMove()
+	net.Reset()
+	action := net.IdealAction(net.StartingPosition(), false)
+	return action.spot, Logistic(action.Q)
+}
+
+// Finds the best move and win rate in practice
+func (trainer *QTrainer) BestMoveAndWinRateInPractice() (TopoSpot, float64) {
 	// The most frequent move in the last batch should be the best
 	var moveCount [NumTopoSpots]int
 	var winCount [NumTopoSpots]int
