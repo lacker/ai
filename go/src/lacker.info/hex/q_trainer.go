@@ -35,6 +35,20 @@ func (trainer *QTrainer) init(b *TopoBoard) {
 	trainer.playouts = []*QPlayout{}
 }
 
+func (trainer *QTrainer) GetToMove() Color {
+	return trainer.whiteNet.StartingPosition().GetToMove()
+}
+
+func (trainer *QTrainer) NetToMove() *QNet {
+	switch trainer.GetToMove() {
+	case White:
+		return trainer.whiteNet
+	case Black:
+		return trainer.blackNet
+	}
+	panic("unhandled switch fallthru")
+}
+
 // Plays one game and accumulates the playout
 func (trainer *QTrainer) PlayOneGame(debug bool) {
 	playout := NewQPlayout(trainer.whiteNet, trainer.blackNet)
@@ -148,7 +162,7 @@ func (trainer *QTrainer) Play(b Board) (NaiveSpot, float64) {
 		}
 	}
 
-	log.Printf("ran %d batches", trainer.batches)
+	trainer.Debug()
 
 	bestMove, winRate := trainer.BestMoveAndWinRate()
 	return bestMove.NaiveSpot(), winRate
