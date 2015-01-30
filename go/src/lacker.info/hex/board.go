@@ -35,6 +35,8 @@ const Black Color = -1
 const White Color = 1
 const Empty Color = 0
 
+var Colors = [2]Color{Black, White}
+
 var Debug bool = false
 
 func (c Color) Name() string {

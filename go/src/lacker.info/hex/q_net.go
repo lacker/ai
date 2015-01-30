@@ -56,6 +56,10 @@ type QNeuron struct {
 	active uint8
 }
 
+func (neuron QNeuron) Debug() {
+	log.Printf("0.2f :: %v", neuron.weight, neuron.features)
+}
+
 // Data surrounding a particular action. Enough to be used for Q-learning.
 type QAction struct {
 	// Which player took the action
@@ -309,5 +313,28 @@ func (qnet *QNet) LearnFromPlayouts(playouts []*QPlayout, scalar float64) {
 }
 
 func (qnet *QNet) Debug() {
-	log.Printf("TODO: real qnet debug info")
+	qnet.bias.Debug()
+}
+
+func (qnet *QNet) DebugSpot(spot TopoSpot) {
+	// Print pair-neuron info
+	for other := TopLeftCorner; other <= BottomRightCorner; other++ {
+		if other == spot {
+			continue
+		}
+
+		for _, color := range Colors {
+			for _, otherColor := range Colors {
+				feature := MakeQFeature(color, spot)
+				otherFeature := MakeQFeature(otherColor, other)
+				qnet.GetNeuron(feature, otherFeature).Debug()
+			}
+		}
+	}
+
+	// Print single-neuron info
+	for _, color := range Colors {
+		feature := MakeQFeature(color, spot)
+		qnet.mono[feature].Debug()
+	}
 }
