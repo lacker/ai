@@ -53,6 +53,10 @@ func (trainer *QTrainer) NetToMove() *QNet {
 func (trainer *QTrainer) PlayOneGame(debug bool) {
 	playout := NewQPlayout(trainer.whiteNet, trainer.blackNet)
 	trainer.playouts = append(trainer.playouts, playout)
+
+	if debug {
+		playout.Debug()
+	}
 }
 
 const DefaultBatchSize int = 100

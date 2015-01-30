@@ -82,6 +82,11 @@ type QAction struct {
 	explorationCost float64
 }
 
+func (action QAction) Debug() {
+	log.Printf("%v%v Q=%.3f eC=%.1f", action.color, action.spot, action.Q,
+		action.explorationCost)
+}
+
 // Turns a q-value into a probability.
 func Logistic(q float64) float64 {
 	return 1.0 - 1.0 / (1.0 + math.Exp(q))

@@ -33,6 +33,13 @@ func (playout *QPlayout) FirstColor() Color {
 	return playout.actions[0].color
 }
 
+func (playout *QPlayout) Debug() {
+	for _, action := range playout.actions {
+		action.Debug()
+	}
+	log.Printf("%v wins", playout.winner)
+}
+
 func NewQPlayout(player1 *QNet, player2 *QNet) *QPlayout {
 	playout := &QPlayout{
 		actions: []QAction{},
