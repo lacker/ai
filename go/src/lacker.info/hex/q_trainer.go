@@ -2,6 +2,7 @@ package hex
 
 import (
 	"bufio"
+	"fmt"
 	"log"
 	"os"
 	"time"
@@ -170,7 +171,13 @@ func (trainer *QTrainer) Play(b Board) (NaiveSpot, float64) {
 				keepPlaying = false
 
 			default:
-				log.Printf("unrecognized command")
+				var row, col int
+				_, err := fmt.Sscanf(command, "%d,%d", &row, &col)
+				if err != nil {
+					log.Printf("unrecognized command")
+				} else {
+					panic("TODO")
+				}
 			}
 		}
 	}
