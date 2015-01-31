@@ -176,7 +176,11 @@ func (trainer *QTrainer) Play(b Board) (NaiveSpot, float64) {
 				if err != nil {
 					log.Printf("unrecognized command")
 				} else {
-					panic("TODO")
+					spot := MakeTopoSpot(row, col)
+					log.Printf("*** White net:")
+					trainer.whiteNet.DebugSpot(spot)
+					log.Printf("*** Black net:")
+					trainer.blackNet.DebugSpot(spot)
 				}
 			}
 		}
