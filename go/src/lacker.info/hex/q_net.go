@@ -64,7 +64,9 @@ func (neuron QNeuron) Debug() {
 		}
 		featureString += feature.String()
 	}
-	log.Printf("%0.2f <- {%s}", neuron.weight, featureString)
+	if neuron.weight > 0.0 {
+		log.Printf("%0.2f <- {%s}", neuron.weight, featureString)
+	}
 }
 
 // Data surrounding a particular action. Enough to be used for Q-learning.
