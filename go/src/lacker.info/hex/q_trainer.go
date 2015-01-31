@@ -65,7 +65,6 @@ const DefaultBatchSize int = 1
 // Plays a batch, til we have batchSize games.
 // This will create a new batch if there is anything in progress.
 func (trainer *QTrainer) PlayBatch(batchSize int, debug bool) {
-	trainer.playouts = []*QPlayout{}
 	for len(trainer.playouts) < batchSize {
 		trainer.PlayOneGame(false)
 	}
@@ -115,10 +114,13 @@ func (trainer *QTrainer) LearnFromBatch(debug bool) {
 	trainer.batches++
 
 	if debug {
-		log.Printf("learned from batch #%d", trainer.batches)
+		log.Printf("learned from batch #%d = %d playouts",
+			trainer.batches, len(trainer.playouts))
 		bestMove, winRate := trainer.BestMoveAndWinRate()
 		log.Printf("best move was %v with win rate %.3f", bestMove, winRate)
 	}
+
+	trainer.playouts = []*QPlayout{}
 }
 
 func (trainer *QTrainer) Debug() {

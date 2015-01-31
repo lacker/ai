@@ -64,7 +64,7 @@ func (neuron QNeuron) Debug() {
 		}
 		featureString += feature.String()
 	}
-	if neuron.weight > 0.0 {
+	if neuron.weight != 0.0 {
 		log.Printf("%0.2f <- {%s}", neuron.weight, featureString)
 	}
 }
@@ -157,7 +157,7 @@ func NewQNet(board *TopoBoard, color Color) *QNet {
 		qnet.mono[feature].features = []QFeature{feature}
 	}
 	for f1 := MinFeature; f1 <= MaxFeature; f1++ {
-		for f2 := f1 + 1; f2 < MaxFeature; f2++ {
+		for f2 := f1 + 1; f2 <= MaxFeature; f2++ {
 			qnet.duo[f1][f2].features = []QFeature{f1, f2}
 		}
 	}
@@ -341,6 +341,7 @@ func (qnet *QNet) DebugSpot(spot TopoSpot) {
 			for _, otherColor := range Colors {
 				feature := MakeQFeature(color, spot)
 				otherFeature := MakeQFeature(otherColor, other)
+				log.Printf("f: %v oF: %v", feature, otherFeature)
 				qnet.GetNeuron(feature, otherFeature).Debug()
 			}
 		}
