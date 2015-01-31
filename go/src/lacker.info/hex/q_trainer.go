@@ -60,7 +60,7 @@ func (trainer *QTrainer) PlayOneGame(debug bool) {
 	}
 }
 
-const DefaultBatchSize int = 100
+const DefaultBatchSize int = 1
 
 // Plays a batch, til we have batchSize games.
 // This will create a new batch if there is anything in progress.
@@ -163,6 +163,8 @@ func (trainer *QTrainer) Play(b Board) (NaiveSpot, float64) {
 				trainer.Debug()
 			case "1":
 				trainer.PlayOneGame(true)
+			case "l":
+				trainer.LearnFromBatch(true)
 			case "p":
 				trainer.PlayBatch(DefaultBatchSize, true)
 				trainer.LearnFromBatch(true)
