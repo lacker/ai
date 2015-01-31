@@ -57,7 +57,14 @@ type QNeuron struct {
 }
 
 func (neuron QNeuron) Debug() {
-	log.Printf("%0.2f <- %v", neuron.weight, neuron.features)
+	featureString := ""
+	for _, feature := range neuron.features {
+		if len(featureString) > 0 {
+			featureString += "+"
+		}
+		featureString += feature.String()
+	}
+	log.Printf("%0.2f <- {%s}", neuron.weight, featureString)
 }
 
 // Data surrounding a particular action. Enough to be used for Q-learning.
