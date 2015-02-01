@@ -28,6 +28,11 @@ type QTrainer struct {
 
 	// How many batches we played
 	batches int
+
+	// A single logistic estimator for who wins.
+	// Black (-1) is negative, White (+1) is positive.
+	// Independent from the main neural net.
+	winner float64
 }
 
 func (trainer *QTrainer) init(b *TopoBoard) {
@@ -54,6 +59,16 @@ func (trainer *QTrainer) NetToMove() *QNet {
 func (trainer *QTrainer) PlayOneGame(debug bool) {
 	playout := NewQPlayout(trainer.whiteNet, trainer.blackNet)
 	trainer.playouts = append(trainer.playouts, playout)
+
+	// Update the winner
+	calcProb := Logistic(trainer.winner)
+	var probDiff float64
+	if playout.winner == White {
+		probDiff = 1.0 - calcProb
+	} else {
+		probDiff = 0.0 - calcProb
+	}
+	trainer.winner += 0.1 * probDiff
 
 	if debug {
 		playout.Debug()
@@ -124,7 +139,8 @@ func (trainer *QTrainer) LearnFromBatch(debug bool) {
 }
 
 func (trainer *QTrainer) Debug() {
-	log.Printf("played %d batches", trainer.batches)
+	log.Printf("played %d batches. P(White wins) = %.3f",
+		trainer.batches, Logistic(trainer.winner))
 }
 
 func (trainer *QTrainer) Play(b Board) (NaiveSpot, float64) {
