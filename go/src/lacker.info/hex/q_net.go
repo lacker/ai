@@ -341,7 +341,6 @@ func (qnet *QNet) DebugSpot(spot TopoSpot) {
 			for _, otherColor := range Colors {
 				feature := MakeQFeature(color, spot)
 				otherFeature := MakeQFeature(otherColor, other)
-				log.Printf("f: %v oF: %v", feature, otherFeature)
 				qnet.GetNeuron(feature, otherFeature).Debug()
 			}
 		}
