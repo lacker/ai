@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"fmt"
 	"log"
+	"math/rand"
 	"os"
 	"time"
 )
@@ -160,6 +161,7 @@ func (trainer *QTrainer) Play(b Board) (NaiveSpot, float64) {
 			trainer.LearnFromBatch(false)
 		}
 	} else {
+		rand.Seed(1)
 
 		// Logic for debug mode
 		keepPlaying := true
@@ -190,7 +192,7 @@ func (trainer *QTrainer) Play(b Board) (NaiveSpot, float64) {
 			case "l":
 				trainer.LearnFromBatch(true)
 			case "p":
-				trainer.PlayBatch(DefaultBatchSize, true)
+				trainer.PlayOneGame(true)
 				trainer.LearnFromBatch(true)
 			case "x":
 				// finish
