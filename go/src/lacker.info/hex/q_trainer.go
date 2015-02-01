@@ -72,7 +72,7 @@ func (trainer *QTrainer) PlayOneGame(debug bool) {
 	} else {
 		probDiff = 0.0 - calcProb
 	}
-	trainer.winner += 0.1 * probDiff
+	trainer.winner += 0.3 * probDiff
 
 	trainer.games++
 	
@@ -194,6 +194,11 @@ func (trainer *QTrainer) Play(b Board) (NaiveSpot, float64) {
 			case "p":
 				trainer.PlayOneGame(true)
 				trainer.LearnFromBatch(true)
+			case "100":
+				for i := 0; i < 100; i++ {
+					trainer.PlayOneGame(true)
+					trainer.LearnFromBatch(true)
+				}
 			case "x":
 				// finish
 				keepPlaying = false

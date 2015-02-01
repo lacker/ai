@@ -149,7 +149,6 @@ func NewQNet(board *TopoBoard, color Color) *QNet {
 		startingPosition: board,
 		color: color,
 		emptySpots: board.PossibleTopoSpotMoves(),
-		epsilon: 0.05,
 		bias: QNeuron{},
 	}
 
@@ -223,11 +222,18 @@ func (qnet *QNet) IdealAction(board *TopoBoard, explore bool) QAction {
 		panic("no empty spot found in Act")
 	}
 
-	if explore && rand.Float64() < qnet.epsilon {
+	// We might do firstPossibleMove as an exploration.
+	// We don't want to do stupid explorations, though.
+	explorationQ := qnet.baseV + firstPossibleDeltaV
+	explorationCost := bestDeltaV - firstPossibleDeltaV
+
+	// A Q of 3 corresponds to a win chance of around 95%.
+	// If we are still 95% likely to win then it seems okay to explore.
+	if explore && explorationQ > 3.0 && rand.Float64() > 0.5 {
 		// Explore
 		action.spot = firstPossibleMove
-		action.Q = qnet.baseV + firstPossibleDeltaV
-		action.explorationCost = bestDeltaV - firstPossibleDeltaV
+		action.Q = explorationQ
+		action.explorationCost = explorationCost
 	} else {
 		// Exploit
 		action.spot = bestMove
