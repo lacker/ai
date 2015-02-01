@@ -29,6 +29,9 @@ type QTrainer struct {
 	// How many batches we played
 	batches int
 
+	// How many games we played
+	games int
+
 	// A single logistic estimator for who wins.
 	// Black (-1) is negative, White (+1) is positive.
 	// Independent from the main neural net.
@@ -70,6 +73,8 @@ func (trainer *QTrainer) PlayOneGame(debug bool) {
 	}
 	trainer.winner += 0.1 * probDiff
 
+	trainer.games++
+	
 	if debug {
 		playout.Debug()
 	}
@@ -132,15 +137,16 @@ func (trainer *QTrainer) LearnFromBatch(debug bool) {
 		log.Printf("learned from batch #%d = %d playouts",
 			trainer.batches, len(trainer.playouts))
 		bestMove, winRate := trainer.BestMoveAndWinRate()
-		log.Printf("best move was %v with win rate %.3f", bestMove, winRate)
+		log.Printf("best move was %v with Q win rate %.3f", bestMove, winRate)
+		trainer.Debug()
 	}
 
 	trainer.playouts = []*QPlayout{}
 }
 
 func (trainer *QTrainer) Debug() {
-	log.Printf("played %d batches. P(White wins) = %.3f",
-		trainer.batches, Logistic(trainer.winner))
+	log.Printf("played %d games. P(White wins) = %.3f",
+		trainer.games, Logistic(trainer.winner))
 }
 
 func (trainer *QTrainer) Play(b Board) (NaiveSpot, float64) {
