@@ -241,7 +241,7 @@ func (qnet *QNet) IdealAction(board *TopoBoard, maybeExplore bool) QAction {
 		}
 	}
 
-	if explore && explorationQ > 3.0 && rand.Float64() > 0.5 {
+	if explore {
 		// Explore
 		action.spot = firstPossibleMove
 		action.Q = explorationQ
