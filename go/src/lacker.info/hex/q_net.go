@@ -138,8 +138,8 @@ type QNet struct {
 	emptySpots []TopoSpot
 
 	// The fraction of the time we intentionally go off-policy in order
-	// to explore.
-	epsilon float64
+	// to handicap this player.
+	handicap float64
 }
 
 // Creates a new qnet that has no values on any features and thus just
@@ -184,9 +184,9 @@ func (qnet *QNet) Act(board *TopoBoard) QAction {
 }
 
 // Returns what this net thinks is the ideal action.
-// explore is whether to add some chance of exploration.
+// maybeExplore is whether to add some chance of exploration.
 // Does not actually mutate anything.
-func (qnet *QNet) IdealAction(board *TopoBoard, explore bool) QAction {
+func (qnet *QNet) IdealAction(board *TopoBoard, maybeExplore bool) QAction {
 
 	if qnet.color != board.GetToMove() {
 		panic("wrong color to move")
@@ -227,8 +227,20 @@ func (qnet *QNet) IdealAction(board *TopoBoard, explore bool) QAction {
 	explorationQ := qnet.baseV + firstPossibleDeltaV
 	explorationCost := bestDeltaV - firstPossibleDeltaV
 
-	// A Q of 3 corresponds to a win chance of around 95%.
-	// If we are still 95% likely to win then it seems okay to explore.
+	// Determine whether we should explore
+	explore := false
+	if maybeExplore {
+		// A Q of 3 corresponds to a win chance of around 95%.
+		// If we are still 95% likely to win then it seems okay to explore.
+		if explorationQ > 3.0 && rand.Float64() > 0.5 {
+			explore = true
+		}
+		// Sometimes we explore extra in order to handicap a player
+		if rand.Float64() < qnet.handicap {
+			explore = true
+		}
+	}
+
 	if explore && explorationQ > 3.0 && rand.Float64() > 0.5 {
 		// Explore
 		action.spot = firstPossibleMove

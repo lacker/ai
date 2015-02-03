@@ -37,6 +37,12 @@ type QTrainer struct {
 	// Black (-1) is negative, White (+1) is positive.
 	// Independent from the main neural net.
 	winner float64
+
+	// Which player, if any, we are handicapping.
+	// This should only be altered right after a batch is processed, so
+	// that this value is the same when we learn as it was for all the
+	// playouts.
+	handicap Color
 }
 
 func (trainer *QTrainer) init(b *TopoBoard) {
@@ -130,8 +136,16 @@ func (trainer *QTrainer) BestMoveAndWinRateInPractice() (TopoSpot, float64) {
 
 // Learns from a batch and resets for the next one.
 func (trainer *QTrainer) LearnFromBatch(debug bool) {
-	trainer.whiteNet.LearnFromPlayouts(trainer.playouts, 0.1)
-	trainer.blackNet.LearnFromPlayouts(trainer.playouts, 0.1)
+	if trainer.handicap != White {
+		trainer.whiteNet.LearnFromPlayouts(trainer.playouts, 0.1)
+	} else if debug {
+		log.Printf("White was handicapped; pausing learning")
+	}
+	if trainer.handicap != Black {
+		trainer.blackNet.LearnFromPlayouts(trainer.playouts, 0.1)
+	} else if debug {
+		log.Printf("Black was handicapped; pausing learning")
+	}
 	trainer.batches++
 
 	if debug {
@@ -140,6 +154,28 @@ func (trainer *QTrainer) LearnFromBatch(debug bool) {
 		bestMove, winRate := trainer.BestMoveAndWinRate()
 		log.Printf("best move was %v with Q win rate %.3f", bestMove, winRate)
 		trainer.Debug()
+	}
+
+	// Determine handicapping for the next batch.
+	trainer.handicap = Empty
+	trainer.whiteNet.handicap = 0.0
+	trainer.blackNet.handicap = 0.0
+	probWhiteWins := Logistic(trainer.winner)
+	// Handicapping starts at 0% handicap for 80% wins and goes to 100%
+	// handicap for 100% wins.
+	if probWhiteWins > 0.8 {
+		trainer.handicap = White
+		trainer.whiteNet.handicap = (probWhiteWins - 0.8) * 5.0
+		if debug {
+			log.Printf("Handicapping White by %.2f", trainer.whiteNet.handicap)
+		}
+	}
+	if probWhiteWins < 0.2 {
+		trainer.handicap = Black
+		trainer.blackNet.handicap = (0.2 - probWhiteWins) * 5.0
+		if debug {
+			log.Printf("Handicapping Black by %.2f", trainer.blackNet.handicap)
+		}
 	}
 
 	trainer.playouts = []*QPlayout{}
