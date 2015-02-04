@@ -10,9 +10,10 @@ http://torch.ch/docs/getting-started.html#_
 brew install zeromq
 brew link zeromq
 
-3. Install ipython
+3. Install python parts
 pip install ipython
+pip install pyzmq
 
-3. Install iTorch
+5. Install iTorch
 See the install instructions at:
 https://github.com/facebook/iTorch
