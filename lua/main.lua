@@ -1,9 +1,10 @@
 #!/usr/bin/env luajit
 
-print("hello lua world")
+require "torch"
 
-num = 2
+train = torch.load("mnist.t7/train_32x32.t7", "ascii")
+test = torch.load("mnist.t7/test_32x32.t7", "ascii")
 
-if num < 30 then
-  print "OK"
-end
+-- Usually for normalization, AI stuff uses zero mean and unit norm
+
+-- TODO: tools for mean and norm
