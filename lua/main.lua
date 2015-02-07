@@ -10,24 +10,14 @@ function globalMean(tensor)
   return tensor:sum() / tensor:nElement()
 end
 
--- Normalizes data with the provided mean to have a unit norm.
--- The first dimension of the tensor is assumed to index the different
--- inputs for the data.
-function normalize(tensor, mean)
-  -- Apply the negative mean as an offset
-  normalized = torch.add(tensor, -mean)
-
-  -- Square to start calculating norm
-  squares = torch.pow(normalized, 2)
-
-  -- Sum across the first index and square root to get norms
-  norms = TODO
-
-  -- Divide the original tensor elements by norms to normalize
-  -- TODO
+-- Converts a byte tensor to a double format.
+-- The range 0-255 gets mapped to 0-1.
+-- This takes a slice of the mnist training or test data and converts
+-- it to something readily displayable.
+function normalize(byteTensor)
+  output = torch.Tensor(byteTensor:size())
+  output:copy(byteTensor)
+  output:div(255)
+  return output
 end
 
-
-mean = globalMean(train.data)
-
-print(mean)
