@@ -10,14 +10,16 @@ function globalMean(tensor)
   return tensor:sum() / tensor:nElement()
 end
 
--- Converts a byte tensor to a double format.
--- The range 0-255 gets mapped to 0-1.
--- This takes a slice of the mnist training or test data and converts
--- it to something readily displayable.
-function normalize(byteTensor)
-  output = torch.Tensor(byteTensor:size())
-  output:copy(byteTensor)
-  output:div(255)
-  return output
+-- Converts an input tensor to something with mean 0 and 1 standard
+-- deviation.
+-- Returns the initial mean and std used to normalize as well.
+function normalize(inputTensor)
+  output = torch.FloatTensor(inputTensor:size())
+  output:copy(inputTensor)
+  mean = output:mean()
+  std = output:std()
+  output:add(-mean)
+  output:div(std)
+  return {mean=mean, std=std, data=output}
 end
 
