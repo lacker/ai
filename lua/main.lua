@@ -1,5 +1,6 @@
 #!/usr/bin/env luajit
 
+require "nn"
 require "torch"
 
 train = torch.load("mnist.t7/train_32x32.t7", "ascii")
@@ -22,4 +23,7 @@ function normalize(inputTensor)
   output:div(std)
   return {mean=mean, std=std, data=output}
 end
+
+-- Create a linear regression model to train on the training data
+model = nn.Sequential()
 
