@@ -3,35 +3,54 @@
 require "nn"
 require "torch"
 
-train = torch.load("mnist.t7/train_32x32.t7", "ascii")
-test = torch.load("mnist.t7/test_32x32.t7", "ascii")
+mnistTrain = torch.load("mnist.t7/train_32x32.t7", "ascii")
+mnistTest = torch.load("mnist.t7/test_32x32.t7", "ascii")
 
--- Finds the global mean for all pixels
-function globalMean(tensor)
-  return tensor:sum() / tensor:nElement()
+-- Creates a Dataset from an mnist-format input that has "data" and
+-- "labels".
+-- TODO: make "Dataset" a real class
+function makeTrainingDataset(abnormal)
+  local normalized = torch.FloatTensor(abnormal.data:size())
+  normalized:copy(abnormal.data)
+  local mean = normalized:mean()
+  local std = normalized:std()
+  normalized:add(-mean)
+  normalized:div(std)
+  return {
+    original=abnormal.data,
+    labels=abnormal.labels,
+    mean=mean,
+    std=std,
+    normalized=normalized,
+  }
 end
 
--- Converts an input tensor to something with mean 0 and 1 standard
--- deviation.
--- Returns the initial mean and std used to normalize as well.
-function normalize(inputTensor)
-  output = torch.FloatTensor(inputTensor:size())
-  output:copy(inputTensor)
-  mean = output:mean()
-  std = output:std()
-  output:add(-mean)
-  output:div(std)
-  return {mean=mean, std=std, data=output}
+-- Makes a new dataset using the same transformation by which dataset
+-- was originally created.
+-- abnormal should have "data" and "labels".
+function makeTestDataset(dataset, abnormal)
+  local normalized = torch.FloatTensor(abnormal.data:size())
+  normalized:copy(abnormal.data)
+  normalized:add(-dataset.mean)
+  normalized:div(dataset.std)
+  return {
+    original=abnormal.data,
+    labels=abnormal.labels,
+    normalized=normalized,
+  }
 end
 
 -- Create a linear regression model to train on the training data
-function makeModel(trainingData)
-  ninputs = trainingData:stride(1)
-  m = nn.Sequential()
+function makeModel(dataset)
+  local ninputs = dataset.normalized:stride(1)
+  local m = nn.Sequential()
   m:add(nn.Reshape(ninputs))
   m:add(nn.Linear(ninputs, 10))
   m:add(nn.LogSoftMax())
   return m
 end
 
-model = makeModel(train.data)
+train = makeTrainingDataset(mnistTrain)
+test = makeTestDataset(train, mnistTest)
+model = makeModel(train)
+
