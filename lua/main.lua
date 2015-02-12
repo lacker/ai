@@ -25,8 +25,13 @@ function normalize(inputTensor)
 end
 
 -- Create a linear regression model to train on the training data
-ninputs = train.data:stride(1)
-model = nn.Sequential()
-model:add(nn.Reshape(ninputs))
-model:add(nn.Linear(ninputs, 10))
-model:add(nn.LogSoftMax())
+function makeModel(trainingData)
+  ninputs = trainingData:stride(1)
+  m = nn.Sequential()
+  m:add(nn.Reshape(ninputs))
+  m:add(nn.Linear(ninputs, 10))
+  m:add(nn.LogSoftMax())
+  return m
+end
+
+model = makeModel(train.data)
