@@ -6,6 +6,17 @@ require "torch"
 mnistTrain = torch.load("mnist.t7/train_32x32.t7", "ascii")
 mnistTest = torch.load("mnist.t7/test_32x32.t7", "ascii")
 
+-- A Dataset can be either training or testing.
+Dataset = {}
+
+function Dataset:new(data, labels)
+  local dataset = {
+    original=data,
+    labels=labels
+  }
+  setmetatable(dataset, {__index=Dataset})
+end
+
 -- Creates a Dataset from an mnist-format input that has "data" and
 -- "labels".
 -- TODO: make "Dataset" a real class
