@@ -29,4 +29,4 @@ ninputs = train.data:stride(1)
 model = nn.Sequential()
 model:add(nn.Reshape(ninputs))
 model:add(nn.Linear(ninputs, 10))
-
+model:add(nn.LogSoftMax())
