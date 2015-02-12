@@ -54,3 +54,5 @@ train = makeTrainingDataset(mnistTrain)
 test = makeTestDataset(train, mnistTest)
 model = makeModel(train)
 
+-- Ghetto testing
+assert(string.format("%.4f", test.normalized[3][1][4][2]) == "-0.3635")
