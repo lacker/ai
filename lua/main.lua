@@ -33,16 +33,13 @@ end
 -- Makes a new dataset using the same transformation by which dataset
 -- was originally created.
 -- abnormal should have "data" and "labels".
-function makeTestDataset(dataset, abnormal)
-  local normalized = torch.FloatTensor(abnormal.data:size())
-  normalized:copy(abnormal.data)
-  normalized:add(-dataset.mean)
-  normalized:div(dataset.std)
-  return {
-    original=abnormal.data,
-    labels=abnormal.labels,
-    normalized=normalized,
-  }
+function Dataset:makeTest(abnormal)
+  local test = Dataset:new(abnormal.data, abnormal.labels)
+  test.normalized = torch.FloatTensor(test.original:size())
+  test.normalized:copy(test.original)
+  test.normalized:add(-self.mean)
+  test.normalized:div(self.std)
+  return test
 end
 
 -- Create a linear regression model to train on the training data
@@ -56,7 +53,7 @@ function makeModel(dataset)
 end
 
 train = Dataset.makeTraining(mnistTrain)
-test = makeTestDataset(train, mnistTest)
+test = train:makeTest(mnistTest)
 model = makeModel(train)
 
 -- Ghetto testing
