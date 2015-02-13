@@ -8,32 +8,26 @@ mnistTest = torch.load("mnist.t7/test_32x32.t7", "ascii")
 
 -- A Dataset can be either training or testing.
 Dataset = {}
-
 function Dataset:new(data, labels)
   local dataset = {
     original=data,
     labels=labels
   }
-  setmetatable(dataset, {__index=Dataset})
+  setmetatable(dataset, {__index = Dataset})
+  return dataset
 end
 
 -- Creates a Dataset from an mnist-format input that has "data" and
 -- "labels".
--- TODO: make "Dataset" a real class
-function makeTrainingDataset(abnormal)
-  local normalized = torch.FloatTensor(abnormal.data:size())
-  normalized:copy(abnormal.data)
-  local mean = normalized:mean()
-  local std = normalized:std()
-  normalized:add(-mean)
-  normalized:div(std)
-  return {
-    original=abnormal.data,
-    labels=abnormal.labels,
-    mean=mean,
-    std=std,
-    normalized=normalized,
-  }
+function Dataset.makeTraining(abnormal)
+  local dataset = Dataset:new(abnormal.data, abnormal.labels)
+  dataset.normalized = torch.FloatTensor(dataset.original:size())
+  dataset.normalized:copy(dataset.original)
+  dataset.mean = dataset.normalized:mean()
+  dataset.std = dataset.normalized:std()
+  dataset.normalized:add(-dataset.mean)
+  dataset.normalized:div(dataset.std)
+  return dataset
 end
 
 -- Makes a new dataset using the same transformation by which dataset
@@ -61,7 +55,7 @@ function makeModel(dataset)
   return m
 end
 
-train = makeTrainingDataset(mnistTrain)
+train = Dataset.makeTraining(mnistTrain)
 test = makeTestDataset(train, mnistTest)
 model = makeModel(train)
 
