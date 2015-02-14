@@ -42,26 +42,29 @@ function Dataset:makeTest(abnormal)
   return test
 end
 
--- Create a stochastic gradient trainer for this dataset
-function makeTrainer(dataset)
-  local ninputs = dataset.normalized:stride(1)
+-- A Net is a neural net with helper functions
+Net = {}
+function Net:new(trainingDataset)
+  local net = {
+    train=trainingDataset,
+  }
+  setmetatable(net, {__index = Net})
 
-  -- Make the module
-  local mod = nn.Sequential()
-  mod:add(nn.Reshape(ninputs))
-  mod:add(nn.Linear(ninputs, 10))
-  mod:add(nn.LogSoftMax())
+  -- The model to train
+  local ninputs = net.train.normalized:stride(1)
+  net.model = nn.Sequential()
+  net.model:add(nn.Reshape(ninputs))
+  net.model:add(nn.Linear(ninputs, 10))
+  net.model:add(nn.LogSoftMax())
 
-  -- Make the criterion. NLL goes with LogSoftMax
-  local crit = nn.ClassNLLCriterion()
+  net.criterion = nn.ClassNLLCriterion()
 
-  local trainer = nn.StochasticGradient(mod, crit)
-  return trainer
+  return net
 end
 
 train = Dataset.makeTraining(mnistTrain)
 test = train:makeTest(mnistTest)
-trainer = makeTrainer(train)
+net = Net:new(train)
 
 -- Ghetto testing
 assert(string.format("%.4f", test.normalized[3][1][4][2]) == "-0.3635")
