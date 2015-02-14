@@ -42,36 +42,26 @@ function Dataset:makeTest(abnormal)
   return test
 end
 
--- Create a linear regression model to train on the training data
-function makeModel(dataset)
+-- Create a stochastic gradient trainer for this dataset
+function makeTrainer(dataset)
   local ninputs = dataset.normalized:stride(1)
-  local m = nn.Sequential()
-  m:add(nn.Reshape(ninputs))
-  m:add(nn.Linear(ninputs, 10))
-  m:add(nn.LogSoftMax())
-  return m
-end
 
--- Train the model on just one input
-function trainOnce(model, input, label)
-  parameters, gradParameters = model:getParameters()
+  -- Make the module
+  local mod = nn.Sequential()
+  mod:add(nn.Reshape(ninputs))
+  mod:add(nn.Linear(ninputs, 10))
+  mod:add(nn.LogSoftMax())
 
-  local feval = function(x) -- TODO: what is feval?
-    if x ~= parameters then
-      parameters:copy(x) -- TODO: this doesn't seem like a great idea
-    end
+  -- Make the criterion. NLL goes with LogSoftMax
+  local crit = nn.ClassNLLCriterion()
 
-    gradParameters:zero()
-  end
-
-  assert(false) -- TODO: finish
+  local trainer = nn.StochasticGradient(mod, crit)
+  return trainer
 end
 
 train = Dataset.makeTraining(mnistTrain)
 test = train:makeTest(mnistTest)
-model = makeModel(train)
-
--- TODO: how to actually run the model on an image? seems fun
+trainer = makeTrainer(train)
 
 -- Ghetto testing
 assert(string.format("%.4f", test.normalized[3][1][4][2]) == "-0.3635")
