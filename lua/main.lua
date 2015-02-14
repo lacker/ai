@@ -52,9 +52,26 @@ function makeModel(dataset)
   return m
 end
 
+-- Train the model on just one input
+function trainOnce(model, input, label)
+  parameters, gradParameters = model:getParameters()
+
+  local feval = function(x) -- TODO: what is feval?
+    if x ~= parameters then
+      parameters:copy(x) -- TODO: this doesn't seem like a great idea
+    end
+
+    gradParameters:zero()
+  end
+
+  assert(false) -- TODO: finish
+end
+
 train = Dataset.makeTraining(mnistTrain)
 test = train:makeTest(mnistTest)
 model = makeModel(train)
+
+-- TODO: how to actually run the model on an image? seems fun
 
 -- Ghetto testing
 assert(string.format("%.4f", test.normalized[3][1][4][2]) == "-0.3635")
