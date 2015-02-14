@@ -62,6 +62,30 @@ function Net:new(trainingDataset)
   return net
 end
 
+-- Trains on a single input-output pair.
+-- input should be a tensor with the input data
+-- TODO: is either 1x32x32 or 32x32 ok?
+-- TODO: does this work?
+-- label should just be a number with the digit+1 (stupid 1-indexing)
+function Net:trainOnce(input, label)
+  local output = torch.Tensor(1)
+  self.criterion:forward(self.model:forward(input), output)
+  self.model:zeroGradParameters()
+  self.model:backward(
+    input, self.criterion:backward(self.model.output, output))
+  self.model:updateParameters(0.01)
+end
+
+function Net:trainIndex(i)
+  self:trainOnce(self.train.normalized[i], self.train.labels[i])
+end
+
+function Net:trainAll()
+  for i = 1,self.train:size(1) do
+    self:trainOnce(i)
+  end
+end
+
 train = Dataset.makeTraining(mnistTrain)
 test = train:makeTest(mnistTest)
 net = Net:new(train)
