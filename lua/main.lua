@@ -21,7 +21,7 @@ end
 -- "labels".
 function Dataset.makeTraining(abnormal)
   local dataset = Dataset:new(abnormal.data, abnormal.labels)
-  dataset.normalized = torch.FloatTensor(dataset.original:size())
+  dataset.normalized = torch.Tensor(dataset.original:size())
   dataset.normalized:copy(dataset.original)
   dataset.mean = dataset.normalized:mean()
   dataset.std = dataset.normalized:std()
@@ -35,7 +35,7 @@ end
 -- abnormal should have "data" and "labels".
 function Dataset:makeTest(abnormal)
   local test = Dataset:new(abnormal.data, abnormal.labels)
-  test.normalized = torch.FloatTensor(test.original:size())
+  test.normalized = torch.Tensor(test.original:size())
   test.normalized:copy(test.original)
   test.normalized:add(-self.mean)
   test.normalized:div(self.std)
