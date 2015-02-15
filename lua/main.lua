@@ -86,6 +86,10 @@ function Net:trainAll()
   end
 end
 
+function Net:classify(input)
+  -- TODO
+end
+
 train = Dataset.makeTraining(mnistTrain)
 test = train:makeTest(mnistTest)
 net = Net:new(train)
