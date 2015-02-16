@@ -3,8 +3,13 @@
 require "nn"
 require "torch"
 
+-- Making this work might save memory
+-- torch.setdefaulttensortype("torch.FloatTensor")
+
 mnistTrain = torch.load("mnist.t7/train_32x32.t7", "ascii")
+mnistTrain.data:resize(60000, 32, 32)
 mnistTest = torch.load("mnist.t7/test_32x32.t7", "ascii")
+mnistTest.data:resize(10000, 32, 32)
 
 -- A Dataset can be either training or testing.
 Dataset = {}
@@ -95,4 +100,4 @@ test = train:makeTest(mnistTest)
 net = Net:new(train)
 
 -- Ghetto testing
-assert(string.format("%.4f", test.normalized[3][1][4][2]) == "-0.3635")
+assert(string.format("%.4f", test.normalized[3][4][2]) == "-0.3635")
