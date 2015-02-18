@@ -99,5 +99,8 @@ train = Dataset.makeTraining(mnistTrain)
 test = train:makeTest(mnistTest)
 net = Net:new(train)
 
+-- This should run
+net:trainIndex(1)
+
 -- Ghetto testing
 assert(string.format("%.4f", test.normalized[3][4][2]) == "-0.3635")
