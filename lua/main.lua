@@ -69,12 +69,13 @@ end
 
 -- Trains on a single input-output pair.
 -- input should be a tensor with the input data
--- TODO: is either 1x32x32 or 32x32 ok?
--- TODO: does this work?
+-- TODO: make this work
 -- label should just be a number with the digit+1 (stupid 1-indexing)
 function Net:trainOnce(input, label)
   local output = torch.Tensor(1)
-  self.criterion:forward(self.model:forward(input), output)
+  local calcOutput = self.model:forward(input)
+  print(calcOutput)
+  self.criterion:forward(calcOutput, output)
   self.model:zeroGradParameters()
   self.model:backward(
     input, self.criterion:backward(self.model.output, output))
