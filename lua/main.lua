@@ -72,13 +72,11 @@ end
 -- TODO: make this work
 -- label should just be a number with the digit+1 (stupid 1-indexing)
 function Net:trainOnce(input, label)
-  local output = torch.Tensor(1)
-  local calcOutput = self.model:forward(input)
-  print(calcOutput)
-  self.criterion:forward(calcOutput, output)
+  local predicted = self.model:forward(input)
+  local err = self.criterion:forward(predicted, label)
   self.model:zeroGradParameters()
-  self.model:backward(
-    input, self.criterion:backward(self.model.output, output))
+  local t = self.criterion:backward(predicted, label)
+  self.model:backward(input, t)
   self.model:updateParameters(0.01)
 end
 
