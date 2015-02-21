@@ -11,6 +11,13 @@ mnistTrain.data:resize(60000, 32, 32)
 mnistTest = torch.load("mnist.t7/test_32x32.t7", "ascii")
 mnistTest.data:resize(10000, 32, 32)
 
+-- itorch-displays a 2d tensor as an image.
+function show(tensor)
+  local image = torch.Tensor(tensor)
+  image:resize(1, tensor:size()[1], tensor:size()[2])
+  itorch.image(image)
+end
+
 -- A Dataset can be either training or testing.
 Dataset = {}
 function Dataset:new(data, labels)
@@ -98,9 +105,6 @@ end
 train = Dataset.makeTraining(mnistTrain)
 test = train:makeTest(mnistTest)
 net = Net:new(train)
-
--- This should run
-net:trainIndex(1)
 
 -- Ghetto testing
 assert(string.format("%.4f", test.normalized[3][4][2]) == "-0.3635")
