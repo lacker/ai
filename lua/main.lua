@@ -90,8 +90,9 @@ function Net:trainAll()
   end
 end
 
+-- Print out some info about classifying an input
 function Net:classify(input)
-  -- TODO
+  print(self.model:forward(input))
 end
 
 train = Dataset.makeTraining(mnistTrain)
