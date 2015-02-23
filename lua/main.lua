@@ -76,7 +76,6 @@ end
 
 -- Trains on a single input-output pair.
 -- input should be a tensor with the input data
--- TODO: make this work
 -- label should just be a number with the digit+1 (stupid 1-indexing)
 function Net:trainOnce(input, label)
   local predicted = self.model:forward(input)
@@ -91,9 +90,10 @@ function Net:trainIndex(i)
   self:trainOnce(self.train.normalized[i], self.train.labels[i])
 end
 
+-- Needs a progress bar
 function Net:trainAll()
-  for i = 1,self.train:size(1) do
-    self:trainOnce(i)
+  for i = 1,self.train.normalized:size(1) do
+    self:trainIndex(i)
   end
 end
 
