@@ -92,9 +92,11 @@ end
 
 -- Needs a progress bar
 function Net:trainAll()
+  local start = os.time()
   for i = 1,self.train.normalized:size(1) do
     self:trainIndex(i)
   end
+  print(string.format("%d seconds elapsed", os.time() - start))
 end
 
 -- Print out some info about classifying an input
