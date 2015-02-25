@@ -86,8 +86,21 @@ function Net:trainOnce(input, label)
   self.model:updateParameters(0.01)
 end
 
+-- Trains on many input-output pairs.
+-- input should be a nx(imagesize) tensor with n points.
+-- labels should be a n-size tensor with the labels.
+-- each label is a number with digit+1 because of 1-indexing
+function Net:trainBatch(inputs, labels)
+  -- TODO: does this just work? if so, rename
+  self:trainOnce(inputs, labels)
+end
+
 function Net:trainIndex(i)
   self:trainOnce(self.train.normalized[i], self.train.labels[i])
+end
+
+function Net:trainRange(first, last)
+  -- TODO: implement. first slice, then trainBatch
 end
 
 -- Needs a progress bar
