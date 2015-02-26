@@ -18,6 +18,18 @@ function show(tensor)
   itorch.image(image)
 end
 
+-- Slices a 3d tensor along the first dimension
+function slice3D(tensor, first, last)
+  local outsize = torch.LongStorage{
+    last - first + 1,
+    tensor:size(2),
+    tensor:size(3),
+  }
+  return torch.Tensor(tensor:storage(),
+                      1 + (first - 1) * tensor:stride(1),
+                      outsize)
+end
+
 -- A Dataset can be either training or testing.
 Dataset = {}
 function Dataset:new(data, labels)
