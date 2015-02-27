@@ -112,7 +112,9 @@ function Net:trainIndex(i)
 end
 
 function Net:trainRange(first, last)
-  -- TODO: implement. first slice, then trainBatch
+  local dataBatch = slice3D(self.train.normalized, first, last)
+  local labelBatch = slice3D(self.train.labels, first, last)
+  self:trainBatch(dataBatch, labelBatch)
 end
 
 -- Needs a progress bar
