@@ -18,6 +18,12 @@ function show(tensor)
   itorch.image(image)
 end
 
+-- Slices a 1d byte tensor along the first dimension
+function sliceBytes(tensor, first, last)
+  return torch.ByteTensor(tensor:storage(), first,
+                          torch.LongStorage{last - first + 1})
+end
+
 -- Slices a 3d tensor along the first dimension
 function slice3D(tensor, first, last)
   local outsize = torch.LongStorage{
@@ -113,7 +119,7 @@ end
 
 function Net:trainRange(first, last)
   local dataBatch = slice3D(self.train.normalized, first, last)
-  local labelBatch = slice3D(self.train.labels, first, last)
+  local labelBatch = sliceBytes(self.train.labels, first, last)
   self:trainBatch(dataBatch, labelBatch)
 end
 
