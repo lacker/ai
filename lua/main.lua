@@ -80,16 +80,20 @@ function Net:new(trainingDataset)
   }
   setmetatable(net, {__index = Net})
 
-  -- The model to train
-  local ninputs = net.train.normalized:stride(1)
-  net.model = nn.Sequential()
-  net.model:add(nn.Reshape(ninputs))
-  net.model:add(nn.Linear(ninputs, 10))
-  net.model:add(nn.LogSoftMax())
-
-  net.criterion = nn.ClassNLLCriterion()
+  net:makeLinearModel()
 
   return net
+end
+
+function Net:makeLinearModel()
+  -- The model to train
+  local ninputs = self.train.normalized:stride(1)
+  self.model = nn.Sequential()
+  self.model:add(nn.Reshape(ninputs))
+  self.model:add(nn.Linear(ninputs, 10))
+  self.model:add(nn.LogSoftMax())
+
+  self.criterion = nn.ClassNLLCriterion()
 end
 
 -- Trains on a single input-output pair.
