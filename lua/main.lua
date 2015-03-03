@@ -96,6 +96,14 @@ function Net:makeLinearModel()
   self.criterion = nn.ClassNLLCriterion()
 end
 
+function Net:makeDeepModel()
+  local ninputs = self.train.normalized:stride(1)
+  self.model = nn.Sequential()
+  -- TODO: add more layers
+
+  self.criterion = nn.ClassNLLCriterion()
+end
+
 -- Trains on a single input-output pair.
 -- input should be a tensor with the input data
 -- label should just be a number with the digit+1 (stupid 1-indexing)
