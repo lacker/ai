@@ -144,9 +144,63 @@ function Net:trainAll()
   print(string.format("%d seconds elapsed", os.time() - start))
 end
 
--- Print out some info about classifying an input
+-- Returns the classification scores for labels
 function Net:classify(input)
-  print(self.model:forward(input))
+  return self.model:forward(input)
+end
+
+-- Returns the best digit for a picture
+function Net:bestDigit(input)
+  local classes = self:classify(input)
+  local m,i = classes:max(1)
+  return i[1] - 1
+end
+
+-- Shows an example of a particular class via random permutation
+function Net:example(digit)
+  local pic = torch.rand(32, 32):add(-0.5):mul(2)
+  local label = digit + 1
+  local picScore = self:classify(pic)[label]
+
+  for i = 1,500 do
+    local newPic = torch.rand(32, 32):add(-0.5):mul(0.1)
+    newPic:add(pic)
+    local newPicScore = self:classify(newPic)[label]
+    if newPicScore > picScore then
+      pic = newPic
+      picScore = newPicScore
+    end
+  end
+
+  return pic
+end
+
+-- Shows an average of examples of a particular class
+function Net:averageExample(digit)
+  local num = 100
+  local sum = torch.Tensor(32, 32):zero()
+  for i = 1,num do
+    sum:add(self:example(digit))
+  end
+  return sum:div(num)
+end
+
+-- Shows the pixels that, when just this pixel is activated, we think
+-- this is the right class
+function Net:pixels(digit)
+  local pic = torch.Tensor(32, 32):zero()
+
+  for i = 1,32 do
+    for j = 1,32 do
+      local pixelPic = torch.Tensor(32, 32):zero()
+      pixelPic[i][j] = 1
+      if self:bestDigit(pixelPic) == digit then
+        pic[i][j] = 1
+      end
+    end
+  end
+
+  return pic
 end
 
 train = Dataset.makeTraining(mnistTrain)
