@@ -76,7 +76,7 @@ end
 Net = {}
 function Net:new(trainingDataset)
   local net = {
-    train=trainingDataset,
+    data=trainingDataset,
   }
   setmetatable(net, {__index = Net})
 
@@ -87,7 +87,7 @@ end
 
 function Net:makeLinearModel()
   -- The model to train
-  local ninputs = self.train.normalized:stride(1)
+  local ninputs = self.data.normalized:stride(1)
   self.model = nn.Sequential()
   self.model:add(nn.Reshape(ninputs))
   self.model:add(nn.Linear(ninputs, 10))
@@ -97,7 +97,7 @@ function Net:makeLinearModel()
 end
 
 function Net:makeDeepModel()
-  local ninputs = self.train.normalized:stride(1)
+  local ninputs = self.data.normalized:stride(1)
   self.model = nn.Sequential()
   -- TODO: add more layers
 
@@ -107,7 +107,8 @@ end
 -- Trains on a single input-output pair.
 -- input should be a tensor with the input data
 -- label should just be a number with the digit+1 (stupid 1-indexing)
-function Net:trainOnce(input, label)
+-- TODO: does this actually work on batches
+function Net:train(input, label)
   local predicted = self.model:forward(input)
   local err = self.criterion:forward(predicted, label)
   self.model:zeroGradParameters()
@@ -122,31 +123,48 @@ end
 -- each label is a number with digit+1 because of 1-indexing
 function Net:trainBatch(inputs, labels)
   -- TODO: does this just work? if so, rename
-  self:trainOnce(inputs, labels)
+  self:train(inputs, labels)
 end
 
 function Net:trainIndex(i)
-  self:trainOnce(self.train.normalized[i], self.train.labels[i])
+  self:train(self.data.normalized[i], self.data.labels[i])
 end
 
 function Net:trainRange(first, last)
-  local dataBatch = slice3D(self.train.normalized, first, last)
-  local labelBatch = sliceBytes(self.train.labels, first, last)
+  local dataBatch = slice3D(self.data.normalized, first, last)
+  local labelBatch = sliceBytes(self.data.labels, first, last)
   self:trainBatch(dataBatch, labelBatch)
 end
 
 -- TODO: this should work the same as trainAll. does it?
 function Net:trainAllNew()
-  self:trainRange(1, self.train.normalized:size(1))
+  self:trainRange(1, self.data.normalized:size(1))
 end
 
 -- Needs a progress bar
 function Net:trainAll()
   local start = os.time()
-  for i = 1,self.train.normalized:size(1) do
+  for i = 1,self.data.normalized:size(1) do
     self:trainIndex(i)
   end
   print(string.format("%d seconds elapsed", os.time() - start))
+end
+
+-- Print performance on the provided dataset.
+function Net:test(dataset)
+  local right = 0
+  local wrong = 0
+  for i = 1,dataset.normalized:size(1) do
+    local label = self:bestLabel(dataset.normalized[i])
+    if dataset.labels[i] == label then
+      right = right + 1
+    else
+      wrong = wrong + 1
+    end
+  end
+
+  print("right: " + right)
+  print("wrong: " + wrong)
 end
 
 -- Returns the classification scores for labels
@@ -154,11 +172,16 @@ function Net:classify(input)
   return self.model:forward(input)
 end
 
--- Returns the best digit for a picture
-function Net:bestDigit(input)
+-- Returns the best label for a picture
+function Net:bestLabel(input)
   local classes = self:classify(input)
   local m,i = classes:max(1)
-  return i[1] - 1
+  return i[0]
+end
+
+-- Returns the best digit for a picture
+function Net:bestDigit(input)
+  return self:bestLabel(input) - 1
 end
 
 -- Shows an example of a particular class via random permutation
