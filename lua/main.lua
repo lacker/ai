@@ -135,6 +135,11 @@ function Net:trainRange(first, last)
   self:trainBatch(dataBatch, labelBatch)
 end
 
+-- TODO: this should work the same as trainAll. does it?
+function Net:trainAllNew()
+  self:trainRange(1, self.train.normalized:size(1))
+end
+
 -- Needs a progress bar
 function Net:trainAll()
   local start = os.time()
