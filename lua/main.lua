@@ -176,7 +176,7 @@ end
 function Net:bestLabel(input)
   local classes = self:classify(input)
   local m,i = classes:max(1)
-  return i[0]
+  return i[1]
 end
 
 -- Returns the best digit for a picture
