@@ -164,7 +164,7 @@ function Net:test(dataset)
   end
 
   print("right:", right)
-  print("wrong: ", wrong)
+  print("wrong:", wrong)
 end
 
 -- Returns the classification scores for labels
