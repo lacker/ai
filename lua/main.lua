@@ -6,6 +6,8 @@ require "torch"
 -- Making this work might save memory
 -- torch.setdefaulttensortype("torch.FloatTensor")
 
+torch.manualSeed(1337)
+
 mnistTrain = torch.load("mnist.t7/train_32x32.t7", "ascii")
 mnistTrain.data:resize(60000, 32, 32)
 mnistTest = torch.load("mnist.t7/test_32x32.t7", "ascii")
