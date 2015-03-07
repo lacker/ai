@@ -106,26 +106,22 @@ function Net:makeDeepModel()
   self.criterion = nn.ClassNLLCriterion()
 end
 
--- Trains on a single input-output pair.
--- input should be a tensor with the input data
+-- Trains on a single input-output pair, or a batch.
+--
+-- If there is a batch of input-outputs, the first dimension of input
+-- and label should have the same size and each index should represent
+-- another data point.
+--
+-- input should be a tensor with the input data.
 -- label should just be a number with the digit+1 (stupid 1-indexing)
--- TODO: does this actually work on batches
 function Net:train(input, label)
   local predicted = self.model:forward(input)
+  -- TODO: why do we throw this error away?
   local err = self.criterion:forward(predicted, label)
   self.model:zeroGradParameters()
   local t = self.criterion:backward(predicted, label)
   self.model:backward(input, t)
   self.model:updateParameters(0.01)
-end
-
--- Trains on many input-output pairs.
--- input should be a nx(imagesize) tensor with n points.
--- labels should be a n-size tensor with the labels.
--- each label is a number with digit+1 because of 1-indexing
-function Net:trainBatch(inputs, labels)
-  -- TODO: does this just work? if so, rename
-  self:train(inputs, labels)
 end
 
 function Net:trainIndex(i)
@@ -135,16 +131,18 @@ end
 function Net:trainRange(first, last)
   local dataBatch = slice3D(self.data.normalized, first, last)
   local labelBatch = sliceBytes(self.data.labels, first, last)
-  self:trainBatch(dataBatch, labelBatch)
+  self:train(dataBatch, labelBatch)
 end
 
--- TODO: this should work the same as trainAll. does it?
-function Net:trainAllNew()
+-- Trains against each data point in one big batch.
+function Net:trainAllBatch()
+  local start = os.time()
   self:trainRange(1, self.data.normalized:size(1))
+  print(string.format("%d seconds elapsed", os.time() - start))
 end
 
--- Needs a progress bar
-function Net:trainAll()
+-- Trains against each data point one by one.
+function Net:trainEach()
   local start = os.time()
   for i = 1,self.data.normalized:size(1) do
     self:trainIndex(i)
