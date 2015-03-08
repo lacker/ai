@@ -1,5 +1,6 @@
 #!/usr/bin/env luajit
 
+require "image"
 require "nn"
 require "torch"
 
@@ -82,11 +83,13 @@ function Net:new(trainingDataset)
   }
   setmetatable(net, {__index = Net})
 
-  net:makeLinearModel()
+  net:makeDeepModel()
+  -- net:makeLinearModel()
 
   return net
 end
 
+-- Input size is not hard coded here
 function Net:makeLinearModel()
   -- The model to train
   local ninputs = self.data.normalized:stride(1)
@@ -98,12 +101,34 @@ function Net:makeLinearModel()
   self.criterion = nn.ClassNLLCriterion()
 end
 
+-- This makes a deep model a la:
+-- http://torch.cogbits.com/doc/tutorials_supervised/
+-- The 32x32-ness is hard coded here.
 function Net:makeDeepModel()
-  local ninputs = self.data.normalized:stride(1)
+  -- Reshape to have an extra size-1 dimension because standard torch
+  -- convolution stuff expects multiple feature planes, a la rgb.
   self.model = nn.Sequential()
-  -- TODO: add more layers
+  self.model:add(nn.Reshape(1, 32, 32))
+
+  -- Layer 1, convolutional
+  self.model:add(nn.SpatialConvolution(1, 16, 5, 5))
+  self.model:add(nn.Tanh())
+  self.model:add(nn.SpatialMaxPooling(2, 2, 2, 2))
+
+  -- Layer 2, convolutional
+  self.model:add(nn.SpatialConvolution(16, 128, 5, 5))
+  self.model:add(nn.Tanh())
+  self.model:add(nn.SpatialMaxPooling(2, 2, 2, 2))
+
+  -- Layer 3, a normal classification net
+  self.model:add(nn.Reshape(128 * 5 * 5))
+  self.model:add(nn.Linear(128 * 5 * 5, 200))
+  self.model:add(nn.Tanh())
+  self.model:add(nn.Linear(200, 10))
+  self.model:add(nn.LogSoftMax())
 
   self.criterion = nn.ClassNLLCriterion()
+
 end
 
 -- Trains on a single input-output pair, or a batch.
@@ -234,9 +259,6 @@ end
 train = Dataset.makeTraining(mnistTrain)
 test = train:makeTest(mnistTest)
 net = Net:new(train)
-
--- Test code
-net:trainRange(10, 100)
 
 -- Ghetto testing
 assert(string.format("%.4f", test.normalized[3][4][2]) == "-0.3635")
