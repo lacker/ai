@@ -167,10 +167,20 @@ function Net:trainAllBatch()
 end
 
 -- Trains against each data point one by one.
-function Net:trainEach()
+function Net:trainAllOneByOne()
   local start = os.time()
   for i = 1,self.data.normalized:size(1) do
     self:trainIndex(i)
+  end
+  print(string.format("%d seconds elapsed", os.time() - start))
+end
+
+-- Trains against each data point with minibatches.
+function Net:trainAllMiniBatch()
+  local start = os.time()
+  local step = 100
+  for i = 1,self.data.normalized:size(1),step do
+    self:trainRange(i, i + step - 1)
   end
   print(string.format("%d seconds elapsed", os.time() - start))
 end
