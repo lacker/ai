@@ -202,6 +202,15 @@ function Net:test(dataset)
   print("wrong:", wrong)
 end
 
+-- Print performance on the provided dataset.
+-- Uses a batch for efficiency.
+function Net:testMiniBatch(dataset, first, last)
+  local inputs = slice3D(dataset.normalized, first, last)
+  return self:bestLabels(inputs)
+  -- TODO: add right and wrong.
+  -- Right now this just returns some labels
+end
+
 -- Returns the classification scores for labels
 function Net:classify(input)
   return self.model:forward(input)
@@ -212,6 +221,12 @@ function Net:bestLabel(input)
   local classes = self:classify(input)
   local m,i = classes:max(1)
   return i[1]
+end
+
+-- Returns the best labels for a set of pictures
+function Net:bestLabels(inputs)
+  local classified = self:classify(inputs)
+  -- TODO: return the right thing
 end
 
 -- Returns the best digit for a picture
