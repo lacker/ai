@@ -226,7 +226,9 @@ end
 -- Returns the best labels for a set of pictures
 function Net:bestLabels(inputs)
   local classified = self:classify(inputs)
-  -- TODO: return the right thing
+  local vals,indexes = classified:max(2)
+  indexes:resize(indexes:size(1))
+  return indexes
 end
 
 -- Returns the best digit for a picture
