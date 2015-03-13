@@ -206,7 +206,10 @@ end
 -- Uses a batch for efficiency.
 function Net:testMiniBatch(dataset, first, last)
   local inputs = slice3D(dataset.normalized, first, last)
-  return self:bestLabels(inputs)
+  local predictedLabels = self:bestLabels(inputs)
+  local targetLabels = sliceBytes(dataset.labels, first, last)
+  print(predictedLabels)
+  print(targetLabels)
   -- TODO: add right and wrong.
   -- Right now this just returns some labels
 end
