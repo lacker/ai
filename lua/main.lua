@@ -208,13 +208,12 @@ function Net:testMiniBatch(dataset, first, last)
   local inputs = slice3D(dataset.normalized, first, last)
   local predictedLabels = self:bestLabels(inputs)
   local targetLabels = sliceBytes(dataset.labels, first, last)
-  if predictedLabels:size()[1] ~= targetLabels:size()[1] then
+  local size = predictedLabels:size()[1]
+  if size ~= targetLabels:size()[1] then
     error()
   end
-  print(predictedLabels)
-  print(targetLabels)
-  -- TODO: add right and wrong.
-  -- Right now this just returns some labels
+  local right = predictedLabels:eq(targetLabels):sum()
+  -- TODO: print stuff
 end
 
 -- Returns the classification scores for labels
