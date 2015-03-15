@@ -213,6 +213,7 @@ function Net:testMiniBatch(dataset, first, last)
     error()
   end
   local right = predictedLabels:eq(targetLabels):sum()
+  local wrong = size - right
   -- TODO: print stuff
 end
 
