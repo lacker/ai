@@ -214,7 +214,9 @@ function Net:testMiniBatch(dataset, first, last)
   end
   local right = predictedLabels:eq(targetLabels):sum()
   local wrong = size - right
-  -- TODO: print stuff
+
+  print("right:", right)
+  -- TODO: print wrong
 end
 
 -- Returns the classification scores for labels
