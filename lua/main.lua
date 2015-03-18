@@ -216,7 +216,7 @@ function Net:testMiniBatch(dataset, first, last)
   local wrong = size - right
 
   print("right:", right)
-  -- TODO: print wrong
+  print("wrong:", wrong)
 end
 
 -- Returns the classification scores for labels
