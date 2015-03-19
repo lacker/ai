@@ -110,19 +110,21 @@ function Net:makeDeepModel()
   self.model = nn.Sequential()
   self.model:add(nn.Reshape(1, 32, 32))
 
+  local n = 5
+
   -- Layer 1, convolutional
-  self.model:add(nn.SpatialConvolution(1, 16, 5, 5))
+  self.model:add(nn.SpatialConvolution(1, 16, n, n))
   self.model:add(nn.Tanh())
   self.model:add(nn.SpatialMaxPooling(2, 2, 2, 2))
 
   -- Layer 2, convolutional
-  self.model:add(nn.SpatialConvolution(16, 128, 5, 5))
+  self.model:add(nn.SpatialConvolution(16, 128, n, n))
   self.model:add(nn.Tanh())
   self.model:add(nn.SpatialMaxPooling(2, 2, 2, 2))
 
   -- Layer 3, a normal classification net
-  self.model:add(nn.Reshape(128 * 5 * 5))
-  self.model:add(nn.Linear(128 * 5 * 5, 200))
+  self.model:add(nn.Reshape(128 * n * n))
+  self.model:add(nn.Linear(128 * n * n, 200))
   self.model:add(nn.Tanh())
   self.model:add(nn.Linear(200, 10))
   self.model:add(nn.LogSoftMax())
