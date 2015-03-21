@@ -1,0 +1,11 @@
+Designing boxcode
+
+Boxcode should have enough logic to be able to build whatever you'd
+typically want from an internet of things type device.
+
+Then, you can have a parsebot that has
+
+1/ some way to connect up to a particular computer
+2/ a way to constantly execute instructions from that computer
+
+So you need a runtime and you need statements.
