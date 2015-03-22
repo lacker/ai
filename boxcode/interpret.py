@@ -4,12 +4,17 @@ An interpreter for boxcode.
 """
 
 """
-The Runtime contains the stuff that is available to boxcode operations.
-"""
-class Runtime:
-  def __init__(self):
-    pass
+Parses a line into an S-expression or atom.
+S-expressions are just represented as Python lists.
 
-  "Interprets a piece of boxcode."
-  def interpret(self, code):
-    pass
+Valid atoms are:
+symbols (no whitespace or (), may not start with a number or .)
+numbers (anything starting with a number of . is assumed to be a number)
+
+symbols are just represented as strings.
+numbers are represented as Python numbers.
+"""
+def parse(serialized):
+  pass
+  
+
