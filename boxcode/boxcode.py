@@ -6,6 +6,7 @@ An interpreter for boxcode.
 """
 Parses a line into an S-expression or atom.
 S-expressions are just represented as Python lists.
+See http://norvig.com/lispy.html for inspiration.
 
 Valid atoms are:
 symbols (no whitespace or (), may not start with a number or .)
