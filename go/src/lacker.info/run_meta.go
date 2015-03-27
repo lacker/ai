@@ -4,7 +4,7 @@ import (
 	"flag"
 	"log"
 
-	// "lacker.info/meta"
+	"lacker.info/meta"
 )
 
 func main() {
@@ -14,4 +14,6 @@ func main() {
 	if len(args) > 0 {
 		log.Fatal("run_meta takes no args")
 	}
+
+	meta.Test()
 }
