@@ -15,5 +15,5 @@ func main() {
 		log.Fatal("run_meta takes no args")
 	}
 
-	meta.Test()
+	meta.Run()
 }

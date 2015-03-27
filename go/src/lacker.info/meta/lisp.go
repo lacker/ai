@@ -8,7 +8,7 @@ import (
 // A Lisp toolkit.
 // See http://norvig.com/lispy.html
 
-func Test() {
+func Run() {
 	log.Printf("%#v", tokenize("((arf bard (+  3 six)) ())"))
 }
 
