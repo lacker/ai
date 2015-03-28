@@ -10,4 +10,13 @@ func TestTokenize(t *testing.T) {
 	AssertEq("(", tokens[1])
 	AssertEq("arf", tokens[2])
 	AssertEq("bard", tokens[3])
+	AssertEq("(", tokens[4])
+	AssertEq("+", tokens[5])
+	AssertEq("3", tokens[6])
+	AssertEq("six", tokens[7])
+	AssertEq(")", tokens[8])
+	AssertEq(")", tokens[9])
+	AssertEq("(", tokens[10])
+	AssertEq(")", tokens[11])
+	AssertEq(")", tokens[12])
 }
