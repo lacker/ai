@@ -20,3 +20,8 @@ func TestTokenize(t *testing.T) {
 	AssertEq(")", tokens[11])
 	AssertEq(")", tokens[12])
 }
+
+func TestReadFromTokens(t *testing.T) {
+	s := readFromTokens(tokenize("((arf bard (+  3 six)) ())"))
+	AssertEq("((arf bard (+ 3 six)) ())", s.String())
+}

@@ -10,6 +10,7 @@ import (
 
 // Either a List or an Atom.
 type SExpression interface {
+	String() string
 }
 
 type List struct {
@@ -18,6 +19,18 @@ type List struct {
 
 type Atom struct {
 	atom string
+}
+
+func (list List) String() string {
+	parts := make([]string, len(list.list))
+	for i := 0; i < len(list.list); i++ {
+		parts[i] = list.list[i].String()
+	}
+	return "(" + strings.Join(parts, " ") + ")"
+}
+
+func (atom Atom) String() string {
+	return atom.atom
 }
 
 // Turns a list of tokens (from tokenize) into an SExpression.
