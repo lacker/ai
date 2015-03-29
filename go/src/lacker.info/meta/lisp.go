@@ -22,7 +22,7 @@ type Atom struct {
 
 // Turns a list of tokens (from tokenize) into an SExpression.
 // Starts at the provided index and moves it along.
-func readFromTokens(tokens []string, index *int) SExpression {
+func readFromTokensAtIndex(tokens []string, index *int) SExpression {
 	if len(tokens) <= *index {
 		log.Fatalf("only %d tokens but need to read tokens[%d]",
 			len(tokens), *index)
@@ -33,7 +33,7 @@ func readFromTokens(tokens []string, index *int) SExpression {
 	if token == "(" {
 		list := make([]SExpression, 0)
 		for tokens[*index] != ")" {
-			sexp := readFromTokens(tokens, index)
+			sexp := readFromTokensAtIndex(tokens, index)
 			list = append(list, sexp)
 		}
 		*index++ // pop the ")"
@@ -48,6 +48,16 @@ func readFromTokens(tokens []string, index *int) SExpression {
 	return Atom{atom:token}
 }
 
+// Turns a list of tokens (from tokenize) into an SExpression.
+func readFromTokens(tokens []string) SExpression {
+	var index int = 0
+	answer := readFromTokensAtIndex(tokens, &index)
+	if index != len(tokens) {
+		log.Fatalf("we have %d tokens but only used %d of them",
+			len(tokens), index)
+	}
+	return answer
+}
 
 // Turns a string into a list of Lisp tokens.
 // White space and parentheses are the only separators.
