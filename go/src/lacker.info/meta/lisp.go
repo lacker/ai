@@ -21,20 +21,33 @@ type Atom struct {
 }
 
 // Turns a list of tokens (from tokenize) into an SExpression.
-// Starts at the given index;
-// Returns the SExpression and the index of the first unread token.
-func readFromTokens(tokens []string, index int) (SExpression, int) {
-	if len(tokens) <= index {
+// Starts at the provided index and moves it along.
+func readFromTokens(tokens []string, index *int) SExpression {
+	if len(tokens) <= *index {
 		log.Fatalf("only %d tokens but need to read tokens[%d]",
-			len(tokens), index)
+			len(tokens), *index)
 	}
-	token := tokens[index]
-	index++
+	token := tokens[*index]
+	*index++
 
 	if token == "(" {
-		panic("TODO")
+		list := make([]SExpression, 0)
+		for tokens[*index] != ")" {
+			sexp := readFromTokens(tokens, index)
+			list = append(list, sexp)
+		}
+		*index++ // pop the ")"
+
+		return List{list:list}
 	}
+
+	if token == ")" {
+		log.Fatalf("unexpected ) at index %d", *index)
+	}
+
+	return Atom{atom:token}
 }
+
 
 // Turns a string into a list of Lisp tokens.
 // White space and parentheses are the only separators.
