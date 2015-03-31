@@ -50,13 +50,13 @@ func (list List) Eval(env *Environment) SExpression {
 	f := list.list[0].Eval(env).(Function)
 	rawArgs := list.list[1:]
 	if f.macro {
-		return f.function(rawArgs)
+		return f.function(rawArgs, env)
 	}
 	args := make([]SExpression, len(rawArgs))
 	for i := 0; i < len(rawArgs); i++ {
 		args[i] = rawArgs[i].Eval(env)
 	}
-	return f.function(args)
+	return f.function(args, env)
 }
 
 func (symbol Symbol) String() string {
@@ -94,12 +94,16 @@ func (e Error) Eval(env *Environment) SExpression {
 	return e
 }
 
-// Some implementations for built-in functions
+// Some implementations for built-ins
 
-func Quote([]SExpression) SExpression {
-	panic("TODO")
+func QuoteMacro(args []SExpression) SExpression {
+	if len(args) != 1 {
+		return Error{error:"quote must have exactly one argument"}
+	}
+	return args[0]
 }
 
+// TODO: more builtins. Does "define" need to live in eval?
 
 // The way we track what variables refer to
 type Environment struct {
