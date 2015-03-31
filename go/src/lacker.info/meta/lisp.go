@@ -13,6 +13,7 @@ import (
 // A List, Symbol, or Integer.
 type SExpression interface {
 	String() string
+	Eval(env *Environment) SExpression
 }
 
 type List struct {
@@ -33,12 +34,40 @@ func (list List) String() string {
 	return "(" + strings.Join(parts, " ") + ")"
 }
 
+func (list List) Eval(env *Environment) SExpression {
+	panic("TODO: implement")
+}
+
 func (symbol Symbol) String() string {
 	return symbol.symbol
 }
 
+func (symbol Symbol) Eval(env *Environment) SExpression {
+	return env.Get(symbol.symbol)
+}
+
 func (i Integer) String() string {
 	return fmt.Sprintf("%d", i)
+}
+
+func (i Integer) Eval(env *Environment) SExpression {
+	return i
+}
+
+type Environment struct {
+	parent *Environment
+	content map[string]*SExpression
+}
+
+func (env *Environment) Get(s string) SExpression {
+	answer := env.content[s]
+	if answer != nil {
+		return *answer
+	}
+	if env.parent == nil {
+		log.Fatalf("could not dereference '%s'", s)
+	}
+	return env.parent.Get(s)
 }
 
 // Turns a list of tokens (from tokenize) into an SExpression.
