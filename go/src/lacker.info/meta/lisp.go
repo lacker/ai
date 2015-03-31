@@ -50,13 +50,13 @@ func (list List) Eval(env *Environment) SExpression {
 	f := list.list[0].Eval(env).(Function)
 	rawArgs := list.list[1:]
 	if f.macro {
-		return f.function(rawArgs, env)
+		return f.function(rawArgs)
 	}
 	args := make([]SExpression, len(rawArgs))
 	for i := 0; i < len(rawArgs); i++ {
 		args[i] = rawArgs[i].Eval(env)
 	}
-	return f.function(args, env)
+	return f.function(args)
 }
 
 func (symbol Symbol) String() string {
