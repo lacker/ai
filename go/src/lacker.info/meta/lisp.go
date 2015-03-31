@@ -1,14 +1,16 @@
 package meta
 
 import (
+	"fmt"
 	"log"
+	"strconv"
 	"strings"
 )
 
 // A Lisp toolkit.
 // See http://norvig.com/lispy.html
 
-// Either a List or an Atom.
+// A List, Symbol, or Integer.
 type SExpression interface {
 	String() string
 }
@@ -17,9 +19,11 @@ type List struct {
 	list []SExpression
 }
 
-type Atom struct {
-	atom string
+type Symbol struct {
+	symbol string
 }
+
+type Integer int
 
 func (list List) String() string {
 	parts := make([]string, len(list.list))
@@ -29,8 +33,12 @@ func (list List) String() string {
 	return "(" + strings.Join(parts, " ") + ")"
 }
 
-func (atom Atom) String() string {
-	return atom.atom
+func (symbol Symbol) String() string {
+	return symbol.symbol
+}
+
+func (i Integer) String() string {
+	return fmt.Sprintf("%d", i)
 }
 
 // Turns a list of tokens (from tokenize) into an SExpression.
@@ -58,7 +66,12 @@ func readFromTokensAtIndex(tokens []string, index *int) SExpression {
 		log.Fatalf("unexpected ) at index %d", *index)
 	}
 
-	return Atom{atom:token}
+	i, err := strconv.Atoi(token)
+	if err != nil {
+		return Symbol{symbol:token}
+	}
+
+	return Integer(i)
 }
 
 // Turns a list of tokens (from tokenize) into an SExpression.
