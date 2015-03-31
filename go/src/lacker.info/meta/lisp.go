@@ -10,7 +10,7 @@ import (
 // A Lisp toolkit.
 // See http://norvig.com/lispy.html
 
-// A List, Symbol, or Integer.
+// A List, Symbol, Integer, or Function.
 type SExpression interface {
 	String() string
 	Eval(env *Environment) SExpression
@@ -26,6 +26,11 @@ type Symbol struct {
 
 type Integer int
 
+type Function struct {
+	macro bool
+	apply func([]SExpression) SExpression
+}
+
 func (list List) String() string {
 	parts := make([]string, len(list.list))
 	for i := 0; i < len(list.list); i++ {
@@ -35,7 +40,19 @@ func (list List) String() string {
 }
 
 func (list List) Eval(env *Environment) SExpression {
-	panic("TODO: implement")
+	if len(list.list) == 0 {
+		panic("cannot eval empty list")
+	}
+	f := list.list[0].Eval(env).(Function)
+	rawArgs := list.list[1:]
+	if f.macro {
+		return f.apply(rawArgs)
+	}
+	args := make([]SExpression, len(rawArgs))
+	for i := 0; i < len(rawArgs); i++ {
+		args[i] = rawArgs[i].Eval(env)
+	}
+	return f.apply(args)
 }
 
 func (symbol Symbol) String() string {
@@ -52,6 +69,17 @@ func (i Integer) String() string {
 
 func (i Integer) Eval(env *Environment) SExpression {
 	return i
+}
+
+func (f Function) String() string {
+	if f.macro {
+		return "<macro>"
+	}
+	return "<func>"
+}
+
+func (f Function) Eval(env *Environment) SExpression {
+	panic("functions cannot be eval'd on their own")
 }
 
 type Environment struct {
