@@ -10,7 +10,7 @@ import (
 // A Lisp toolkit.
 // See http://norvig.com/lispy.html
 
-// A List, Symbol, Integer, or Function.
+// A List, Symbol, Integer, Function, or Error.
 type SExpression interface {
 	String() string
 	Eval(env *Environment) SExpression
@@ -28,7 +28,11 @@ type Integer int
 
 type Function struct {
 	macro bool
-	apply func([]SExpression) SExpression
+	function func([]SExpression) SExpression
+}
+
+type Error struct {
+	error string
 }
 
 func (list List) String() string {
@@ -41,18 +45,18 @@ func (list List) String() string {
 
 func (list List) Eval(env *Environment) SExpression {
 	if len(list.list) == 0 {
-		panic("cannot eval empty list")
+		return Error{error:"cannot eval empty list"}
 	}
 	f := list.list[0].Eval(env).(Function)
 	rawArgs := list.list[1:]
 	if f.macro {
-		return f.apply(rawArgs)
+		return f.function(rawArgs)
 	}
 	args := make([]SExpression, len(rawArgs))
 	for i := 0; i < len(rawArgs); i++ {
 		args[i] = rawArgs[i].Eval(env)
 	}
-	return f.apply(args)
+	return f.function(args)
 }
 
 func (symbol Symbol) String() string {
@@ -79,9 +83,25 @@ func (f Function) String() string {
 }
 
 func (f Function) Eval(env *Environment) SExpression {
-	panic("functions cannot be eval'd on their own")
+	return Error{error:"functions cannot be eval'd on their own"}
 }
 
+func (e Error) String() string {
+	return fmt.Sprintf("error(%s)", e.error)
+}
+
+func (e Error) Eval(env *Environment) SExpression {
+	return e
+}
+
+// Some implementations for built-in functions
+
+func Quote([]SExpression) SExpression {
+	panic("TODO")
+}
+
+
+// The way we track what variables refer to
 type Environment struct {
 	parent *Environment
 	content map[string]*SExpression
@@ -97,6 +117,7 @@ func (env *Environment) Get(s string) SExpression {
 	}
 	return env.parent.Get(s)
 }
+
 
 // Turns a list of tokens (from tokenize) into an SExpression.
 // Starts at the provided index and moves it along.
