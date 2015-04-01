@@ -22,6 +22,12 @@ func TestTokenize(t *testing.T) {
 }
 
 func TestReadFromTokens(t *testing.T) {
-	s := readFromTokens(tokenize("((arf bard (+  3 six)) ())"))
+	s := read("((arf bard (+  3 six)) ())")
 	AssertEq("((arf bard (+ 3 six)) ())", s.String())
+}
+
+func TestBuiltInFunction(t *testing.T) {
+	env := DefaultEnvironment()
+	s := read("(+ 2 2)")
+	AssertEq("4", s.Eval(env).String())
 }

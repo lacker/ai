@@ -193,6 +193,23 @@ func (env *Environment) Set(s string, val SExpression) {
 	env.content[s] = &val
 }
 
+func EmptyEnvironment() *Environment {
+	return &Environment{
+		content: make(map[string]*SExpression),
+	}
+}
+
+func DefaultEnvironment() *Environment {
+	env := EmptyEnvironment()
+	env.Set("+", MakeIntFunction(func(ints []Integer) Integer {
+		sum := Integer(0)
+		for i := 0; i < len(ints); i++ {
+			sum += ints[i]
+		}
+		return sum
+	}))
+	return env
+}
 
 // Turns a list of tokens (from tokenize) into an SExpression.
 // Starts at the provided index and moves it along.
@@ -236,6 +253,10 @@ func readFromTokens(tokens []string) SExpression {
 			len(tokens), index)
 	}
 	return answer
+}
+
+func read(s string) SExpression {
+	return readFromTokens(tokenize(s))
 }
 
 // Turns a string into a list of Lisp tokens.
