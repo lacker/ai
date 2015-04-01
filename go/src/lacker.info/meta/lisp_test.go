@@ -31,3 +31,9 @@ func TestBuiltInFunction(t *testing.T) {
 	s := read("(+ 2 2)")
 	AssertEq("4", s.Eval(env).String())
 }
+
+func TestMultiFunction(t *testing.T) {
+	env := DefaultEnvironment()
+	s := read("(* (+ 1 2 3) (+ 4 5 6) (+ 7 8 9))")
+	AssertEq("2160", s.Eval(env).String())
+}

@@ -156,7 +156,7 @@ func (e Error) Truthy() bool {
 	return true
 }
 
-func MakeIntFunction(f func([]Integer) Integer) Function {
+func MakeIntFunction(f func([]Integer) SExpression) Function {
 	wrapped := func(args []SExpression) SExpression {
 		ints := make([]Integer, len(args))
 		for i := 0; i < len(args); i++ {
@@ -201,12 +201,19 @@ func EmptyEnvironment() *Environment {
 
 func DefaultEnvironment() *Environment {
 	env := EmptyEnvironment()
-	env.Set("+", MakeIntFunction(func(ints []Integer) Integer {
+	env.Set("+", MakeIntFunction(func(ints []Integer) SExpression {
 		sum := Integer(0)
 		for i := 0; i < len(ints); i++ {
 			sum += ints[i]
 		}
 		return sum
+	}))
+	env.Set("*", MakeIntFunction(func(ints []Integer) SExpression {
+		prod := Integer(1)
+		for i := 0; i < len(ints); i++ {
+			prod *= ints[i]
+		}
+		return prod
 	}))
 	return env
 }
