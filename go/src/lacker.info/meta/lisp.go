@@ -14,6 +14,9 @@ import (
 type SExpression interface {
 	String() string
 	Eval(env *Environment) SExpression
+
+	// Only zero and empty list are falsy
+	Truthy() bool
 }
 
 type List struct {
@@ -54,8 +57,14 @@ func (list List) Eval(env *Environment) SExpression {
 	case Symbol:
 		switch rawFirst.(Symbol).symbol {
 		case "quote":
-			panic("TODO handle quote")
+			if len(list.list) != 2 {
+				return Error{error:"quote must have exactly one argument"}
+			}
+			return list.list[1]
 		case "if":
+			if len(list.list) != 4 {
+				return Error{error:"if must have exactly three arguments"}
+			}
 			panic("TODO handle if")
 		case "define":
 			panic("TODO handle define")
@@ -80,12 +89,20 @@ func (list List) Eval(env *Environment) SExpression {
 	return f.function(args)
 }
 
+func (list List) Truthy() bool {
+	return len(list.list) > 0
+}
+
 func (symbol Symbol) String() string {
 	return symbol.symbol
 }
 
 func (symbol Symbol) Eval(env *Environment) SExpression {
 	return env.Get(symbol.symbol)
+}
+
+func (symbol Symbol) Truthy() bool {
+	return true
 }
 
 func (i Integer) String() string {
@@ -96,6 +113,10 @@ func (i Integer) Eval(env *Environment) SExpression {
 	return i
 }
 
+func (i Integer) Truthy() bool {
+	return i != 0
+}
+
 func (f Function) String() string {
 	return "<func>"
 }
@@ -104,12 +125,20 @@ func (f Function) Eval(env *Environment) SExpression {
 	return Error{error:"functions cannot be eval'd on their own"}
 }
 
+func (f Function) Truthy() bool {
+	return true
+}
+
 func (e Error) String() string {
 	return fmt.Sprintf("error(%s)", e.error)
 }
 
 func (e Error) Eval(env *Environment) SExpression {
 	return e
+}
+
+func (e Error) Truthy() bool {
+	return true
 }
 
 // The way we track what variables refer to
