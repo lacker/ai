@@ -27,7 +27,6 @@ type Symbol struct {
 type Integer int
 
 type Function struct {
-	macro bool
 	function func([]SExpression) SExpression
 }
 
@@ -47,11 +46,33 @@ func (list List) Eval(env *Environment) SExpression {
 	if len(list.list) == 0 {
 		return Error{error:"cannot eval empty list"}
 	}
-	f := list.list[0].Eval(env).(Function)
-	rawArgs := list.list[1:]
-	if f.macro {
-		return f.function(rawArgs)
+
+	// Handle builtin macros
+
+	rawFirst := list.list[0]
+	switch rawFirst.(type) {
+	case Symbol:
+		switch rawFirst.(Symbol).symbol {
+		case "quote":
+			panic("TODO handle quote")
+		case "if":
+			panic("TODO handle if")
+		case "define":
+			panic("TODO handle define")
+		}
 	}
+
+	// If it's not a builtin macro then it must be a function
+
+	first := rawFirst.Eval(env)
+	switch first.(type) {
+	case Function:
+		// This is assumed
+	default:
+		return Error{error:"first value in a list must be a function"}
+	}
+	f := first.(Function)
+	rawArgs := list.list[1:]
 	args := make([]SExpression, len(rawArgs))
 	for i := 0; i < len(rawArgs); i++ {
 		args[i] = rawArgs[i].Eval(env)
@@ -76,9 +97,6 @@ func (i Integer) Eval(env *Environment) SExpression {
 }
 
 func (f Function) String() string {
-	if f.macro {
-		return "<macro>"
-	}
 	return "<func>"
 }
 
@@ -93,17 +111,6 @@ func (e Error) String() string {
 func (e Error) Eval(env *Environment) SExpression {
 	return e
 }
-
-// Some implementations for built-ins
-
-func QuoteMacro(args []SExpression) SExpression {
-	if len(args) != 1 {
-		return Error{error:"quote must have exactly one argument"}
-	}
-	return args[0]
-}
-
-// TODO: more builtins. Does "define" need to live in eval?
 
 // The way we track what variables refer to
 type Environment struct {
