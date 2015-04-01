@@ -65,9 +65,24 @@ func (list List) Eval(env *Environment) SExpression {
 			if len(list.list) != 4 {
 				return Error{error:"if must have exactly three arguments"}
 			}
-			panic("TODO handle if")
+			if list.list[1].Eval(env).Truthy() {
+				return list.list[2].Eval(env)
+			} else {
+				return list.list[3].Eval(env)
+			}
 		case "define":
-			panic("TODO handle define")
+			if len(list.list) != 3 {
+				return Error{error:"define must have exactly two arguments"}
+			}
+			value := list.list[2].Eval(env)
+			sym := list.list[1]
+			switch sym.(type) {
+			case Symbol:
+				env.Set(sym.(Symbol).symbol, value)
+				return value
+			default:
+				return Error{error:"define's first arg must be a symbol"}
+			}
 		}
 	}
 
@@ -141,6 +156,22 @@ func (e Error) Truthy() bool {
 	return true
 }
 
+func MakeIntFunction(f func([]Integer) Integer) Function {
+	wrapped := func(args []SExpression) SExpression {
+		ints := make([]Integer, len(args))
+		for i := 0; i < len(args); i++ {
+			switch args[i].(type) {
+			case Integer:
+				ints[i] = args[i].(Integer)
+			default:
+				return Error{error:"function requires Integer args"}
+			}
+		}
+		return f(ints)
+	}
+	return Function{function:wrapped}
+}
+
 // The way we track what variables refer to
 type Environment struct {
 	parent *Environment
@@ -156,6 +187,10 @@ func (env *Environment) Get(s string) SExpression {
 		log.Fatalf("could not dereference '%s'", s)
 	}
 	return env.parent.Get(s)
+}
+
+func (env *Environment) Set(s string, val SExpression) {
+	env.content[s] = &val
 }
 
 
