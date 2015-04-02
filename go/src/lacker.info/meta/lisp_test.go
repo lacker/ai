@@ -37,3 +37,9 @@ func TestMultiFunction(t *testing.T) {
 	s := read("(* (+ 1 2 3) (+ 4 5 6) (+ 7 8 9))")
 	AssertEq("2160", s.Eval(env).String())
 }
+
+func TestQuote(t *testing.T) {
+	env := DefaultEnvironment()
+	s := read("(quote (+ 1 2 3))")
+	AssertEq("(+ 1 2 3)", s.Eval(env).String())
+}
