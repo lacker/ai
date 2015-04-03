@@ -215,6 +215,26 @@ func DefaultEnvironment() *Environment {
 		}
 		return prod
 	}))
+	env.Set("<", MakeIntFunction(func(ints []Integer) SExpression {
+		if len(ints) != 2 {
+			return Error{error:"< expects two args"}
+		}
+		if (ints[0] < ints[1]) {
+			return Integer(1)
+		} else {
+			return Integer(0)
+		}
+	}))
+	env.Set(">", MakeIntFunction(func(ints []Integer) SExpression {
+		if len(ints) != 2 {
+			return Error{error:"> expects two args"}
+		}
+		if (ints[0] > ints[1]) {
+			return Integer(1)
+		} else {
+			return Integer(0)
+		}
+	}))
 	return env
 }
 

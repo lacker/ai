@@ -43,3 +43,9 @@ func TestQuote(t *testing.T) {
 	s := read("(quote (+ 1 2 3))")
 	AssertEq("(+ 1 2 3)", s.Eval(env).String())
 }
+
+func TestIf(t *testing.T) {
+	env := DefaultEnvironment()
+	s := read("(if (< 1 2) 3 4)")
+	AssertEq("3", s.Eval(env).String())
+}
