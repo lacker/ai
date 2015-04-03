@@ -48,4 +48,8 @@ func TestIf(t *testing.T) {
 	env := DefaultEnvironment()
 	s := read("(if (< 1 2) 3 4)")
 	AssertEq("3", s.Eval(env).String())
+
+	env = DefaultEnvironment()
+	s = read("(if (> 1 2) 3 4)")
+	AssertEq("4", s.Eval(env).String())
 }
