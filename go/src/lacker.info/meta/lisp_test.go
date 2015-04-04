@@ -53,3 +53,9 @@ func TestIf(t *testing.T) {
 	s = read("(if (> 1 2) 3 4)")
 	AssertEq("4", s.Eval(env).String())
 }
+
+func TestDefine(t *testing.T) {
+	env := DefaultEnvironment()
+	s := read("(* (define x 2) (+ x x))")
+	AssertEq("8", s.Eval(env).String())
+}
