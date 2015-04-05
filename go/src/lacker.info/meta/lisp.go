@@ -1,8 +1,10 @@
 package meta
 
 import (
+	"bufio"
 	"fmt"
 	"log"
+	"os"
 	"strconv"
 	"strings"
 )
@@ -294,8 +296,26 @@ func tokenize(s string) []string {
 	return strings.Fields(s)
 }
 
-// This is just whatever run_meta runs. Feel free to muck around.
+// Runs a REPL
 func Main() {
-	log.Printf("%#v", tokenize("((arf bard (+  3 six)) ())"))
+	env := DefaultEnvironment()
+	for {
+		// Show a prompt
+		fmt.Printf("> ")
+
+		// Read a line
+		bio := bufio.NewReader(os.Stdin)
+		line, hasMoreInLine, err := bio.ReadLine()
+		if hasMoreInLine || err != nil {
+			panic("failed to read line")
+		}
+		
+		// Evaluate it
+		s := read(string(line))
+		out := s.Eval(env).String()
+
+		// Print the result
+		fmt.Printf("%s\n", out)
+	}
 }
 
