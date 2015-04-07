@@ -252,7 +252,13 @@ func readFromTokensAtIndex(tokens []string, index *int) SExpression {
 
 	if token == "(" {
 		list := make([]SExpression, 0)
-		for tokens[*index] != ")" {
+		for {
+			if len(tokens) <= *index {
+				log.Fatalf("ran off the end of tokens")
+			}
+			if tokens[*index] == ")" {
+				break
+			}
 			sexp := readFromTokensAtIndex(tokens, index)
 			list = append(list, sexp)
 		}
