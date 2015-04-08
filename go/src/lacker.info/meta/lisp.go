@@ -313,7 +313,9 @@ func Main() {
 		bio := bufio.NewReader(os.Stdin)
 		line, hasMoreInLine, err := bio.ReadLine()
 		if hasMoreInLine || err != nil {
-			panic("failed to read line")
+			// This happens on a control-D
+			fmt.Printf("\n")
+			break
 		}
 		
 		// Evaluate it
