@@ -186,7 +186,7 @@ func (env *Environment) Get(s string) SExpression {
 		return *answer
 	}
 	if env.parent == nil {
-		log.Fatalf("could not dereference '%s'", s)
+		return Error{error:fmt.Sprintf("could not dereference %s", s)}
 	}
 	return env.parent.Get(s)
 }
