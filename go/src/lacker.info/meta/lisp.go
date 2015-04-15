@@ -242,7 +242,7 @@ func DefaultEnvironment() *Environment {
 
 // Turns a list of tokens (from tokenize) into an SExpression.
 // Starts at the provided index and moves it along.
-func readFromTokensAtIndex(tokens []string, index *int) SExpression {
+func readLispFromTokensAtIndex(tokens []string, index *int) SExpression {
 	if len(tokens) <= *index {
 		log.Fatalf("only %d tokens but need to read tokens[%d]",
 			len(tokens), *index)
@@ -259,7 +259,7 @@ func readFromTokensAtIndex(tokens []string, index *int) SExpression {
 			if tokens[*index] == ")" {
 				break
 			}
-			sexp := readFromTokensAtIndex(tokens, index)
+			sexp := readLispFromTokensAtIndex(tokens, index)
 			list = append(list, sexp)
 		}
 		*index++ // pop the ")"
@@ -280,9 +280,9 @@ func readFromTokensAtIndex(tokens []string, index *int) SExpression {
 }
 
 // Turns a list of tokens (from tokenize) into an SExpression.
-func readFromTokens(tokens []string) SExpression {
+func readLispFromTokens(tokens []string) SExpression {
 	var index int = 0
-	answer := readFromTokensAtIndex(tokens, &index)
+	answer := readLispFromTokensAtIndex(tokens, &index)
 	if index != len(tokens) {
 		log.Fatalf("we have %d tokens but only used %d of them",
 			len(tokens), index)
@@ -290,8 +290,8 @@ func readFromTokens(tokens []string) SExpression {
 	return answer
 }
 
-func read(s string) SExpression {
-	return readFromTokens(tokenize(s))
+func readLisp(s string) SExpression {
+	return readLispFromTokens(tokenize(s))
 }
 
 // Turns a string into a list of Lisp tokens.
@@ -319,7 +319,7 @@ func LispMain() {
 		}
 		
 		// Evaluate it
-		s := read(string(line))
+		s := readLisp(string(line))
 		out := s.Eval(env).String()
 
 		// Print the result

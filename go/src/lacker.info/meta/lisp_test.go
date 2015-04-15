@@ -22,40 +22,40 @@ func TestTokenize(t *testing.T) {
 }
 
 func TestReadFromTokens(t *testing.T) {
-	s := read("((arf bard (+  3 six)) ())")
+	s := readLisp("((arf bard (+  3 six)) ())")
 	AssertEq("((arf bard (+ 3 six)) ())", s.String())
 }
 
 func TestBuiltInFunction(t *testing.T) {
 	env := DefaultEnvironment()
-	s := read("(+ 2 2)")
+	s := readLisp("(+ 2 2)")
 	AssertEq("4", s.Eval(env).String())
 }
 
 func TestMultiFunction(t *testing.T) {
 	env := DefaultEnvironment()
-	s := read("(* (+ 1 2 3) (+ 4 5 6) (+ 7 8 9))")
+	s := readLisp("(* (+ 1 2 3) (+ 4 5 6) (+ 7 8 9))")
 	AssertEq("2160", s.Eval(env).String())
 }
 
 func TestQuote(t *testing.T) {
 	env := DefaultEnvironment()
-	s := read("(quote (+ 1 2 3))")
+	s := readLisp("(quote (+ 1 2 3))")
 	AssertEq("(+ 1 2 3)", s.Eval(env).String())
 }
 
 func TestIf(t *testing.T) {
 	env := DefaultEnvironment()
-	s := read("(if (< 1 2) 3 4)")
+	s := readLisp("(if (< 1 2) 3 4)")
 	AssertEq("3", s.Eval(env).String())
 
 	env = DefaultEnvironment()
-	s = read("(if (> 1 2) 3 4)")
+	s = readLisp("(if (> 1 2) 3 4)")
 	AssertEq("4", s.Eval(env).String())
 }
 
 func TestDefine(t *testing.T) {
 	env := DefaultEnvironment()
-	s := read("(* (define x 2) (+ x x))")
+	s := readLisp("(* (define x 2) (+ x x))")
 	AssertEq("8", s.Eval(env).String())
 }
