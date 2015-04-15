@@ -5,6 +5,7 @@ import (
 
 // Boson is a programming language designed to contain the simplest
 // possible way of representing functions. Even simpler than Lisp.
+// TODO: is this description correct in light of lambda calculus?
 
 type BExpression interface {
 	String() string
