@@ -303,7 +303,7 @@ func tokenize(s string) []string {
 }
 
 // Runs a REPL
-func Main() {
+func LispMain() {
 	env := DefaultEnvironment()
 	for {
 		// Show a prompt
