@@ -1,2 +1,3 @@
+#!/usr/bin/env runhaskell
 
--- Just learning some Haskell
+main = putStrLn "hello world!"
