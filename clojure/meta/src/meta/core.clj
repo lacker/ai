@@ -2,6 +2,6 @@
   (:gen-class))
 
 (defn -main
-  "I don't do a whole lot ... yet."
+  "Let's build a Boson repl."
   [& args]
-  (println "Hello, World!"))
+  (println ">>> "))
