@@ -12,9 +12,14 @@
 
 (defn brepl []
   "brepl runs a Boson repl."
-  nil)
+  (repeatedly
+   #(do
+      (print ">>> ")
+      (flush)
+      (println (beval (read-string (read-line)))))))
 
+; This just exits immediately. But calling (brepl) from lein repl works. Hm.
 (defn -main
   "Let's build a Boson repl."
   [& args]
-  (println ">>> "))
+  (brepl))
