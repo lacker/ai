@@ -10,6 +10,7 @@
   (throw (Exception. message)))
 
 ; TODO: (car (cons (cons nil nil) (cons nil nil))) should work but doesn't
+; TODO: have real tests
 (defn beval [expr]
   "Evaluates some Boson code."
   (cond
