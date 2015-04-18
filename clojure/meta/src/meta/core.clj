@@ -6,23 +6,39 @@
 ; The "functional" stuff: lambda, recur, this
 ; "if" because you need if
 
+(defn bthrow [message]
+  (throw (Exception. message)))
+
 (defn beval [expr]
-  "beval evaluates a list of Boson code."
+  "Evaluates some Boson code."
   (cond
     (= 'nil expr) nil
-    true (cons 'could-not-beval (cons expr nil))))
+    (list? expr) (let [op (first expr)
+                       args (rest expr)]
+                   (cond
+                     (= 'if op) (if (= 3 (count args))
+                                  (if (beval (first args))
+                                    (beval (first (rest args)))
+                                    (beval (first (rest (rest args)))))
+                                  (bthrow "if must have 3 args"))
+                     true (bthrow "unknown op")))
+    true (bthrow "unhandled case")))
+
+(defn safe-beval [expr]
+  "Evaluates some Boson code and turns exceptions into strings."
+  (try
+    (beval expr)
+    (catch Exception e (str "exception: " (.getMessage e)))))
 
 ; TODO: make blank lines and ^D not die. Make bad syntax just fail.
 (defn brepl []
-  "brepl runs a Boson repl."
+  "Runs a Boson repl."
   (print ">>> ")
   (flush)
-  (println (beval (read-string (read-line))))
+  (println (safe-beval (read-string (read-line))))
   (recur))
 
-(defn -main
-  "Let's build a Boson repl."
-  [& args]
+(defn -main [& args]
   (brepl)
   (println "done")
   )
