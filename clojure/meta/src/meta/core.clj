@@ -9,6 +9,7 @@
 (defn bthrow [message]
   (throw (Exception. message)))
 
+; TODO: (car (cons (cons nil nil) (cons nil nil))) should work but doesn't
 (defn beval [expr]
   "Evaluates some Boson code."
   (cond
@@ -16,11 +17,32 @@
     (list? expr) (let [op (first expr)
                        args (rest expr)]
                    (cond
+
                      (= 'if op) (if (= 3 (count args))
                                   (if (beval (first args))
-                                    (beval (first (rest args)))
-                                    (beval (first (rest (rest args)))))
+                                    (beval (nth args 1))
+                                    (beval (nth args 2)))
                                   (bthrow "if must have 3 args"))
+
+                     (= 'car op) (if (= 1 (count args))
+                                   (let [arg (beval (first args))]
+                                     (if (list? arg)
+                                       (first arg)
+                                       (bthrow "can only car a list")))
+                                   (bthrow "car must have 1 arg"))
+
+                     (= 'cdr op) (if (= 1 (count args))
+                                   (let [arg (beval (first args))]
+                                     (if (list? arg)
+                                       (rest arg)
+                                       (bthrow "can only cdr a list")))
+                                   (bthrow "cdr must have 1 arg"))
+
+                     (= 'cons op) (if (= 2 (count args))
+                                    (let [x (beval (first args))
+                                          y (beval (nth args 1))]
+                                      (cons x y)))
+                                        
                      true (bthrow "unknown op")))
     true (bthrow "unhandled case")))
 
