@@ -10,16 +10,18 @@
   "beval evaluates a list of Boson code."
   (cons 'beval (cons expr nil)))
 
+; TODO: make blank lines and ^D not die. Make bad syntax just fail.
 (defn brepl []
   "brepl runs a Boson repl."
-  (repeatedly
-   #(do
-      (print ">>> ")
-      (flush)
-      (println (beval (read-string (read-line)))))))
+  (print ">>> ")
+  (flush)
+  (println (beval (read-string (read-line))))
+  (recur))
 
 ; This just exits immediately. But calling (brepl) from lein repl works. Hm.
 (defn -main
   "Let's build a Boson repl."
   [& args]
-  (brepl))
+  (brepl)
+  (println "done")
+  )
