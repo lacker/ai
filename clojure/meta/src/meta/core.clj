@@ -44,8 +44,8 @@
                                           y (beval (nth args 1))]
                                       (cons x y)))
                                         
-                     true (bthrow "unknown op")))
-    true (bthrow "unhandled case")))
+                     :else (bthrow "unknown op")))
+    :else (bthrow "unhandled case")))
 
 (defn safe-beval [expr]
   "Evaluates some Boson code and turns exceptions into strings."
