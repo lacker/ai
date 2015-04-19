@@ -6,6 +6,9 @@
 ; The "functional" stuff: lambda, recur, this
 ; "if" because you need if
 
+; It might be useful to add "define", and consider there to be a
+; global namespace.
+
 (defn bthrow [message]
   (throw (Exception. message)))
 
