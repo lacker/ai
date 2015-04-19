@@ -32,7 +32,7 @@
                                    (let [arg (beval (first args))]
                                      (if (list? arg)
                                        (first arg)
-                                       (bthrow "can only car a list")))
+                                       (bthrow (str "can't car " arg))))
                                    (bthrow "car must have 1 arg"))
 
                      (= 'cdr op) (if (= 1 (count args))
