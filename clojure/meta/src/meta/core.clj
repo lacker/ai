@@ -65,7 +65,14 @@
                                                     (nth args 1) this)]
                                        (beval func subthis))
                                      (bthrow "can only apply two args"))
-                                        
+
+                     (= 'loop op) (if (= 2 (count args))
+                                    (let [func (first args)
+                                          subthis (beval
+                                                   (nth args 1) this)]
+                                      (bthrow "todo: implement"))
+                                    (bthrow "can only loop two args"))
+
                      :else (bthrow "unknown op")))
      :else (bthrow "unhandled case")))
   )
