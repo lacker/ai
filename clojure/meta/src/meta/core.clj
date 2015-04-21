@@ -54,9 +54,16 @@
                                    (bthrow "cdr must have 1 arg"))
 
                      (= 'cons op) (if (= 2 (count args))
-                                    (let [x (beval (first args))
-                                          y (beval (nth args 1))]
-                                      (cons x y)))
+                                    (let [x (beval (first args) this)
+                                          y (beval (nth args 1) this)]
+                                      (cons x y))
+                                    (bthrow "can only cons two args"))
+
+                     (= 'apply op) (if (= 2 (count args))
+                                     (let [func (first args)
+                                           subthis (beval (nth args 1))]
+                                       (beval func subthis))
+                                     (bthrow "can only apply two args"))
                                         
                      :else (bthrow "unknown op")))
      :else (bthrow "unhandled case")))
