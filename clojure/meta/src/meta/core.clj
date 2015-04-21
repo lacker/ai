@@ -61,7 +61,8 @@
 
                      (= 'apply op) (if (= 2 (count args))
                                      (let [func (first args)
-                                           subthis (beval (nth args 1))]
+                                           subthis (beval
+                                                    (nth args 1) this)]
                                        (beval func subthis))
                                      (bthrow "can only apply two args"))
                                         

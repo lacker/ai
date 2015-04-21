@@ -22,5 +22,6 @@
     (is (nil? (beval '(apply (if this nil (cons nil nil)) (cons nil nil)))))
     (is (= '(nil) (beval '(apply (if this this nil) (cons nil nil)))))
     (is (nil? (beval '(apply (if this nil this) nil))))
+    (is (nil? (beval '(apply (apply this this) nil))))
     )
   )
