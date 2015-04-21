@@ -15,26 +15,30 @@
     (is (thrown? Exception (beval '(cons))))
     (is (thrown? Exception (beval '(cdr))))
     (is (thrown? Exception (beval '(car))))
-    (is (thrown? Exception (beval '(apply))))
+    (is (thrown? Exception (beval '(call))))
 
     (is (thrown? Exception (beval '(cons nil))))
     (is (thrown? Exception (beval '(car nil))))
     (is (thrown? Exception (beval '(cdr nil))))
     )
 
-  (testing "basic apply/this"
-    (is (= '(nil) (beval '(apply (cons this this) nil))))
-    (is (nil? (beval '(apply (car (cons this this)) nil))))
-    (is (nil? (beval '(apply (cdr (cons this this)) nil))))
-    (is (nil? (beval '(apply (if this nil (cons nil nil)) (cons nil nil)))))
-    (is (= '(nil) (beval '(apply (if this this nil) (cons nil nil)))))
-    (is (nil? (beval '(apply (if this nil this) nil))))
-    (is (nil? (beval '(apply (apply this this) nil))))
+  (testing "basic call/this"
+    (is (= '(nil) (beval '(call (cons this this) nil))))
+    (is (nil? (beval '(call (car (cons this this)) nil))))
+    (is (nil? (beval '(call (cdr (cons this this)) nil))))
+    (is (nil? (beval '(call (if this nil (cons nil nil)) (cons nil nil)))))
+    (is (= '(nil) (beval '(call (if this this nil) (cons nil nil)))))
+    (is (nil? (beval '(call (if this nil this) nil))))
+    (is (nil? (beval '(call (call this this) nil))))
     )
 
   (testing "loop expand"
-    (is (= '(apply (if (cdr this) (loop g (cdr this)) (car this))
-                   (apply g y))
+    (is (= '(call (if (cdr this) (loop g (cdr this)) (car this))
+                  (call g y))
            (loop-expand 'g 'y)))
+    )
+
+  (testing "loop in operation"
+    (is (nil? (beval '(loop (cdr this) (cons nil (cons nil nil))))))
     )
   )

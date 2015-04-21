@@ -9,12 +9,12 @@
 
 ; Boson has a small number of core keywords:
 ; The "data structure" stuff: car, cdr, cons, nil
-; The "functional" stuff: apply, this, loop
+; The "functional" stuff: call, this, loop
 ; "if" because you need if
 
 ; The only particularly tricky one is "loop".
 ; (loop f x) macro-expands to
-; (apply (if (cdr this) (loop f (cdr this)) (car this)) (apply f x))
+; (call (if (cdr this) (loop f (cdr this)) (car this)) (call f x))
 
 ; It might be useful to add "define", and consider there to be a
 ; global namespace.
@@ -25,8 +25,8 @@
 (defn loop-expand
   "Expands a loop macro. f and x are uneval'd Boson code."
   ([f x]
-   `(~'apply (if (~'cdr ~'this) (~'loop ~f (~'cdr ~'this)) (~'car ~'this))
-           (~'apply ~f ~x))
+   `(~'call (if (~'cdr ~'this) (~'loop ~f (~'cdr ~'this)) (~'car ~'this))
+            (~'call ~f ~x))
    ))
 
 
@@ -71,18 +71,15 @@
                                       (cons x y))
                                     (bthrow "can only cons two args"))
 
-                     (= 'apply op) (if (= 2 (count args))
-                                     (let [func (first args)
-                                           subthis (beval
-                                                    (nth args 1) this)]
-                                       (beval func subthis))
-                                     (bthrow "can only apply two args"))
-
-                     (= 'loop op) (if (= 2 (count args))
+                     (= 'call op) (if (= 2 (count args))
                                     (let [func (first args)
                                           subthis (beval
                                                    (nth args 1) this)]
-                                      (bthrow "todo: implement"))
+                                      (beval func subthis))
+                                    (bthrow "can only call two args"))
+
+                     (= 'loop op) (if (= 2 (count args))
+                                    (beval (apply loop-expand args))
                                     (bthrow "can only loop two args"))
 
                      :else (bthrow "unknown op")))
