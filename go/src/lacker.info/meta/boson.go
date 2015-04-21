@@ -4,6 +4,9 @@ import (
 	"strings"
 )
 
+// NOTE: this comment reflects an older version of the language with
+// "lambda" and "recur".
+
 // Boson is a programming language designed to contain the simplest
 // possible way of representing functions.
 // It has eight keywords, four "simple" and four "tricky":

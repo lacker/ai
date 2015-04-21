@@ -1,9 +1,15 @@
 (ns meta.core
   (:gen-class))
 
-; Boson is a Lisp dialect that has eight core built-ins:
+; Boson is a Lisp dialect that is designed so that it is simple to
+; automatically generate valid Boson code.
+
+; Each list of Boson code starts with a keyword that determines how
+; that list is evaluated.
+
+; Boson has a small number of core keywords:
 ; The "data structure" stuff: car, cdr, cons, nil
-; The "functional" stuff: lambda, recur, this
+; The "functional" stuff: apply, this, loop
 ; "if" because you need if
 
 ; It might be useful to add "define", and consider there to be a
