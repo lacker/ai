@@ -7,4 +7,6 @@
     (is (= nil (beval '(car (cons nil nil)))))
     (is (= '(nil) (beval '(cons nil nil))))
     (is (= '(nil) (beval '(car (cons (cons nil nil) (cons nil nil))))))
+
+    (is (thrown? Exception (beval '(cons nil this))))
     ))

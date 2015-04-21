@@ -18,10 +18,13 @@
 (defn bthrow [message]
   (throw (Exception. message)))
 
-(defn beval [expr]
+(defn beval [expr & {:keys [this] :or {this "no binding for this"}}]
   "Evaluates some Boson code."
   (cond
     (= 'nil expr) nil
+    (= 'this expr) (if (string? this)
+                     (bthrow this)
+                     this)
     (seq? expr) (let [op (first expr)
                        args (rest expr)]
                    (cond
