@@ -19,5 +19,8 @@
     (is (= '(nil) (beval '(apply (cons this this) nil))))
     (is (nil? (beval '(apply (car (cons this this)) nil))))
     (is (nil? (beval '(apply (cdr (cons this this)) nil))))
+    (is (nil? (beval '(apply (if this nil (cons nil nil)) (cons nil nil)))))
+    (is (= '(nil) (beval '(apply (if this this nil) (cons nil nil)))))
+    (is (nil? (beval '(apply (if this nil this) nil))))
     )
   )

@@ -32,9 +32,9 @@
                    (cond
 
                      (= 'if op) (if (= 3 (count args))
-                                  (if (beval (first args))
-                                    (beval (nth args 1))
-                                    (beval (nth args 2)))
+                                  (if (beval (first args) this)
+                                    (beval (nth args 1) this)
+                                    (beval (nth args 2) this))
                                   (bthrow "if must have 3 args"))
 
                      (= 'car op) (if (= 1 (count args))
