@@ -12,12 +12,11 @@
 (defn bthrow [message]
   (throw (Exception. message)))
 
-; TODO: (car (cons (cons nil nil) (cons nil nil))) should work but doesn't
 (defn beval [expr]
   "Evaluates some Boson code."
   (cond
     (= 'nil expr) nil
-    (list? expr) (let [op (first expr)
+    (seq? expr) (let [op (first expr)
                        args (rest expr)]
                    (cond
 
