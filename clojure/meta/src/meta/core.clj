@@ -12,11 +12,23 @@
 ; The "functional" stuff: apply, this, loop
 ; "if" because you need if
 
+; The only particularly tricky one is "loop".
+; (loop f x) macro-expands to
+; (apply (if (cdr this) (loop f (cdr this)) (car this)) (apply f x))
+
 ; It might be useful to add "define", and consider there to be a
 ; global namespace.
 
 (defn bthrow [message]
   (throw (Exception. message)))
+
+(defn loop-expand
+  "Expands a loop macro. f and x are uneval'd Boson code."
+  ([f x]
+   `(~'apply (if (~'cdr ~'this) (~'loop ~f (~'cdr ~'this)) (~'car ~'this))
+           (~'apply ~f ~x))
+   ))
+
 
 (defn beval
   "Evaluates some Boson code."

@@ -31,4 +31,10 @@
     (is (nil? (beval '(apply (if this nil this) nil))))
     (is (nil? (beval '(apply (apply this this) nil))))
     )
+
+  (testing "loop expand"
+    (is (= '(apply (if (cdr this) (loop g (cdr this)) (car this))
+                   (apply g y))
+           (loop-expand 'g 'y)))
+    )
   )
