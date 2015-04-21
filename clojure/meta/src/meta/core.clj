@@ -18,14 +18,15 @@
 (defn bthrow [message]
   (throw (Exception. message)))
 
-(defn beval [expr & {:keys [this] :or {this "no binding for this"}}]
+(defn beval
   "Evaluates some Boson code."
-  (cond
-    (= 'nil expr) nil
-    (= 'this expr) (if (string? this)
-                     (bthrow this)
-                     this)
-    (seq? expr) (let [op (first expr)
+  ([expr & {:keys [this] :or {this "no binding for this"}}]
+   (cond
+     (= 'nil expr) nil
+     (= 'this expr) (if (string? this)
+                      (bthrow this)
+                      this)
+     (seq? expr) (let [op (first expr)
                        args (rest expr)]
                    (cond
 
@@ -57,7 +58,8 @@
                                       (cons x y)))
                                         
                      :else (bthrow "unknown op")))
-    :else (bthrow "unhandled case")))
+     :else (bthrow "unhandled case")))
+  )
 
 (defn safe-beval [expr]
   "Evaluates some Boson code and turns exceptions into strings."
