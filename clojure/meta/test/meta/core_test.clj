@@ -8,5 +8,6 @@
     (is (= '(nil) (beval '(cons nil nil))))
     (is (= '(nil) (beval '(car (cons (cons nil nil) (cons nil nil))))))
 
-    (is (thrown? Exception (beval '(cons nil this))))
+    (is (thrown-with-msg? Exception #"no binding for 'this'"
+                          (beval '(cons nil this))))
     ))

@@ -20,7 +20,8 @@
 
 (defn beval
   "Evaluates some Boson code."
-  ([expr & {:keys [this] :or {this "no binding for this"}}]
+  ([expr] (beval expr "no binding for 'this'"))
+  ([expr this]
    (cond
      (= 'nil expr) nil
      (= 'this expr) (if (string? this)
