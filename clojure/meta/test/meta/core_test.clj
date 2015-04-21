@@ -14,7 +14,10 @@
 
     (is (thrown? Exception (beval '(cons nil))))
     )
+
   (testing "basic apply/this"
     (is (= '(nil) (beval '(apply (cons this this) nil))))
+    (is (nil? (beval '(apply (car (cons this this)) nil))))
+    (is (nil? (beval '(apply (cdr (cons this this)) nil))))
     )
   )

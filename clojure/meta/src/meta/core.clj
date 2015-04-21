@@ -28,7 +28,7 @@
                       (bthrow this)
                       this)
      (seq? expr) (let [op (first expr)
-                       args (rest expr)]
+                       args (next expr)]
                    (cond
 
                      (= 'if op) (if (= 3 (count args))
@@ -38,7 +38,7 @@
                                   (bthrow "if must have 3 args"))
 
                      (= 'car op) (if (= 1 (count args))
-                                   (let [arg (beval (first args))]
+                                   (let [arg (beval (first args) this)]
                                      (if (seq? arg)
                                        (first arg)
                                        (bthrow (str "can't car " arg
@@ -47,9 +47,9 @@
                                    (bthrow "car must have 1 arg"))
 
                      (= 'cdr op) (if (= 1 (count args))
-                                   (let [arg (beval (first args))]
-                                     (if (list? arg)
-                                       (rest arg)
+                                   (let [arg (beval (first args) this)]
+                                     (if (seq? arg)
+                                       (next arg)
                                        (bthrow "can only cdr a list")))
                                    (bthrow "cdr must have 1 arg"))
 
