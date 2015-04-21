@@ -29,9 +29,11 @@
 
                      (= 'car op) (if (= 1 (count args))
                                    (let [arg (beval (first args))]
-                                     (if (list? arg)
+                                     (if (seq? arg)
                                        (first arg)
-                                       (bthrow (str "can't car " arg))))
+                                       (bthrow (str "can't car " arg
+                                                    " of type "
+                                                    (type arg)))))
                                    (bthrow "car must have 1 arg"))
 
                      (= 'cdr op) (if (= 1 (count args))

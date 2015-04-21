@@ -6,4 +6,5 @@
   (testing "bevaluating some expressions."
     (is (= nil (beval '(car (cons nil nil)))))
     (is (= '(nil) (beval '(cons nil nil))))
+    (is (= '(nil) (beval '(car (cons (cons nil nil) (cons nil nil))))))
     ))
