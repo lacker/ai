@@ -113,8 +113,11 @@
   "Lists all length-len lists of numbers summing to n."
   (cond
     (< len 1) (bthrow "can't compose with no length")
-    (= len 1) [n]
-    (> len 1) (bthrow "TODO: not implemented yet")
+    (< n len) []
+    (= len 1) [[n]]
+    (> len 1) (for [k (range 1 n)
+                    subcomp (compositions (- n k) (- len 1))]
+                (cons k subcomp))
     ))
 
 (defn bcode-for-size [size lookup]
