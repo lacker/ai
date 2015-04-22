@@ -11,15 +11,21 @@
   (testing "things that should throw."
     (is (thrown-with-msg? Exception #"no binding for 'this'"
                           (beval '(cons nil this))))
-    (is (thrown? Exception (beval '(if))))
-    (is (thrown? Exception (beval '(cons))))
-    (is (thrown? Exception (beval '(cdr))))
-    (is (thrown? Exception (beval '(car))))
-    (is (thrown? Exception (beval '(call))))
 
     (is (thrown? Exception (beval '(cons nil))))
     (is (thrown? Exception (beval '(car nil))))
     (is (thrown? Exception (beval '(cdr nil))))
+
+    ; Nothing should work with no args
+    (is (thrown? Exception (beval '(call))))
+    (is (thrown? Exception (beval '(car))))
+    (is (thrown? Exception (beval '(cdr))))
+    (is (thrown? Exception (beval '(cons))))
+    (is (thrown? Exception (beval '(if))))
+    (is (thrown? Exception (beval '(loop))))
+    (is (thrown? Exception (beval '(nil))))
+    (is (thrown? Exception (beval '(this))))
+
     )
 
   (testing "basic call/this"
