@@ -120,6 +120,7 @@
                 (cons k subcomp))
     ))
 
+; TODO: does this actually work??
 (defn bcode-for-size [size lookup]
   "Lists all valid Boson expressions of a particular size.
    Boson expressions are ordered lexicographically on:
@@ -131,7 +132,20 @@
   (cond
     (< size 1) []
     (= size 1) ['this 'nil]
-    :else (bthrow "TODO: not implemented yet")
+    :else (mapcat
+           (fn [keyword arglen]
+             (for [comp (compositions (- size 1) arglen)
+                   args (cross-product (map #(get lookup % []) comp))]
+               (cons keyword args)
+               )
+             )
+           [['call 2]
+            ['car 1]
+            ['cdr 1]
+            ['cons 2]
+            ['if 3]
+            ['loop 2]
+            ])
     ))
     
 
