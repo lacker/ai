@@ -32,61 +32,62 @@
 
 (defn beval
   "Evaluates some Boson code."
-  [expr & {:keys [this] :or {this "no binding for 'this'"}}]
-  (cond
-    (= 'nil expr) nil
-    (= 'this expr) (if (string? this)
-                     (bthrow this)
-                     this)
+  ([expr] (beval expr "no binding for 'this'"))
+  ([expr this]
+   (cond
+     (= 'nil expr) nil
+     (= 'this expr) (if (string? this)
+                      (bthrow this)
+                      this)
 
-    (seq? expr)
-    (let [op (first expr)
-          args (next expr)]
-      (cond
-        
-        (= 'if op) (if (= 3 (count args))
-                     (if (beval (first args) :this this)
-                       (beval (nth args 1) :this this)
-                       (beval (nth args 2) :this this))
-                     (bthrow "if must have 3 args"))
+     (seq? expr)
+     (let [op (first expr)
+           args (next expr)]
+       (cond
+         
+         (= 'if op) (if (= 3 (count args))
+                      (if (beval (first args) this)
+                        (beval (nth args 1) this)
+                        (beval (nth args 2) this))
+                      (bthrow "if must have 3 args"))
 
-        (= 'car op) (if (= 1 (count args))
-                      (let [arg (beval (first args) :this this)]
-                        (if (seq? arg)
-                          (first arg)
-                          (bthrow (str "can't car " arg
-                                       " of type "
-                                       (type arg)))))
-                      (bthrow "car must have 1 arg"))
+         (= 'car op) (if (= 1 (count args))
+                       (let [arg (beval (first args) this)]
+                         (if (seq? arg)
+                           (first arg)
+                           (bthrow (str "can't car " arg
+                                        " of type "
+                                        (type arg)))))
+                       (bthrow "car must have 1 arg"))
 
-        (= 'cdr op) (if (= 1 (count args))
-                      (let [arg (beval (first args) :this this)]
-                        (if (seq? arg)
-                          (next arg)
-                          (bthrow "can only cdr a list")))
-                      (bthrow "cdr must have 1 arg"))
+         (= 'cdr op) (if (= 1 (count args))
+                       (let [arg (beval (first args) this)]
+                         (if (seq? arg)
+                           (next arg)
+                           (bthrow "can only cdr a list")))
+                       (bthrow "cdr must have 1 arg"))
 
-        (= 'cons op) (if (= 2 (count args))
-                       (let [x (beval (first args) :this this)
-                             y (beval (nth args 1) :this this)]
-                         (cons x y))
-                       (bthrow "can only cons two args"))
-        
-        (= 'call op) (if (= 2 (count args))
-                       (let [func (first args)
-                             subthis (beval
-                                      (nth args 1) :this this)]
-                         (beval func :this subthis))
-                       (bthrow "can only call two args"))
-
-        (= 'loop op) (if (= 2 (count args))
-                       (beval (apply loop-expand args) :this this)
-                       (bthrow "can only loop two args"))
-        
-        :else (bthrow "unknown op")))
-
-    :else (bthrow "unhandled case"))
-  )
+         (= 'cons op) (if (= 2 (count args))
+                        (let [x (beval (first args) this)
+                              y (beval (nth args 1) this)]
+                          (cons x y))
+                        (bthrow "can only cons two args"))
+         
+         (= 'call op) (if (= 2 (count args))
+                        (let [func (first args)
+                              subthis (beval
+                                       (nth args 1) this)]
+                          (beval func subthis))
+                        (bthrow "can only call two args"))
+         
+         (= 'loop op) (if (= 2 (count args))
+                        (beval (apply loop-expand args) this)
+                        (bthrow "can only loop two args"))
+         
+         :else (bthrow "unknown op")))
+     
+     :else (bthrow "unhandled case"))
+   ))
 
 (defn safe-beval [expr]
   "Evaluates some Boson code and turns exceptions into strings."
