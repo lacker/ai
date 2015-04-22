@@ -16,9 +16,6 @@
 ; (loop f x) macro-expands to
 ; (call (if (cdr this) (loop f (cdr this)) (car this)) (call f x))
 
-; It might be useful to add "define", and consider there to be a
-; global namespace.
-
 (defn bthrow [message]
   (throw (Exception. message)))
 
@@ -102,6 +99,19 @@
   (try
     (beval expr)
     (catch Exception e (str "exception: " (.getMessage e)))))
+
+
+(defn bcode-of-size [size]
+  "Lists all valid Boson expressions of a particular size.
+   Boson expressions are ordered lexicographically on:
+   1. size
+   2. the first token, alphabetically
+   3. recursively on the args, in order"
+  (cond
+    (< size 1) []
+    (= size 1) ['this 'nil]
+    :else (bthrow "not implemented yet")))
+    
 
 ; TODO: make blank lines and ^D not die. Make bad syntax just fail.
 (defn brepl []
