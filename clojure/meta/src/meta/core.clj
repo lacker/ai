@@ -29,30 +29,33 @@
             (~'call ~f ~x))
    ))
 
-
-(defn beval
-  "Evaluates some Boson code."
-  ([expr] (beval expr "no binding for 'this'"))
-  ([expr this]
+(defn beval*
+  "Evaluates some Boson code.
+  Takes the code itself, the data bound to 'this', and the recursive
+  depth to permit (for infinite loop prevention)."
+  ([expr this depth]
    (cond
      (= 'nil expr) nil
      (= 'this expr) (if (string? this)
                       (bthrow this)
                       this)
+     (<= depth 0) (bthrow "recursive depth exceeded")
 
      (seq? expr)
      (let [op (first expr)
-           args (next expr)]
+           args (next expr)
+           subdepth (- depth 1)
+           ]
        (cond
          
          (= 'if op) (if (= 3 (count args))
-                      (if (beval (first args) this)
-                        (beval (nth args 1) this)
-                        (beval (nth args 2) this))
+                      (if (beval* (first args) this subdepth)
+                        (beval* (nth args 1) this subdepth)
+                        (beval* (nth args 2) this subdepth))
                       (bthrow "if must have 3 args"))
 
          (= 'car op) (if (= 1 (count args))
-                       (let [arg (beval (first args) this)]
+                       (let [arg (beval* (first args) this subdepth)]
                          (if (seq? arg)
                            (first arg)
                            (bthrow (str "can't car " arg
@@ -61,33 +64,38 @@
                        (bthrow "car must have 1 arg"))
 
          (= 'cdr op) (if (= 1 (count args))
-                       (let [arg (beval (first args) this)]
+                       (let [arg (beval* (first args) this subdepth)]
                          (if (seq? arg)
                            (next arg)
                            (bthrow "can only cdr a list")))
                        (bthrow "cdr must have 1 arg"))
 
          (= 'cons op) (if (= 2 (count args))
-                        (let [x (beval (first args) this)
-                              y (beval (nth args 1) this)]
+                        (let [x (beval* (first args) this subdepth)
+                              y (beval* (nth args 1) this subdepth)]
                           (cons x y))
                         (bthrow "can only cons two args"))
          
          (= 'call op) (if (= 2 (count args))
                         (let [func (first args)
-                              subthis (beval
-                                       (nth args 1) this)]
-                          (beval func subthis))
+                              subthis (beval*
+                                       (nth args 1) this subdepth)]
+                          (beval* func subthis subdepth))
                         (bthrow "can only call two args"))
          
          (= 'loop op) (if (= 2 (count args))
-                        (beval (apply loop-expand args) this)
+                        (beval* (apply loop-expand args) this subdepth)
                         (bthrow "can only loop two args"))
          
          :else (bthrow "unknown op")))
      
      :else (bthrow "unhandled case"))
    ))
+
+(defn beval
+  "Evaluates some Boson code, setting sane defaults."
+  [expr]
+  (beval* expr "no binding for 'this'" 100))
 
 (defn safe-beval [expr]
   "Evaluates some Boson code and turns exceptions into strings."
