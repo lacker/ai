@@ -62,4 +62,8 @@
   (testing "compositions"
     (is (= [[1 2] [2 1]] (compositions 3 2)))
     )
+
+  (testing "bcode-for-size"
+    (is (= ['this 'nil] (bcode-for-size 1 {})))
+    )
   )
