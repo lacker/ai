@@ -103,7 +103,8 @@
 (defn cross-product
   "Lists all valid Boson expressions that are cons'd with one
   expression from each of the expression-list arguments."
-  ([xs] xs)
+  ([xs]
+   (for [x xs] [x]))
   ([xs ys]
    (for [x xs y ys] [x y]))
   ([xs ys zs]
@@ -121,7 +122,6 @@
                 (cons k subcomp))
     ))
 
-; TODO: does this actually work??
 (defn bcode-for-size [size lookup]
   "Lists all valid Boson expressions of a particular size.
    Boson expressions are ordered lexicographically on:
