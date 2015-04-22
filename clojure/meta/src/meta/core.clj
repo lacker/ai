@@ -100,13 +100,23 @@
     (beval expr)
     (catch Exception e (str "exception: " (.getMessage e)))))
 
+(defn cross-product
+  "Lists all valid Boson expressions that are cons'd with one
+  expression from each of the expression-list arguments."
+  ([xs ys]
+   (for [x xs y ys] [x y]))
+  ([xs ys zs]
+   (for [x xs y ys z zs] [x y z]))
+   )
 
-(defn bcode-of-size [size]
+(defn bcode-for-size [size lookup]
   "Lists all valid Boson expressions of a particular size.
    Boson expressions are ordered lexicographically on:
-   1. size
+   1. size (number of keywords)
    2. the first token, alphabetically
-   3. recursively on the args, in order"
+   3. recursively on the args, in order
+   'lookup' provides a lookup table of which bcode of smaller sizes to
+   use as component pieces."
   (cond
     (< size 1) []
     (= size 1) ['this 'nil]
