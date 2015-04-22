@@ -109,6 +109,14 @@
    (for [x xs y ys z zs] [x y z]))
    )
 
+(defn compositions [n len]
+  "Lists all length-len lists of numbers summing to n."
+  (cond
+    (< len 1) (bthrow "can't compose with no length")
+    (= len 1) [n]
+    (> len 1) (bthrow "TODO: not implemented yet")
+    ))
+
 (defn bcode-for-size [size lookup]
   "Lists all valid Boson expressions of a particular size.
    Boson expressions are ordered lexicographically on:
@@ -120,7 +128,7 @@
   (cond
     (< size 1) []
     (= size 1) ['this 'nil]
-    :else (bthrow "not implemented yet")
+    :else (bthrow "TODO: not implemented yet")
     ))
     
 
