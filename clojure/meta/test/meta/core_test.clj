@@ -41,4 +41,9 @@
   (testing "loop in operation"
     (is (nil? (beval '(loop (cdr this) (cons nil (cons nil nil))))))
     )
+
+  (testing "preventing infinite recursion"
+    (is (thrown-with-msg? Exception #"recursive depth exceeded"
+                          (beval '(loop (cons nil (cons nil nil)) nil))))
+    )
   )

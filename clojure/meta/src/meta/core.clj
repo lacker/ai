@@ -108,7 +108,7 @@
   "Runs a Boson repl."
   (print ">>> ")
   (flush)
-  (println (safe-beval (read-string (read-line))))
+  (println (safe-beval (read)))
   (recur))
 
 (defn -main [& args]
