@@ -110,7 +110,8 @@
   (cond
     (< size 1) []
     (= size 1) ['this 'nil]
-    :else (bthrow "not implemented yet")))
+    :else (bthrow "not implemented yet")
+    ))
     
 
 ; TODO: make blank lines and ^D not die. Make bad syntax just fail.
