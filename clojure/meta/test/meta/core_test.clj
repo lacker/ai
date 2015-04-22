@@ -63,7 +63,11 @@
     (is (= [[1 2] [2 1]] (compositions 3 2)))
     )
 
+; the real size-2 list
+; ['(car this) '(car nil) '(cdr this) '(cdr nil)]
+
   (testing "bcode-for-size"
     (is (= ['this 'nil] (bcode-for-size 1 {})))
+    (is (= [] (bcode-for-size 2 {})))
     )
   )

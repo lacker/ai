@@ -103,6 +103,7 @@
 (defn cross-product
   "Lists all valid Boson expressions that are cons'd with one
   expression from each of the expression-list arguments."
+  ([xs] xs)
   ([xs ys]
    (for [x xs y ys] [x y]))
   ([xs ys zs]
@@ -133,9 +134,9 @@
     (< size 1) []
     (= size 1) ['this 'nil]
     :else (mapcat
-           (fn [keyword arglen]
+           (fn [[keyword arglen]]
              (for [comp (compositions (- size 1) arglen)
-                   args (cross-product (map #(get lookup % []) comp))]
+                   args (apply cross-product (map #(get lookup % []) comp))]
                (cons keyword args)
                )
              )
