@@ -148,7 +148,16 @@
             ['loop 2]
             ])
     ))
-    
+
+; TODO: does this work?
+(defn all-bcode []
+  "Lazily lists all valid Boson expressions."
+  (mapcat first
+          (iterate
+           (fn [[prev-results size lookup]]
+             (let [results (bcode-for-size size lookup)]
+               [results (+ 1 size) (assoc lookup size results)]
+               )))))
 
 ; TODO: make blank lines and ^D not die. Make bad syntax just fail.
 (defn brepl []
