@@ -101,7 +101,7 @@
     (catch Exception e (str "exception: " (.getMessage e)))))
 
 (defn cross-product
-  "Lists all valid Boson expressions that are cons'd with one
+  "Lazily lists all valid Boson expressions that are cons'd with one
   expression from each of the expression-list arguments."
   ([xs]
    (for [x xs] [x]))
@@ -112,7 +112,7 @@
    )
 
 (defn compositions [n len]
-  "Lists all length-len lists of numbers summing to n."
+  "Lazily lists all length-len lists of numbers summing to n."
   (cond
     (< len 1) (bthrow "can't compose with no length")
     (< n len) []
@@ -123,7 +123,7 @@
     ))
 
 (defn bcode-for-size [size lookup]
-  "Lists all valid Boson expressions of a particular size.
+  "Lazily lists all valid Boson expressions of a particular size.
    Boson expressions are ordered lexicographically on:
    1. size (number of keywords)
    2. the first token, alphabetically
