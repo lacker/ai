@@ -157,7 +157,9 @@
            (fn [[prev-results size lookup]]
              (let [results (bcode-for-size size lookup)]
                [results (+ 1 size) (assoc lookup size results)]
-               )))))
+               ))
+           [[] 1 {}]
+           )))
 
 ; TODO: make blank lines and ^D not die. Make bad syntax just fail.
 (defn brepl []

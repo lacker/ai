@@ -73,4 +73,9 @@
            (bcode-for-size 2 {1 ['this 'nil]})
            ))
     )
+
+  (testing "generating all bcode"
+    (is (= ['this] (take 1 (all-bcode))))
+    )
+
   )
