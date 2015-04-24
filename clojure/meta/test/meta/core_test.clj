@@ -75,7 +75,7 @@
     )
 
   (testing "generating all bcode"
-    (is (= ['this] (take 1 (all-bcode))))
+    (is (= ['this 'nil] (take 2 (all-bcode))))
     )
 
   )
