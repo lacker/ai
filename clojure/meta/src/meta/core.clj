@@ -149,7 +149,6 @@
             ])
     ))
 
-; TODO: does this work?
 (defn all-bcode []
   "Lazily lists all valid Boson expressions."
   (mapcat first
