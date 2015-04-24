@@ -75,7 +75,8 @@
     )
 
   (testing "generating all bcode"
-    (is (= ['this 'nil] (take 2 (all-bcode))))
-    )
-
+    (let [prefix '[this
+                   nil]]
+      (is (= prefix (take (count prefix) (all-bcode)))))
   )
+)
