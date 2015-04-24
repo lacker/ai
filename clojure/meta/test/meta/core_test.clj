@@ -98,6 +98,10 @@
                    (cons this nil)
                    (cons nil this)
                    (cons nil nil)
+                   (loop this this)
+                   (loop this nil)
+                   (loop nil this)
+                   (loop nil nil)
                    ]]
       (is (= prefix (take (count prefix) (all-bcode)))))
   )
