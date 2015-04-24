@@ -102,6 +102,10 @@
                    (loop this nil)
                    (loop nil this)
                    (loop nil nil)
+                   (call this (car this))
+                   (call this (car nil))
+                   (call this (cdr this))
+                   (call this (cdr nil))
                    ]]
       (is (= prefix (take (count prefix) (all-bcode)))))
   )
