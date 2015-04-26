@@ -160,6 +160,22 @@
            [[] 1 {}]
            )))
 
+(defn bfind
+  "Finds some bcode that satisfies the predicate."
+  ([pred] (bfind pred (all-bcode)))
+  ([pred codegen]
+   (if (pred (first codegen))
+     (first codegen)
+     (recur pred (rest codegen)))
+   ))
+
+(defn solve-map [fmap]
+  "fmap is a vector of 2-vectors listing pairs that we want a function
+  to implement. solve-map finds a function that takes the first
+  element of each of these pairs to the second."
+  (bthrow "TODO: implement")
+  )
+
 ; TODO: make blank lines and ^D not die. Make bad syntax just fail.
 (defn brepl []
   "Runs a Boson repl."

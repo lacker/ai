@@ -110,6 +110,7 @@
                    (call nil (car nil))
                    (call nil (cdr this))
                    (call nil (cdr nil))
+                   (call (car this) this)
                    ]]
       (is (= prefix (take (count prefix) (all-bcode)))))
   )
