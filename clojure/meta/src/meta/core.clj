@@ -26,10 +26,14 @@
             (~'call ~f ~x))
    ))
 
-(defn beval*
+(defn beval
   "Evaluates some Boson code.
   Takes the code itself, the data bound to 'this', and the recursive
   depth to permit (for infinite loop prevention)."
+  ([expr]
+   (beval expr "no binding for 'this'"))
+  ([expr this]
+   (beval expr this 100))
   ([expr this depth]
    (cond
      (= 'nil expr) nil
@@ -46,13 +50,13 @@
        (cond
          
          (= 'if op) (if (= 3 (count args))
-                      (if (beval* (first args) this subdepth)
-                        (beval* (nth args 1) this subdepth)
-                        (beval* (nth args 2) this subdepth))
+                      (if (beval (first args) this subdepth)
+                        (beval (nth args 1) this subdepth)
+                        (beval (nth args 2) this subdepth))
                       (bthrow "if must have 3 args"))
 
          (= 'car op) (if (= 1 (count args))
-                       (let [arg (beval* (first args) this subdepth)]
+                       (let [arg (beval (first args) this subdepth)]
                          (if (seq? arg)
                            (first arg)
                            (bthrow (str "can't car " arg
@@ -61,27 +65,27 @@
                        (bthrow "car must have 1 arg"))
 
          (= 'cdr op) (if (= 1 (count args))
-                       (let [arg (beval* (first args) this subdepth)]
+                       (let [arg (beval (first args) this subdepth)]
                          (if (seq? arg)
                            (next arg)
                            (bthrow "can only cdr a list")))
                        (bthrow "cdr must have 1 arg"))
 
          (= 'cons op) (if (= 2 (count args))
-                        (let [x (beval* (first args) this subdepth)
-                              y (beval* (nth args 1) this subdepth)]
+                        (let [x (beval (first args) this subdepth)
+                              y (beval (nth args 1) this subdepth)]
                           (cons x y))
                         (bthrow "can only cons two args"))
          
          (= 'call op) (if (= 2 (count args))
                         (let [func (first args)
-                              subthis (beval*
+                              subthis (beval
                                        (nth args 1) this subdepth)]
-                          (beval* func subthis subdepth))
+                          (beval func subthis subdepth))
                         (bthrow "can only call two args"))
          
          (= 'loop op) (if (= 2 (count args))
-                        (beval* (apply loop-expand args) this subdepth)
+                        (beval (apply loop-expand args) this subdepth)
                         (bthrow "can only loop two args"))
          
          :else (bthrow "unknown op")))
@@ -89,15 +93,10 @@
      :else (bthrow "unhandled case"))
    ))
 
-(defn beval
-  "Evaluates some Boson code, setting sane defaults."
-  [expr]
-  (beval* expr "no binding for 'this'" 100))
-
-(defn safe-beval [expr]
-  "Evaluates some Boson code and turns exceptions into strings."
+(defn safe [f & args]
+  "Turns exceptions into strings in the arg."
   (try
-    (beval expr)
+    (apply f args)
     (catch Exception e (str "exception: " (.getMessage e)))))
 
 (defn cross-product
@@ -169,19 +168,22 @@
      (recur pred (rest codegen)))
    ))
 
+; TODO: does this work?
 (defn solve-map [fmap]
   "fmap is a vector of 2-vectors listing pairs that we want a function
   to implement. solve-map finds a function that takes the first
   element of each of these pairs to the second."
-  (bthrow "TODO: implement")
-  )
+  (bfind
+   (fn [expr]
+     (every? (fn [input output] (= output (safe beval expr input))))
+  )))
 
 ; TODO: make blank lines and ^D not die. Make bad syntax just fail.
 (defn brepl []
   "Runs a Boson repl."
   (print ">>> ")
   (flush)
-  (println (safe-beval (read)))
+  (println (safe beval (read)))
   (recur))
 
 (defn -main [& args]
