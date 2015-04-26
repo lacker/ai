@@ -169,9 +169,9 @@
    ))
 
 ; TODO: does this work?
-(defn solve-map [fmap]
-  "fmap is a vector of 2-vectors listing pairs that we want a function
-  to implement. solve-map finds a function that takes the first
+(defn solve-io [iolist]
+  "iolist is a vector of 2-vectors listing pairs that we want a function
+  to implement. solve-io finds a function that takes the first
   element of each of these pairs to the second."
   (bfind
    (fn [expr]
