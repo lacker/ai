@@ -179,7 +179,7 @@
        (recur pred (rest codegen) new-num-tested start-time))
    )))
 
-; TODO: does this work?
+; TODO: does this work? try 'lein run'
 (defn solve-io [iolist]
   "iolist is a vector of 2-vectors listing pairs that we want a function
   to implement. solve-io finds a function that takes the first
@@ -218,6 +218,7 @@
   (recur))
 
 (defn -main [& args]
-  (brepl)
-  (println "done")
-  )
+  (for [[name iolist] gauntlet]
+    (do (println name)
+        (println (solve-io iolist))
+        )))
