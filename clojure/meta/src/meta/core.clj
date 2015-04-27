@@ -160,13 +160,20 @@
            )))
 
 (defn bfind
-  "Finds some bcode that satisfies the predicate."
-  ([pred] (bfind pred (all-bcode)))
-  ([pred codegen]
-   (if (pred (first codegen))
-     (first codegen)
-     (recur pred (rest codegen)))
-   ))
+  "Finds some bcode that satisfies the predicate.
+  Returns a map with
+  :bcode - the code
+  :time  - the amount of time spent to find it
+  :count - the number of expressions tested to find it"
+  ([pred] (bfind pred (all-bcode) 0))
+  ([pred codegen num-tested]
+   (let [new-num-tested (+ 1 num-tested)]
+     (if (pred (first codegen))
+       {:bcode (first codegen)
+        :time 0.0 ; TODO: fix
+        :count new-num-tested}
+       (recur pred (rest codegen) new-num-tested))
+   )))
 
 ; TODO: does this work?
 (defn solve-io [iolist]
