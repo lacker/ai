@@ -195,18 +195,18 @@
   common functions. We should keep adding to the gauntlet to make the
   system more intelligent."
   (sorted-map
-   :always-false '[[nil nil]
-                   [(cons nil nil) nil]
-                   [(cons (cons nil nil) nil) nil]
-                   [(cons nil (cons nil nil)) nil]]
-   :always-true '[[nil (cons nil nil)]
-                  [(cons nil nil) (cons nil nil)]
-                  [(cons (cons nil nil) nil) (cons nil nil)]
-                  [(cons nil (cons nil nil)) (cons nil nil)]]
-   :prepend-nil '[[nil (cons nil nil)]
-                  [(cons nil nil) (cons nil (cons nil nil))]
-                  [(cons (cons nil nil) nil)
-                   (cons nil (cons (cons nil nil) nil))]]
+   :always-false [[nil nil]
+                  [(cons nil nil) nil]
+                  [(cons (cons nil nil) nil) nil]
+                  [(cons nil (cons nil nil)) nil]]
+   :always-true [[nil (cons nil nil)]
+                 [(cons nil nil) (cons nil nil)]
+                 [(cons (cons nil nil) nil) (cons nil nil)]
+                 [(cons nil (cons nil nil)) (cons nil nil)]]
+   :prepend-nil [[nil (cons nil nil)]
+                 [(cons nil nil) (cons nil (cons nil nil))]
+                 [(cons (cons nil nil) nil)
+                  (cons nil (cons (cons nil nil) nil))]]
    ))
 
 ; TODO: make blank lines and ^D not die. Make bad syntax just fail.
