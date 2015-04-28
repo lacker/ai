@@ -186,7 +186,9 @@
   element of each of these pairs to the second."
   (bfind
    (fn [expr]
-     (every? (fn [input output] (= output (safe beval expr input))))
+     (every?
+      (fn [input output] (= output (safe beval expr input)))
+      iolist)
   )))
 
 ; TODO: express the gauntlet in clojure-data form for briefness
@@ -218,7 +220,9 @@
   (recur))
 
 (defn -main [& args]
-  (for [[name iolist] gauntlet]
-    (do (println name)
-        (println (solve-io iolist))
-        )))
+  (println "running the gauntlet")
+  (doall (for [[name iolist] gauntlet]
+           (do (println name)
+               (println (solve-io iolist))
+               )))
+  (println "done"))
