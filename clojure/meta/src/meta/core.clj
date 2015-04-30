@@ -190,25 +190,25 @@
       iolist)
   )))
 
-; TODO: express the gauntlet in clojure-data form for briefness
 (def gauntlet
   "The gauntlet is a collection of input-output puzzles that define
   common functions. We should keep adding to the gauntlet to make the
   system more intelligent."
-  (sorted-map
-   :always-false [[nil nil]
-                  [(cons nil nil) nil]
-                  [(cons (cons nil nil) nil) nil]
-                  [(cons nil (cons nil nil)) nil]]
-   :always-true [[nil (cons nil nil)]
-                 [(cons nil nil) (cons nil nil)]
-                 [(cons (cons nil nil) nil) (cons nil nil)]
-                 [(cons nil (cons nil nil)) (cons nil nil)]]
-   :prepend-nil [[nil (cons nil nil)]
-                 [(cons nil nil) (cons nil (cons nil nil))]
-                 [(cons (cons nil nil) nil)
-                  (cons nil (cons (cons nil nil) nil))]]
-   ))
+  (let [t (cons nil nil)]
+    (sorted-map
+     :always-false [[nil nil]
+                    [t nil]
+                    [(cons t nil) nil]
+                    [(cons nil t) nil]]
+     :always-true [[nil t]
+                   [t t]
+                   [(cons t nil) t]
+                   [(cons nil t) t]]
+     :prepend-nil [[nil t]
+                   [t (cons nil t)]
+                   [(cons t nil)
+                    (cons nil (cons t nil))]]
+     )))
 
 ; TODO: make blank lines and ^D not die. Make bad syntax just fail.
 (defn brepl []
