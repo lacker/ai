@@ -205,15 +205,13 @@
                    [t t]
                    [(cons t nil) t]
                    [(cons nil t) t]]
-     :prepend-nil [[nil t]
-                   [t (cons nil t)]
-                   [(cons t nil)
-                    (cons nil (cons t nil))]]
+     :prepend-nil [[nil [nil]]
+                   [[nil] [nil nil]]
+                   [[t] [nil t]]]
      :reverse [[nil nil]
                [t t]
-               [(cons nil t) (cons nil t)]
-               [(cons t t) (cons nil (cons t nil))]]
-                                        ; TODO: better list syntax
+               [[nil nil] [nil nil]]
+               [[t nil] [nil t]]]
      )))
 
 ; TODO: make blank lines and ^D not die. Make bad syntax just fail.
