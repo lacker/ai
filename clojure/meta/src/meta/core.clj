@@ -195,7 +195,7 @@
   "The gauntlet is a collection of input-output puzzles that define
   common functions. We should keep adding to the gauntlet to make the
   system more intelligent."
-  (let [t (cons nil nil)]
+  (let [t [nil]]
     (sorted-map
      :always-false [[nil nil]
                     [t nil]
