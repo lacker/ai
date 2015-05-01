@@ -179,6 +179,7 @@
        (recur pred (rest codegen) new-num-tested start-time))
    )))
 
+; TODO: limit by time, print out debug info
 (defn solve-io [iolist]
   "iolist is a vector of 2-vectors listing pairs that we want a function
   to implement. solve-io finds a function that takes the first
@@ -208,6 +209,11 @@
                    [t (cons nil t)]
                    [(cons t nil)
                     (cons nil (cons t nil))]]
+     :reverse [[nil nil]
+               [t t]
+               [(cons nil t) (cons nil t)]
+               [(cons t t) (cons nil (cons t nil))]]
+                                        ; TODO: better list syntax
      )))
 
 ; TODO: make blank lines and ^D not die. Make bad syntax just fail.
