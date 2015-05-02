@@ -169,8 +169,9 @@
   :bcode - the code
   :time  - the amount of time spent to find it
   :count - the number of expressions tested to find it"
-  ([pred] (bfind pred (all-bcode) 0 (now)))
-  ([pred codegen num-tested start-time]
+  ([pred] (bfind pred false))
+  ([pred verbose] (bfind pred (all-bcode) 0 (now) verbose))
+  ([pred codegen num-tested start-time verbose]
    (let [new-num-tested (+ 1 num-tested)]
      (if (pred (first codegen))
        {:bcode (first codegen)

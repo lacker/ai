@@ -114,4 +114,7 @@
                    ]]
       (is (= prefix (take (count prefix) (all-bcode)))))
   )
+
+  ; TODO: test bfind
+  ; TODO: test solve-io
 )
