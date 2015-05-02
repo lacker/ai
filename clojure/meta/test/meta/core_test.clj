@@ -115,6 +115,10 @@
       (is (= prefix (take (count prefix) (all-bcode)))))
   )
 
-  ; TODO: test bfind
+  ; TODO: test bfind more
+  (testing "bfind"
+    (is (= nil (:bcode (bfind not))))
+    )
+
   ; TODO: test solve-io
 )

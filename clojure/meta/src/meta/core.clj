@@ -177,7 +177,7 @@
        {:bcode (first codegen)
         :time (- (now) start-time)
         :count new-num-tested}
-       (recur pred (rest codegen) new-num-tested start-time))
+       (recur pred (rest codegen) new-num-tested start-time verbose))
    )))
 
 ; TODO: limit by time, print out debug info
