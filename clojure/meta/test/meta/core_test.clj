@@ -115,9 +115,9 @@
       (is (= prefix (take (count prefix) (all-bcode)))))
   )
 
-  ; TODO: test bfind more
   (testing "bfind"
     (is (= nil (:bcode (bfind not))))
+    (is (= '(call this this) (:bcode (bfind #(and (seq? %) (= 3 (count %)))))))
     )
 
   ; TODO: test solve-io
