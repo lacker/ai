@@ -120,5 +120,7 @@
     (is (= '(call this this) (:bcode (bfind #(and (seq? %) (= 3 (count %)))))))
     )
 
-  ; TODO: test solve-io
+  (testing "solve-io"
+    (is (= nil (:bcode (solve-io [[(cons nil nil) nil]]))))
+    )
 )
