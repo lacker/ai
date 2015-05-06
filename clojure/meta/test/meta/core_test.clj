@@ -122,5 +122,7 @@
 
   (testing "solve-io"
     (is (= nil (:bcode (solve-io [[(cons nil nil) nil]]))))
+    (is (= 'this (:bcode (solve-io [[(cons nil nil) (cons nil nil)]
+                                    [nil nil]]))))
     )
 )

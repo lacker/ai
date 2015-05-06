@@ -215,7 +215,6 @@
                [[t nil] [nil t]]]
      )))
 
-; TODO: make blank lines and ^D not die. Make bad syntax just fail.
 (defn brepl []
   "Runs a Boson repl."
   (print ">>> ")
