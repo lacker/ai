@@ -121,6 +121,16 @@
                 (cons k subcomp))
     ))
 
+; TODO: test
+(defn bcode-with-fragment [fragment others]
+  "Lazily lists valid Boson expressions that contain the provided
+  fragment as an immediate child of the root. 'others' is a sequence
+  of other expressions that can be immediate children."
+  (concat
+   [(list 'car fragment) (list 'cdr fragment)] ; 1-arg cases
+   (bthrow "TODO: more than 1 arg cases")
+   ))
+
 (defn bcode-for-size [size lookup]
   "Lazily lists all valid Boson expressions of a particular size.
    Boson expressions are ordered lexicographically on:
@@ -158,6 +168,11 @@
                ))
            [[] 1 {}]
            )))
+
+(defn all-bcode-sorted-by [sortfn]
+  "Lazily lists all valid Boson expressions, sorted by sortfn."
+  (bthrow "TODO: implement")
+  )
 
 (defn now
   "Current time as a float."
