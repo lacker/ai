@@ -127,8 +127,22 @@
   fragment as an immediate child of the root. 'others' is a sequence
   of other expressions that can be immediate children."
   (concat
-   [(list 'car fragment) (list 'cdr fragment)] ; 1-arg cases
-   (bthrow "TODO: more than 1 arg cases")
+   (for [one-arg-builtin ['car 'cdr]]
+     (list one-arg-builtin fragment))
+
+   (for [two-arg-builtin ['call 'cons 'loop]
+         other others
+         args [[fragment other] [other fragment]]]
+     (cons two-arg-builtin args)
+     )
+
+   ; 'if' is the only three-arg builtin
+   (for [other1 others
+         other2 others
+         args [[fragment other1 other2]
+               [other1 fragment other2]
+               [other2 other2 fragment]]]
+     (cons 'if args))
    ))
 
 (defn bcode-for-size [size lookup]
