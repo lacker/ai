@@ -145,7 +145,6 @@
      (cons 'if args))
    ))
 
-; TODO: test
 (defn prefixes [s]
   "Lazily lists all the nonempty prefix-sequences of the provided
   sequence s."
