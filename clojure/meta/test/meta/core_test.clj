@@ -125,4 +125,8 @@
     (is (= 'this (:bcode (solve-io [[(cons nil nil) (cons nil nil)]
                                     [nil nil]]))))
     )
+
+  (testing "prefixes"
+    (is (= '(0 1 2) (nth (prefixes (range)) 2)))
+    )
 )
