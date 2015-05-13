@@ -7,9 +7,9 @@ Impulse imp => Gain out => dac;
 out => Delay delay => out;
 
 // our radius
-.99999 => float R;
+.9999 => float R;
 // our delay order
-500 => float L;
+200 => float L;
 // set delay
 L::samp => delay.delay;
 // set dissipation factor
