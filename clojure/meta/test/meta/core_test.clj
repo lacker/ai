@@ -129,4 +129,8 @@
   (testing "prefixes"
     (is (= '(0 1 2) (nth (prefixes (range)) 2)))
     )
+
+  (testing "bcode-with-fragment"
+    (is (= ['(car nil) '(cdr nil)] (bcode-with-fragment nil [])))
+    )
 )
