@@ -132,5 +132,7 @@
 
   (testing "bcode-with-fragment"
     (is (= ['(car nil) '(cdr nil)] (bcode-with-fragment nil [])))
+    (is (= ['(car nil) '(cdr nil)]
+           (take 2 (bcode-with-fragment nil ['this]))))
     )
 )

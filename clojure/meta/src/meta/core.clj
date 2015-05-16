@@ -121,7 +121,7 @@
                 (cons k subcomp))
     ))
 
-; TODO: test
+; TODO: misses (car nil nil)
 (defn bcode-with-fragment [fragment others]
   "Lazily lists valid Boson expressions that contain the provided
   fragment as an immediate child of the root. 'others' is a sequence
