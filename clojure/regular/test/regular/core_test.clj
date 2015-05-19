@@ -3,7 +3,8 @@
             [regular.core :refer :all]))
 
 (deftest regular-test
-  (testing "find-all"
-    (is (seq? (find-all "foo" "fao")))
+  (testing "re-to-string"
+    (is (= "foo" (re-to-string "foo")))
+    (is (= "foobar" (re-to-string ["foo" "bar"])))
     )
   )
