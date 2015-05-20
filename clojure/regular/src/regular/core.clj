@@ -25,6 +25,9 @@
     ; TODO: alphabetize
     (set? re) (str "[" (clojure.string/join "" (map re-to-string re)) "]")
 
+    ; (repeat n m regex) -> regex{n,m}
+    (list? re) (throw (Exception. "TODO: implement repeat"))
+
     :else (throw (Exception. "cannot re-to-string this"))
     ))
 
