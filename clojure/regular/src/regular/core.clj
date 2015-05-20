@@ -21,6 +21,10 @@
   (cond
     (string? re) re
     (vector? re) (clojure.string/join "" (map re-to-string re))
+
+    ; TODO: alphabetize and restrict and test set-handling
+    (set? re) (str "[" (clojure.string/join "" (map re-to-string re)) "]")
+
     :else (throw (Exception. "cannot re-to-string this"))
     ))
 
