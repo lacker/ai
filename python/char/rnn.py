@@ -6,8 +6,15 @@ https://github.com/karpathy/char-rnn
 for inspiration.
 """
 
+import math
 import os
+import random
 
+def random_number():
+  "Makes a random number with 5 to 20 digits."
+  return int(10 ** (5 + (random.random() * 15)))
+
+  
 def make_labeled_data(chars):
   """
   Given a list of characters, turn it into labeled data.
