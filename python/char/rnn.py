@@ -39,7 +39,22 @@ def make_labeled_data(chars):
     labels.append(i)
     accum.append(i)
   return dataset, labels
-  
 
+def make_labeled_mod3(n):
+  """
+  Makes a labeled dataset of n mod3 problems.
+  We can take it for granted that a \n resets and not ask the machine
+  to learn that. It only has to learn that \n terminates the correct
+  answer, and we'll take it from there.
+  """
+  dataset, labels = [], []
+  for _ in range(n):
+    statement = mod_statement(3) + "\n"
+    newdata, newlabels = make_labeled_data(statement)
+    dataset.extend(newdata)
+    labels.extend(newlabels)
+  return dataset, labels
+
+  
 chatfile = os.path.realpath(__file__ + "/../data/chat.txt")
 print "chatfile:", chatfile
