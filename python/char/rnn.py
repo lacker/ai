@@ -14,6 +14,15 @@ def random_number():
   "Makes a random number with 5 to 20 digits."
   return int(10 ** (5 + (random.random() * 15)))
 
+def mod_statement(m):
+  """
+  Makes a random expression that calculates mod m.
+  For example, a mod_statement(3) could be:
+  "8374 % 3 = 1"
+  """
+  num = random_number()
+  rhs = num % m
+  return "%d %% %d = %d" % (num, m, rhs)
   
 def make_labeled_data(chars):
   """
