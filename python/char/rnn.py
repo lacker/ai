@@ -4,11 +4,23 @@ Character-level recurrent neural networks, using Keras.
 See:
 https://github.com/karpathy/char-rnn
 for inspiration.
+
+Philosophically training on deterministic problems with which we have
+infinite training data seems interesting.
+
+State of the art is roughly, it works for addition, but only for a
+fixed length of sequence, and it doesn't work for anything more
+complex. I wonder if a new type of neuron might be able to do
+something like a stack data structure.
+
+TODO: make the GPU work
 """
 
 import math
 import os
 import random
+
+from keras.models import Sequential
 
 def random_number():
   "Makes a random number with 5 to 20 digits."
@@ -55,6 +67,9 @@ def make_labeled_mod3(n):
     labels.extend(newlabels)
   return dataset, labels
 
-  
-chatfile = os.path.realpath(__file__ + "/../data/chat.txt")
-print "chatfile:", chatfile
+
+# Let's use this dataset
+mod3_data, mod3_labels = make_labeled_mod3(10000)
+
+print "creating a model"
+model = Sequential()
