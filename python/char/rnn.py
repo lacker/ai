@@ -21,6 +21,8 @@ import os
 import random
 
 from keras.models import Sequential
+from keras.layers.core import Dense, Dropout, Activation
+from keras.layers.recurrent import LSTM
 
 def random_number():
   "Makes a random number with 5 to 20 digits."
@@ -71,5 +73,10 @@ def make_labeled_mod3(n):
 # Let's use this dataset
 mod3_data, mod3_labels = make_labeled_mod3(10000)
 
+# A la "Sequence classification with LSTM" on https://github.com/fchollet/keras
 print "creating a model"
 model = Sequential()
+model.add(LSTM(256, 128, activation='sigmoid', inner_activation='hard_sigmoid'))
+model.add(Dropout(0.5))
+model.add(Dense(128, 1))
+model.add(Activation('sigmoid'))
