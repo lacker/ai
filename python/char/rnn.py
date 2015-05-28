@@ -76,7 +76,8 @@ mod3_data, mod3_labels = make_labeled_mod3(10000)
 # A la "Sequence classification with LSTM" on https://github.com/fchollet/keras
 print "creating a model"
 model = Sequential()
-model.add(LSTM(256, 128, activation='sigmoid', inner_activation='hard_sigmoid'))
+model.add(LSTM(256, 128, activation="sigmoid",
+               inner_activation="hard_sigmoid"))
 model.add(Dropout(0.5))
 model.add(Dense(128, 1))
-model.add(Activation('sigmoid'))
+model.add(Activation("sigmoid"))
