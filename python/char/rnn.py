@@ -73,7 +73,9 @@ def make_labeled_mod3(n):
 # Let's use this dataset
 mod3_data, mod3_labels = make_labeled_mod3(10000)
 
-# A la "Sequence classification with LSTM" on https://github.com/fchollet/keras
+# A la "Sequence classification with LSTM" on
+# https://github.com/fchollet/keras
+
 print "creating a model"
 model = Sequential()
 model.add(LSTM(256, 128, activation="sigmoid",
@@ -81,3 +83,9 @@ model.add(LSTM(256, 128, activation="sigmoid",
 model.add(Dropout(0.5))
 model.add(Dense(128, 1))
 model.add(Activation("sigmoid"))
+
+print "compiling"
+model.compile(loss="binary_crossentropy", optimizer="rmsprop")
+
+print "fitting"
+model.fit(mod3_data, mod3_labels, batch_size=16, nb_epoch=10)
