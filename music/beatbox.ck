@@ -2,8 +2,8 @@
 116 => float bpm;
 1::minute / bpm => dur quarterRest;
 
-// Code from say-chu.ck that we use as a toolkit.
-
+// I don't actually understand resonators; I copied stuff from say-chu.ck.
+// So beware this paragraph.
 TwoPole r[3];	// Resonators
 Noise n => Envelope ne => r[0] => TwoZero z => Gain gain => dac;
 n => r[1] => z; n => r[2] => z; 
@@ -41,7 +41,7 @@ fun void doimpulse()  {
     }
 }
 
-
+// Leaves sound being generated
 fun void doCh()  {
     <<< "Ch" >>>;
     0.03=>ne.time;
@@ -54,6 +54,7 @@ fun void doCh()  {
     1=>ne.keyOff;0.03 :: second => now;
 }
 
+// Leaves sound being generated
 fun void doKay()  {
     <<< "KKK" >>>;
     0.0 => i.gain;
@@ -72,11 +73,11 @@ fun void doKay()  {
 
 while (true) {
 
-    doCh();
+    spork ~ doCh();
     quarterRest => now;
-    doUhh();
+    spork ~ doUhh();
     quarterRest => now;
-    doKay();
+    spork ~ doKay();
     quarterRest => now;
     quarterRest => now;
 }
