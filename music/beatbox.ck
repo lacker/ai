@@ -13,28 +13,27 @@ Impulse i => Envelope ie => OnePole o => r[0]; o => r[1]; o => r[2];
 // louder
 4.0 => gain.gain;
 
-// doUhh does not work in parallel because of maintainUhh
-0 => int maintainUhh;
-fun void doUhh()  {
+fun void uhh() {
+    spork ~ doUhh();
+}
+fun void doUhh() {
     0.1=>ie.time;
     0.0 => n.gain;
     600.0 => r[0].freq; 0.995 => r[0].radius; 1.0 => r[0].gain;
     1500.0 => r[1].freq; 0.995 => r[1].radius; 0.5 => r[1].gain;
     3900.0 => r[2].freq; 0.99 => r[2].radius; 0.2 => r[2].gain;
-    1 => maintainUhh;
-    spork ~ doimpulse();
+    spork ~ doUhhImpulse();
     0.4 => i.gain;
     1.0 => i.gain;
     1 => ie.keyOn;
     0.1 :: second => now;
     1 => ie.keyOff;
     0.1 :: second => now;
-    0 => maintainUhh;
 }
-fun void doimpulse()  {
+fun void doUhhImpulse()  {
     150.0 => float freq;
     <<< "uhh" >>>;
-    while (maintainUhh)  {
+    while (true)  {
         1.0 => i.next;
         (1.0 / freq) :: second => now;    
         freq * 0.98 => freq;
@@ -75,7 +74,7 @@ while (true) {
 
     spork ~ doCh();
     quarterRest => now;
-    spork ~ doUhh();
+    uhh();
     quarterRest => now;
     spork ~ doKay();
     quarterRest => now;
