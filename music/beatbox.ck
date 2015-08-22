@@ -1,5 +1,5 @@
 // Overall params
-116 => float bpm;
+130 => float bpm;
 1 :: minute / bpm => dur quarter;
 quarter / 2 => dur eighth;
 
@@ -74,18 +74,41 @@ fun void doKuh()  {
     1 => ne.keyOff; 0.01 => ne.time; 0.01 :: second => now;
 }
 
+// Whole-measure things
+fun void chuh() {
+    ch();
+    eighth => now;
+    eighth => now;
+    uhh();
+    eighth => now;
+    eighth => now;
+    eighth => now;
+    ch();
+    eighth => now;
+    uhh();
+    eighth => now;
+    eighth => now;
+}
+
+fun void khuh() {
+    kuh();
+    eighth => now;
+    eighth => now;
+    uhh();
+    eighth => now;
+    eighth => now;
+    eighth => now;
+    kuh();
+    eighth => now;
+    uhh();
+    eighth => now;
+    eighth => now;
+}
+
 // This loop plays the melody
 while (true) {
-    ch();
-    eighth => now;
-    eighth => now;
-    uhh();
-    eighth => now;
-    eighth => now;
-    eighth => now;
-    ch();
-    eighth => now;
-    uhh();
-    eighth => now;
-    eighth => now;    
+    chuh();
+    chuh();
+    chuh();
+    khuh();
 }
