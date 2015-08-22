@@ -1,6 +1,7 @@
 // Overall params
 116 => float bpm;
-1 :: minute / bpm => dur quarterRest;
+1 :: minute / bpm => dur quarter;
+quarter / 2 => dur eighth;
 
 // I don't actually understand resonators; I copied stuff from say-chu.ck.
 // So beware this paragraph.
@@ -41,6 +42,9 @@ fun void doUhhImpulse()  {
 }
 
 // Leaves sound being generated
+fun void ch() {
+    spork ~ doCh();
+}
 fun void doCh()  {
     <<< "Ch" >>>;
     0.03 => ne.time;
@@ -54,8 +58,11 @@ fun void doCh()  {
 }
 
 // Leaves sound being generated
-fun void doKay()  {
-    <<< "KKK" >>>;
+fun void kuh() {
+    spork ~ doKuh();
+}
+fun void doKuh()  {
+    <<< "K" >>>;
     0.0 => i.gain;
     0.05 :: second => now;
     0.005 => ne.time;
@@ -69,12 +76,16 @@ fun void doKay()  {
 
 // This loop plays the melody
 while (true) {
-
-    spork ~ doCh();
-    quarterRest => now;
+    ch();
+    eighth => now;
+    eighth => now;
     uhh();
-    quarterRest => now;
-    spork ~ doKay();
-    quarterRest => now;
-    quarterRest => now;
+    eighth => now;
+    eighth => now;
+    eighth => now;
+    ch();
+    eighth => now;
+    uhh();
+    eighth => now;
+    eighth => now;    
 }
