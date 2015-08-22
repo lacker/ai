@@ -1,0 +1,2 @@
+
+Machine.add("beatbox.ck");
