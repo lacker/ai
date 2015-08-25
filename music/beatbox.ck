@@ -1,9 +1,4 @@
-// Overall params
-130 => float bpm;
-1 :: minute / bpm => dur quarter;
-quarter / 2 => dur eighth;
-
-class BeatBox {
+public class BeatBox {
 
     // I don't actually understand resonators; I copied stuff from say-chu.ck.
     // So beware this paragraph.
@@ -77,7 +72,7 @@ class BeatBox {
     }
 
     // Whole-measure things
-    fun void chuh() {
+    fun void chuh(dur eighth) {
         ch();
         eighth => now;
         eighth => now;
@@ -92,7 +87,7 @@ class BeatBox {
         eighth => now;
     }
 
-    fun void khuh() {
+    fun void khuh(dur eighth) {
         kuh();
         eighth => now;
         eighth => now;
@@ -108,11 +103,3 @@ class BeatBox {
     }
 }
 
-// This loop plays the melody
-BeatBox bb;
-while (true) {
-    bb.chuh();
-    bb.chuh();
-    bb.chuh();
-    bb.khuh();
-}
