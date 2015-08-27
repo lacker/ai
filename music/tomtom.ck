@@ -56,8 +56,17 @@ public class TomTom {
 TomTom A;
 A.output => dac;
 
+// Like a two-measure low/hi beat
+// see http://www.buttonbass.com/dubstepcube.html
+// i'm aiming for the left side's second-down, second-in-from-left
 for (int i; i < 100; i++) {
-    A.setBaseFreq(50);
-    A.hit(1.5);
-    0.2::second => now;
+    if (i % 2 == 0) {
+        A.setBaseFreq(50);
+        A.hit(0.9);
+    } else {
+        A.setBaseFreq(70);
+        A.hit(0.9);
+    }
+    
+    (60./130)::second => now;
 }
