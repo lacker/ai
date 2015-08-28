@@ -50,6 +50,18 @@ public class TomTom {
     fun void setFilter(float f) {
         f => s_f.freq;
     }
+
+    fun void dubstep(dur quarter) {
+        // Low drum beat
+        setBaseFreq(50);
+        hit(0.9);
+        4 * quarter => now;
+
+        // High drum beat
+        setBaseFreq(70);
+        hit(0.9);
+        4 * quarter => now;
+    }
 }
 
 
@@ -58,15 +70,7 @@ A.output => dac;
 
 // Like a two-measure low/hi beat
 // see http://www.buttonbass.com/dubstepcube.html
-// i'm aiming for the left side's second-down, second-in-from-left
+// i'm aiming for the left side's second-down, third-in-from-left
 for (int i; i < 100; i++) {
-    if (i % 2 == 0) {
-        A.setBaseFreq(50);
-        A.hit(0.9);
-    } else {
-        A.setBaseFreq(70);
-        A.hit(0.9);
-    }
-    
-    (60./130)::second => now;
+    A.dubstep(1 :: minute / 200);
 }
