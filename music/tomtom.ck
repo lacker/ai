@@ -51,15 +51,22 @@ public class TomTom {
         f => s_f.freq;
     }
 
-    fun void dubstep(dur quarter) {
-        // Low drum beat
+    // Below this should make musical sense
+    fun void lowDrumBeat() {
         setBaseFreq(50);
         hit(0.9);
-        4 * quarter => now;
+    }
 
-        // High drum beat
+    fun void highDrumBeat() {
         setBaseFreq(70);
         hit(0.9);
+    }
+    
+    fun void dubstep(dur quarter) {
+        lowDrumBeat();
+        4 * quarter => now;
+
+        highDrumBeat();
         4 * quarter => now;
     }
 }
