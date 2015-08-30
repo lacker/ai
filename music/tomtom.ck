@@ -61,10 +61,22 @@ public class TomTom {
         setBaseFreq(70);
         hit(0.9);
     }
+
+    fun void extraHighBeat() {
+        setBaseFreq(90);
+        hit(0.9);
+    }
     
     fun void dubstep(dur quarter) {
         lowDrumBeat();
-        4 * quarter => now;
+        quarter => now;
+        extraHighBeat();
+        quarter => now;
+        extraHighBeat();
+        quarter => now;
+        extraHighBeat();
+        quarter => now;
+        
 
         highDrumBeat();
         4 * quarter => now;
