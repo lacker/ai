@@ -68,10 +68,13 @@ public class TomTom {
     }
     
     fun void dubstep(dur quarter) {
+        quarter / 2 => dur eighth;
+        
         lowDrumBeat();
         quarter => now;
+        eighth => now;
         extraHighBeat();
-        quarter => now;
+        eighth => now;
         extraHighBeat();
         quarter => now;
         extraHighBeat();
@@ -91,5 +94,5 @@ A.output => dac;
 // see http://www.buttonbass.com/dubstepcube.html
 // i'm aiming for the left side's second-down, third-in-from-left
 for (int i; i < 100; i++) {
-    A.dubstep(1 :: minute / 200);
+    A.dubstep(1 :: minute / 260);
 }
