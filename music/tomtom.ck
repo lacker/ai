@@ -82,7 +82,18 @@ public class TomTom {
         
 
         highDrumBeat();
-        4 * quarter => now;
+        quarter => now;
+        eighth => now;
+        extraHighBeat();
+        eighth => now;
+        lowDrumBeat();
+        eighth => now;
+        extraHighBeat();
+        eighth => now;
+        lowDrumBeat();
+        eighth => now;
+        extraHighBeat();
+        eighth => now;
     }
 }
 
