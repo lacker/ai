@@ -1,4 +1,4 @@
-// A cymbaly sound
+// A clicky-drum sound
 public class RimShot {
     Impulse i => LPF f1 => DelayA body => Gain ampenv => SinOsc drive => Gain output;
     body => Gain body_fb => body;
@@ -14,7 +14,7 @@ public class RimShot {
     second / 600 => body.delay;
     .9 => body_fb.gain;   
    
-    1.0 - 1.0/800 => g1_fb.gain;
+    1.0 - 1.0 / 800 => g1_fb.gain;
    
     1.2 => ampenv.gain;
     0.3 => n_ampenv.gain;
