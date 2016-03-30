@@ -1,14 +1,20 @@
-#lang lazy
+#lang racket
 
-; merge two lists, keeping them sorted
+; merge two streams, removing dupes, keeping them sorted
 (define (merge a b)
   (cond
-    [(empty? a) b]
-    [(empty? b) a]
-    [(< (first a) (first b)) (cons (first a) (merge (rest a) b))]
-    (cons (first b) (merge a (rest b)))))
+    [(stream-empty? a) b]
+    [(stream-empty? b) a]
+    [(= (stream-first a) (stream-first b))
+     (cons (stream-first a) (merge (stream-rest a) (stream-rest b)))]
+    [(< (stream-first a) (stream-first b))
+     (cons (stream-first a) (merge (stream-rest a) b))]
+    [(cons (stream-first b) (merge a (stream-rest b)))]
+    ))
 
 
-(merge '(1 3 5) '(2 4 6))
+
+(for ([x (merge '(1 2 3 5) '(2 4 5 6))])
+  (writeln x))
      
 
