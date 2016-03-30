@@ -13,3 +13,5 @@ merge (x:xs) (y:ys) = if x == y then x:(merge xs ys) else if x < y then x:(merge
 trimerge a b c = merge (merge a b) c
 
 foo = 1:(trimerge (map (* 2) foo) (map (* 3) foo) (map (* 5) foo))
+
+
