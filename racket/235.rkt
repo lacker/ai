@@ -20,7 +20,16 @@
     [(stream-cons (* k (stream-first s)) (stream-rest s))]
     ))
 
-(for ([x (merge '(1 2 3 5) '(2 4 5 6))])
+(define (solve)
+  (stream-cons
+   1
+   (trimerge
+    (smult 2 (solve))
+    (smult 3 (solve))
+    (smult 5 (solve))
+    )))
+
+(for ([x (solve)])
   (writeln x))
      
 
