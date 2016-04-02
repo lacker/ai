@@ -20,17 +20,15 @@
     [(stream-cons (* k (stream-first s)) (smult k (stream-rest s)))]
     ))
 
-; rop is the operator of which our answer is the fixed point
-(define (rop s)
-  (stream-cons
-   1
-   (trimerge
-    (smult 2 s)
-    (smult 3 s)
-    (smult 5 s)
-    )))
+; rester gets the 235-expansion of a stream
+(define (rester s)
+  (trimerge
+   (smult 2 s)
+   (smult 3 s)
+   (smult 5 s)
+   ))
 
-(letrec ([fixed-point (rop fixed-point)])
+(letrec ([fixed-point (stream-cons 1 (rester fixed-point))])
   (for ([x fixed-point])
     (writeln x)))
      
