@@ -20,16 +20,18 @@
     [(stream-cons (* k (stream-first s)) (smult k (stream-rest s)))]
     ))
 
-(define (solve)
+; rop is the operator of which our answer is the fixed point
+(define (rop s)
   (stream-cons
    1
    (trimerge
-    (smult 2 (solve))
-    (smult 3 (solve))
-    (smult 5 (solve))
+    (smult 2 s)
+    (smult 3 s)
+    (smult 5 s)
     )))
 
-(for ([x (solve)])
-  (writeln x))
+(letrec ([fixed-point (rop fixed-point)])
+  (for ([x fixed-point])
+    (writeln x)))
      
 
