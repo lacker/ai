@@ -14,10 +14,10 @@
 
 (define (trimerge a b c) (merge (merge a b) c))
 
-(define (smult s k)
+(define (smult k s)
   (cond
     [(stream-empty? s) s]
-    [(stream-cons (* k (stream-first s)) (stream-rest s))]
+    [(stream-cons (* k (stream-first s)) (smult k (stream-rest s)))]
     ))
 
 (define (solve)
