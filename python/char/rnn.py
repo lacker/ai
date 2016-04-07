@@ -8,6 +8,8 @@ for inspiration.
 Philosophically training on deterministic problems with which we have
 infinite training data seems interesting.
 
+NOTE: ^ I feel like that opinion was validated by AlphaGo.
+
 State of the art is roughly, it works for addition, but only for a
 fixed length of sequence, and it doesn't work for anything more
 complex. I wonder if a new type of neuron might be able to do
