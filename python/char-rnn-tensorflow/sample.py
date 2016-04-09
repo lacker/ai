@@ -1,4 +1,7 @@
 #!/usr/bin/env python3
+# Generates a sample from the neural net.
+# Write this to save/output.txt and run score.py to get scoring stats.
+
 from __future__ import print_function
 import numpy as np
 import tensorflow as tf
@@ -11,13 +14,15 @@ from six.moves import cPickle
 from utils import TextLoader
 from model import Model
 
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--save_dir', type=str, default='save',
                        help='model directory to store checkpointed models')
     parser.add_argument('-n', type=int, default=500,
                        help='number of characters to sample')
-    parser.add_argument('--prime', type=str, default=' ',
+    parser.add_argument('--prime', type=str, default='\n>>> 0\n0\n',
                        help='prime text')
     args = parser.parse_args()
     sample(args)
