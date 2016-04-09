@@ -10,10 +10,11 @@ So for example:
 456
 '''
 
+import os
 import random
 
 MIN_NUMBER_LENGTH = 1
-MAX_NUMBER_LENGTH = 4
+MAX_NUMBER_LENGTH = 2
 BYTES = 10000000
 
 
@@ -41,13 +42,41 @@ def add_numbers():
   c = str(int(a) + int(b))
   return '>>> ' + a + ' + ' + b + '\n' + c + '\n'
 
+'''Multiplies some numbers.'''
+def multiply_numbers():
+  a = number()
+  b = number()
+  c = str(int(a) * int(b))
+  return '>>> ' + a + ' * ' + b + '\n' + c + '\n'
+
+'''Subtracts some numbers.'''
+def subtract_numbers():
+  a = number()
+  b = number()
+  c = str(int(a) - int(b))
+  return '>>> ' + a + ' - ' + b + '\n' + c + '\n'
+  
+'''Mods some numbers.'''
+def mod_numbers():
+  a = number()
+  b = number()
+  c = str(int(a) % int(b))
+  return '>>> ' + a + ' % ' + b + '\n' + c + '\n'
+
+def some_math():
+  return random.choice([add_numbers, multiply_numbers, mod_numbers,
+                        echo_number, subtract_numbers])()
   
 def main():
-  with open('data/numbers/input.txt', 'w') as f:
+  dirname = 'data/numbers'
+  for f in os.listdir(dirname):
+    print('removing', dirname + '/' + f)
+    os.remove(dirname + '/' + f)
+  with open(dirname + '/input.txt', 'w') as f:
     written = 0
     while written < BYTES:
 
-      text = add_numbers()
+      text = some_math()
 
       f.write(text)
       written += len(text)
