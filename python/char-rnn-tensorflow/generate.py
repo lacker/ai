@@ -13,20 +13,16 @@ So for example:
 import os
 import random
 
-MIN_NUMBER_LENGTH = 1
-MAX_NUMBER_LENGTH = 2
+MIN_NUMBER = 1
+MAX_NUMBER = 20
 BYTES = 10000000
 
 
 '''A string for a random number.'''
 def number():
-  number = random.choice('123456789')
-  number_length = random.randrange(MIN_NUMBER_LENGTH,
-                                   MAX_NUMBER_LENGTH + 1)
-  while len(number) < number_length:
-    number += random.choice('0123456789')
-
-  return number
+  answer = random.randrange(MIN_NUMBER,
+                            MAX_NUMBER + 1)
+  return str(answer)
 
   
 '''Just a number that python echoes back.'''
@@ -63,9 +59,37 @@ def mod_numbers():
   c = str(int(a) % int(b))
   return '>>> ' + a + ' % ' + b + '\n' + c + '\n'
 
-def some_math():
+def less_than():
+  a = number()
+  b = number()
+  c = str(int(a) < int(b))
+  return '>>> ' + a + ' < ' + b + '\n' + c + '\n'
+  
+def greater_than():
+  a = number()
+  b = number()
+  c = str(int(a) > int(b))
+  return '>>> ' + a + ' > ' + b + '\n' + c + '\n'
+  
+def one_op():
   return random.choice([add_numbers, multiply_numbers, mod_numbers,
                         echo_number, subtract_numbers])()
+
+def ineq():
+  return random.choice([less_than, greater_than])()
+
+'''Something like 5 * (3 + 2)'''
+def two_ops():
+  a, b, c = number(), number(), number()
+  ops = ['*', random.choice('+-')]
+  random.shuffle(ops)
+  op1, op2 = ops
+  template = random.choice([
+    '%s %s (%s %s %s)',
+    '(%s %s %s) %s %s'])
+  problem = template % (a, op1, b, op2, c)
+  d = str(eval(problem))
+  return '>>> ' + problem + '\n' + d + '\n'
   
 def main():
   dirname = 'data/numbers'
@@ -76,7 +100,7 @@ def main():
     written = 0
     while written < BYTES:
 
-      text = some_math()
+      text = two_ops()
 
       f.write(text)
       written += len(text)
