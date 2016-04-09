@@ -14,7 +14,7 @@ import os
 import random
 
 MIN_NUMBER = 1
-MAX_NUMBER = 20
+MAX_NUMBER = 99
 BYTES = 10000000
 
 
@@ -100,7 +100,7 @@ def main():
     written = 0
     while written < BYTES:
 
-      text = two_ops()
+      text = multiply_numbers()
 
       f.write(text)
       written += len(text)
