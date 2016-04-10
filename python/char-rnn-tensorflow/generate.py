@@ -14,7 +14,7 @@ import os
 import random
 
 MIN_NUMBER = 1
-MAX_NUMBER = 99
+MAX_NUMBER = 127
 BYTES = 10000000
 
 
@@ -45,6 +45,12 @@ def multiply_numbers():
   c = str(int(a) * int(b))
   return '>>> ' + a + ' * ' + b + '\n' + c + '\n'
 
+def binary_multiply_numbers():
+  a = int(number())
+  b = int(number())
+  c = a * b
+  return '>{0:b}*{1:b}\n{2:b}\n'.format(a, b, c)
+  
 '''Subtracts some numbers.'''
 def subtract_numbers():
   a = number()
@@ -100,7 +106,7 @@ def main():
     written = 0
     while written < BYTES:
 
-      text = multiply_numbers()
+      text = binary_multiply_numbers()
 
       f.write(text)
       written += len(text)
