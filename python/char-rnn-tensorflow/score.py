@@ -19,14 +19,17 @@ Then prints some stats.
 '''
 
 def binary_eval(s):
-  part1, part2 = s.split('*')
+  part1, part2 = s.split('+')
   a = int(part1, 2)
   b = int(part2, 2)
-  c = a * b
+  c = a + b
   return '{0:b}'.format(c)
 
+def python_eval(s):
+  return repr(eval(s))
+  
 # PREFIX = '>>> '
-# eval_fn = eval
+# eval_fn = python_eval
 PREFIX = '>'
 eval_fn = binary_eval
 
@@ -41,11 +44,11 @@ def main():
       graded.append(line)
       
       if last_line.startswith(PREFIX):
-        code = last_line[4:]
+        code = last_line[len(PREFIX):]
 
         response = ''
         try:
-          response = repr(eval_fn(code))
+          response = eval_fn(code)
         except:
           response = 'Error'
           

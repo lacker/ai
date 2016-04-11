@@ -51,6 +51,12 @@ def binary_multiply_numbers():
   c = a * b
   return '>{0:b}*{1:b}\n{2:b}\n'.format(a, b, c)
   
+def binary_add_numbers():
+  a = int(number())
+  b = int(number())
+  c = a + b
+  return '>{0:b}+{1:b}\n{2:b}\n'.format(a, b, c)
+  
 '''Subtracts some numbers.'''
 def subtract_numbers():
   a = number()
@@ -106,7 +112,7 @@ def main():
     written = 0
     while written < BYTES:
 
-      text = binary_multiply_numbers()
+      text = binary_add_numbers()
 
       f.write(text)
       written += len(text)
