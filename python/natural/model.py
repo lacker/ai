@@ -11,21 +11,37 @@ MAX_NUMBER = 127
 def number():
     return random.randrange(MIN_NUMBER, MAX_NUMBER + 1)
 
-SOURCE_VOCAB, TARGET_VOCAB = '10*\n', '10\n'
-MAX_SOURCE_LEN = 2 + 2 * len(str(MAX_NUMBER))
-MAX_TARGET_LEN = 5
+# Format is like
+# 10*10
+# 100
+# space-padded on the right to get consistent lengths.
+SOURCE_VOCAB, TARGET_VOCAB = '10* ', '10 '
+MAX_SOURCE_LEN = 1 + 2 * len('{0:b}'.format(MAX_NUMBER))
+MAX_TARGET_LEN = len('{0:b}'.format(MAX_NUMBER * MAX_NUMBER))
 
+def source_pad(s):
+  while len(s) <= MAX_SOURCE_LEN:
+    s += ' '
+  return s
+
+def target_pad(s):
+  while len(s) <= MAX_TARGET_LEN:
+    s += ' '
+  return s
+
+  
 # Generates one example (source, target) pair
 def generate():
-    a, b = number(), number()
-    c = a * b
-    source, target = '{0:b}*{0:b}\n'.format(a, b), '{0:b}\n'.format(c)
-    assert all(ch in SOURCE_VOCAB for ch in source)
-    assert all(ch in TARGET_VOCAB for ch in target)
-    assert len(source) <= MAX_SOURCE_LEN
-    assert len(target) <= MAX_TARGET_LEN
-    return source, target
-
+  a, b = number(), number()
+  c = a * b
+  source = source_pad('{0:b}*{0:b}'.format(a, b))
+  target = target_pad('{0:b}'.format(c))
+  assert all(ch in SOURCE_VOCAB for ch in source)
+  assert all(ch in TARGET_VOCAB for ch in target)
+  assert len(source) == MAX_SOURCE_LEN
+  assert len(target) == MAX_TARGET_LEN
+  return source, target
+  
     
 class Model(object):
 
@@ -40,9 +56,8 @@ class Model(object):
     self.layer_size = 128
 
     # Set up the core RNN cells of the tensor network
-    self.single_cell = rnn_cell.BasicLSTMCell(self.layer_size)
-    self.multi_cell = rnn_cell.MultiRNNCell(
-      [self.single_cell] * self.num_layers)
+    single_cell = rnn_cell.BasicLSTMCell(self.layer_size)
+    self.cell = rnn_cell.MultiRNNCell([single_cell] * self.num_layers)
 
     # Set up placeholders for the source and target embeddings
     self.encoder_inputs = [tf.placeholder(tf.int32,
@@ -54,13 +69,12 @@ class Model(object):
                                           shape=[None],
                                           name='decoder{0}'.format(i))
                            for i in range(len(TARGET_VOCAB))]
-    
-    self.target_weights = [tf.placeholder(tf.float32,
-                                          shape=[None],
-                                          name='weight{0}'.format(i))
-                           for i in range(len(TARGET_VOCAB))]    
-    
-    # Our targets are decoder inputs shifted by one.
-    self.targets = self.decoder_inputs[1:]
 
+    # Construct the seq2seq part of the model
+    self.outputs, self.states = seq2seq.embedding_rnn_seq2seq(
+      self.encoder_inputs,
+      self.decoder_inputs,
+      self.cell,
+      len(SOURCE_VOCAB),
+      len(TARGET_VOCAB))
 
