@@ -16,16 +16,16 @@ def number():
 # 100
 # space-padded on the right to get consistent lengths.
 SOURCE_VOCAB, TARGET_VOCAB = '10* ', '10 '
-MAX_SOURCE_LEN = 1 + 2 * len('{0:b}'.format(MAX_NUMBER))
-MAX_TARGET_LEN = len('{0:b}'.format(MAX_NUMBER * MAX_NUMBER))
+SOURCE_LEN = 1 + 2 * len('{0:b}'.format(MAX_NUMBER))
+TARGET_LEN = len('{0:b}'.format(MAX_NUMBER * MAX_NUMBER))
 
 def source_pad(s):
-  while len(s) <= MAX_SOURCE_LEN:
+  while len(s) <= SOURCE_LEN:
     s += ' '
   return s
 
 def target_pad(s):
-  while len(s) <= MAX_TARGET_LEN:
+  while len(s) <= TARGET_LEN:
     s += ' '
   return s
 
@@ -38,8 +38,8 @@ def generate():
   target = target_pad('{0:b}'.format(c))
   assert all(ch in SOURCE_VOCAB for ch in source)
   assert all(ch in TARGET_VOCAB for ch in target)
-  assert len(source) == MAX_SOURCE_LEN
-  assert len(target) == MAX_TARGET_LEN
+  assert len(source) == SOURCE_LEN
+  assert len(target) == TARGET_LEN
   return source, target
   
     
@@ -54,6 +54,7 @@ class Model(object):
     # Set up hyperparameters
     self.num_layers = 2
     self.layer_size = 128
+    self.batch_size = 50
 
     # Set up the core RNN cells of the tensor network
     single_cell = rnn_cell.BasicLSTMCell(self.layer_size)
@@ -61,16 +62,22 @@ class Model(object):
 
     # Set up placeholders for the source and target embeddings
     self.encoder_inputs = [tf.placeholder(tf.int32,
-                                          shape=[None],
+                                          shape=[self.batch_size],
                                           name='encoder{0}'.format(i))
-                           for i in range(len(SOURCE_VOCAB))]
+                           for i in range(SOURCE_LEN)]
     
     self.decoder_inputs = [tf.placeholder(tf.int32,
-                                          shape=[None],
+                                          shape=[self.batch_size],
                                           name='decoder{0}'.format(i))
-                           for i in range(len(TARGET_VOCAB))]
+                           for i in range(TARGET_LEN)]
 
+    # Weights for the decoding
+    self.decoder_weights = [tf.ones([self.batch_size], tf.float32)
+                            for i in range(TARGET_LEN)]
+    
     # Construct the seq2seq part of the model
+    # For what exactly outputs and states are, see
+    # https://github.com/tensorflow/tensorflow/blob/master/tensorflow/python/ops/seq2seq.py
     self.outputs, self.states = seq2seq.embedding_rnn_seq2seq(
       self.encoder_inputs,
       self.decoder_inputs,
@@ -78,3 +85,11 @@ class Model(object):
       len(SOURCE_VOCAB),
       len(TARGET_VOCAB))
 
+    self.losses = seq2seq.sequence_loss_by_example(
+      self.outputs,
+      self.decoder_inputs,
+      self.decoder_weights)
+      
+      
+
+    
