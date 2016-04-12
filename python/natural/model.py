@@ -41,41 +41,58 @@ def generate():
   assert len(source) == SOURCE_LEN
   assert len(target) == TARGET_LEN
   return source, target
+
+# Turns a string into a list of ints with the source embedding
+def source_embed(s):
+  return [SOURCE_VOCAB.index(ch) for ch in s]
+
+# Turns a string into a list of ints with the target embedding
+def target_embed(s):
+  return [TARGET_VOCAB.index(ch) for ch in s]
+
   
-    
 class Model(object):
 
   '''
-  If learning=False, that means we are not training, and we don't need to
-  learn things on the fly.
+  Create a RNN sequence-to-sequence model for the problems created by 'generate'
   '''
-  def __init__(self, learning=True):
+  def __init__(self):
 
     # Set up hyperparameters
     self.num_layers = 2
     self.layer_size = 128
-    self.batch_size = 50
 
     # Set up the core RNN cells of the tensor network
     single_cell = rnn_cell.BasicLSTMCell(self.layer_size)
     self.cell = rnn_cell.MultiRNNCell([single_cell] * self.num_layers)
 
-    # Set up placeholders for the source and target embeddings
+    # Set up placeholders for the inputs and outputs.
+    # Leave batch size unspecified as a None shape.
+
+    # The input problem
     self.encoder_inputs = [tf.placeholder(tf.int32,
-                                          shape=[self.batch_size],
+                                          shape=[None],
                                           name='encoder{0}'.format(i))
                            for i in range(SOURCE_LEN)]
-    
+
+    # The correct answers
+    self.labels = [tf.placeholder(tf.int32,
+                                  shape=[None],
+                                  name='labels{0}'.format(i))
+                   for i in range(TARGET_LEN)]
+
+    # Each item is equal, so weights are ones
+    self.weights = [tf.ones_like(label, dtype=tf.float32)
+                    for label in self.labels]
+
+    # We will feed the decoder the correct output from the previous timestep,
+    # with a "go" token on the first one
     self.decoder_inputs = [tf.placeholder(tf.int32,
-                                          shape=[self.batch_size],
+                                          shape=[None],
                                           name='decoder{0}'.format(i))
                            for i in range(TARGET_LEN)]
-
-    # Weights for the decoding
-    self.decoder_weights = [tf.ones([self.batch_size], tf.float32)
-                            for i in range(TARGET_LEN)]
     
-    # Construct the seq2seq part of the model
+    # Construct the guts of the model
     # For what exactly outputs and states are, see
     # https://github.com/tensorflow/tensorflow/blob/master/tensorflow/python/ops/seq2seq.py
     self.outputs, self.states = seq2seq.embedding_rnn_seq2seq(
@@ -85,11 +102,37 @@ class Model(object):
       len(SOURCE_VOCAB),
       len(TARGET_VOCAB))
 
-    self.losses = seq2seq.sequence_loss_by_example(
+    self.loss = seq2seq.sequence_loss(
       self.outputs,
-      self.decoder_inputs,
-      self.decoder_weights)
-      
-      
+      self.labels,
+      self.weights)
 
+    # Set up the ops we need for training
+    learning_rate = 0.05
+    momentum = 0.9
+    self.optimizer = tf.train.MomentumOptimizer(learning_rate, momentum)
+    self.train_op = optimizer.minimize(self.loss)
+
+    self.sess = tf.Session()
+    self.sess.run(tf.initialize_all_variables())
+
+    
+  '''
+  Trains a batch of batch_size randomly generated problems.
+  Returns the loss.
+  '''
+  def train_batch(self, batch_size):
+    problems = [generate() for _ in range(batch_size)]
+
+    encoder_input_data = np.transpose([source_embed(s) for s, _ in problems])
+    label_data = np.transpose([target_embed(s) for _, s in problems])
+
+    feed_dict = {}
+    for i in range(SOURCE_LEN):
+      feed_dict[self.encoder_inputs[i]] = encoder_input_data[i]
+    for i in range(TARGET_LEN):
+      feed_dict[self.labels[i]] = label_data[i]
+
+    _, loss = self.sess.run([self.train_op, self.loss], feed_dict)
+    return loss
     
