@@ -12,36 +12,39 @@ def number():
   return random.randrange(MIN_NUMBER, MAX_NUMBER + 1)
 
 # Format is like
-# 10*10
-# 100
-# space-padded on the right to get consistent lengths.
-SOURCE_VOCAB, TARGET_VOCAB = '10* ', '10 '
-SOURCE_LEN = 1 + 2 * len('{0:b}'.format(MAX_NUMBER))
-TARGET_LEN = len('{0:b}'.format(MAX_NUMBER * MAX_NUMBER))
+# 001+001
+# 0001000
+# least-significant-bit first.
+# zero-padded on the right to get consistent lengths.
+SOURCE_VOCAB, TARGET_VOCAB = '10+', '10'
+NUMBER_LEN = len('{0:b}'.format(MAX_NUMBER))
+SOURCE_LEN = 1 + 2 * NUMBER_LEN
+TARGET_LEN = len('{0:b}'.format(MAX_NUMBER + MAX_NUMBER))
 
-def source_pad(s):
-  while len(s) < SOURCE_LEN:
-    s += ' '
-  return s
-
-def target_pad(s):
-  while len(s) < TARGET_LEN:
-    s += ' '
+# Converts to LSB int if needed
+def right_pad(s, ch, length):
+  if type(s) == int:
+    s = '{0:b}'.format(s)[::-1]
+  while len(s) < length:
+    s += ch
   return s
 
   
 # Generates one example (source, target) pair
 def generate():
   a, b = number(), number()
-  c = a * b
-  source = source_pad('{0:b}*{0:b}'.format(a, b))
-  target = target_pad('{0:b}'.format(c))
+  c = a + b
+  a_str = right_pad(a, '0', NUMBER_LEN)
+  b_str = right_pad(b, '0', NUMBER_LEN)
+  source = a_str + '+' + b_str
+  target = right_pad(c, '0', TARGET_LEN)
   assert all(ch in SOURCE_VOCAB for ch in source)
   assert all(ch in TARGET_VOCAB for ch in target)
   assert len(source) == SOURCE_LEN, 'source: [{}] #{}'.format(source, SOURCE_LEN)
   assert len(target) == TARGET_LEN, 'target: [{}] #{}'.format(target, TARGET_LEN)
   return source, target
 
+  
 # Turns a string into a list of ints with the source embedding
 def source_embed(s):
   return [SOURCE_VOCAB.index(ch) for ch in s]
