@@ -154,8 +154,32 @@ class Model(object):
     feed_dict = {}
     for i in range(SOURCE_LEN):
       feed_dict[self.encoder_inputs[i]] = input_data[i]
-
+    for i in range(TARGET_LEN):
+      feed_dict[self.labels[i]] = label_data[i]
+      
     output_data = self.sess.run(self.outputs, feed_dict)
-    outputs = [target_unembed(data) for data in np.transpose(output_data)]
+    unembedded = np.transpose(np.argmax(np.array(output_data), axis=2))
+    outputs = [target_unembed(data) for data in unembedded]
 
     return zip(inputs, labels, outputs)
+
+
+  def score(self, n=1000):
+    success = 0
+    total = 0
+    for inp, label, out in self.test_batch(n):
+      total += 1
+      if label == out:
+        success += 1
+    print('{} / {} = {}%'.format(success, total, 100.0 * success / total))
+
+
+  def sample(self, n=10):
+    for inp, label, out in self.test_batch(n):
+      print('input puzzle: {}'.format(inp))
+      print('right answer: {}'.format(label))
+      if label == out:
+        print('OK')
+      else:
+        print('wrong answer: {}'.format(out))
+      print()
