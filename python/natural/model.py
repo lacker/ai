@@ -9,7 +9,7 @@ from tensorflow.models.rnn import seq2seq
 MIN_NUMBER = 1
 MAX_NUMBER = 127
 def number():
-    return random.randrange(MIN_NUMBER, MAX_NUMBER + 1)
+  return random.randrange(MIN_NUMBER, MAX_NUMBER + 1)
 
 # Format is like
 # 10*10
@@ -20,12 +20,12 @@ SOURCE_LEN = 1 + 2 * len('{0:b}'.format(MAX_NUMBER))
 TARGET_LEN = len('{0:b}'.format(MAX_NUMBER * MAX_NUMBER))
 
 def source_pad(s):
-  while len(s) <= SOURCE_LEN:
+  while len(s) < SOURCE_LEN:
     s += ' '
   return s
 
 def target_pad(s):
-  while len(s) <= TARGET_LEN:
+  while len(s) < TARGET_LEN:
     s += ' '
   return s
 
@@ -38,8 +38,8 @@ def generate():
   target = target_pad('{0:b}'.format(c))
   assert all(ch in SOURCE_VOCAB for ch in source)
   assert all(ch in TARGET_VOCAB for ch in target)
-  assert len(source) == SOURCE_LEN
-  assert len(target) == TARGET_LEN
+  assert len(source) == SOURCE_LEN, 'source: [{}] #{}'.format(source, SOURCE_LEN)
+  assert len(target) == TARGET_LEN, 'target: [{}] #{}'.format(target, TARGET_LEN)
   return source, target
 
 # Turns a string into a list of ints with the source embedding
@@ -50,6 +50,9 @@ def source_embed(s):
 def target_embed(s):
   return [TARGET_VOCAB.index(ch) for ch in s]
 
+# Reverses target_embed
+def target_unembed(data):
+  return ''.join(TARGET_VOCAB[i] for i in data)
   
 class Model(object):
 
@@ -59,8 +62,8 @@ class Model(object):
   def __init__(self):
 
     # Set up hyperparameters
-    self.num_layers = 2
-    self.layer_size = 128
+    self.num_layers = 3
+    self.layer_size = 256
 
     # Set up the core RNN cells of the tensor network
     single_cell = rnn_cell.BasicLSTMCell(self.layer_size)
@@ -85,22 +88,21 @@ class Model(object):
     self.weights = [tf.ones_like(label, dtype=tf.float32)
                     for label in self.labels]
 
-    # We will feed the decoder the correct output from the previous timestep,
-    # with a "go" token on the first one
-    self.decoder_inputs = [tf.placeholder(tf.int32,
-                                          shape=[None],
-                                          name='decoder{0}'.format(i))
-                           for i in range(TARGET_LEN)]
+    # decoder_inputs has the correct output from the previous timestep,
+    # with a zero-hot "go" token on the first one
+    go_token = tf.zeros_like(self.labels[0], dtype=np.int32, name="GO")
+    self.decoder_inputs = [go_token] + self.labels[:-1]
     
-    # Construct the guts of the model
-    # For what exactly outputs and states are, see
-    # https://github.com/tensorflow/tensorflow/blob/master/tensorflow/python/ops/seq2seq.py
+    # Construct the guts of the model.
+    # This same model will be used for training and testing, so we
+    # don't feed_previous.
     self.outputs, self.states = seq2seq.embedding_rnn_seq2seq(
       self.encoder_inputs,
       self.decoder_inputs,
       self.cell,
       len(SOURCE_VOCAB),
-      len(TARGET_VOCAB))
+      len(TARGET_VOCAB),
+      feed_previous=False)
 
     self.loss = seq2seq.sequence_loss(
       self.outputs,
@@ -111,7 +113,7 @@ class Model(object):
     learning_rate = 0.05
     momentum = 0.9
     self.optimizer = tf.train.MomentumOptimizer(learning_rate, momentum)
-    self.train_op = optimizer.minimize(self.loss)
+    self.train_op = self.optimizer.minimize(self.loss)
 
     self.sess = tf.Session()
     self.sess.run(tf.initialize_all_variables())
@@ -124,15 +126,36 @@ class Model(object):
   def train_batch(self, batch_size):
     problems = [generate() for _ in range(batch_size)]
 
-    encoder_input_data = np.transpose([source_embed(s) for s, _ in problems])
+    input_data = np.transpose([source_embed(s) for s, _ in problems])
     label_data = np.transpose([target_embed(s) for _, s in problems])
 
     feed_dict = {}
     for i in range(SOURCE_LEN):
-      feed_dict[self.encoder_inputs[i]] = encoder_input_data[i]
+      feed_dict[self.encoder_inputs[i]] = input_data[i]
     for i in range(TARGET_LEN):
       feed_dict[self.labels[i]] = label_data[i]
 
     _, loss = self.sess.run([self.train_op, self.loss], feed_dict)
     return loss
+
     
+  '''
+  Tests a batch of batch_size randomly generated problems.
+  Returns a list of (input, label, output) tuples.
+  '''
+  def test_batch(self, batch_size):
+    problems = [generate() for _ in range(batch_size)]
+    inputs = [i for i, _ in problems]
+    labels = [l for _, l in problems]
+    
+    input_data = np.transpose([source_embed(s) for s, _ in problems])
+    label_data = np.transpose([target_embed(s) for _, s in problems])
+
+    feed_dict = {}
+    for i in range(SOURCE_LEN):
+      feed_dict[self.encoder_inputs[i]] = input_data[i]
+
+    output_data = self.sess.run(self.outputs, feed_dict)
+    outputs = [target_unembed(data) for data in np.transpose(output_data)]
+
+    return zip(inputs, labels, outputs)
