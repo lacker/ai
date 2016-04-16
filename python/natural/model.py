@@ -113,10 +113,22 @@ class Model(object):
       self.weights)
 
     # Set up the ops we need for training
-    learning_rate = 0.05
-    momentum = 0.9
-    self.optimizer = tf.train.MomentumOptimizer(learning_rate, momentum)
-    self.train_op = self.optimizer.minimize(self.loss)
+
+    if True: # momentum
+      learning_rate = 0.05
+      momentum = 0.9
+      self.optimizer = tf.train.MomentumOptimizer(learning_rate, momentum)
+      self.train_op = self.optimizer.minimize(self.loss)
+    else: # adam
+      # Assumes batch size of 100
+      self.cost = tf.reduce_sum(self.loss) / TARGET_LEN / 100
+      self.lr = tf.Variable(0.0, trainable=False)
+      tvars = tf.trainable_variables()
+      # Clip gradients at 5.0
+      grads, _ = tf.clip_by_global_norm(tf.gradients(self.cost, tvars),
+                                        5.0)
+      optimizer = tf.train.AdamOptimizer(self.lr)
+      self.train_op = optimizer.apply_gradients(zip(grads, tvars))
 
     self.sess = tf.Session()
     self.sess.run(tf.initialize_all_variables())
