@@ -56,6 +56,7 @@ def target_embed(s):
 # Reverses target_embed
 def target_unembed(data):
   return ''.join(TARGET_VOCAB[i] for i in data)
+
   
 class Model(object):
 
