@@ -33,8 +33,34 @@ class VoidToBool(object):
 
 
 '''
-A generic predictor that works off no input.
+A distribution of things that don't have any relationship to each other.
+They are just meaningless symbols.
+In general None will never be a symbol - it is used to represent the
+absence of a symbol.
 '''
-class VoidInput(object):
-  def __init__(self, default='default', max_history=1000):
-    raise 'TODO'
+class SymbolDistribution(object):
+  '''
+  max_size is the maximum number of specific symbols for which we
+  keep information around.
+  history_range is the range of acceptable amounts of history.
+  It's like a-b trees - when we hit the max we will rebalance to the min.
+  '''
+  def __init__(self, max_size=8, history_range=(1000, 1100)):
+    self.history_range = history_range
+    
+    # Maps symbol to count
+    self.symbol_count = {}
+    
+    # Things that are in total_count but not symbol_count are None
+    self.total_count = 1
+
+    
+  def rebalance_if_needed(self):
+    if self.total_count <= self.history_range[1]:
+      return
+      
+    overshoot = self.history_range[1] / self.history_range[0]
+    items = list(self.symbol_count.items())
+    for s, c in items:
+      self.symbol_count[s] = c / overshoot
+    self.total_count /= overshoot
