@@ -64,3 +64,24 @@ class SymbolDistribution(object):
     for s, c in items:
       self.symbol_count[s] = c / overshoot
     self.total_count /= overshoot
+
+    
+  '''
+  Predicts the frequency of a particular unknown token, given an
+  assumption about how frequent it is.
+  (If we have no assumption, the prediction is simply zero.)
+  '''
+  def predict_unknown(self, assumption):
+    min_count = min(self.symbol_count.values())
+
+    estimation = (min_count - 1 / overshoot)
+    return min(estimation, assumption)
+    
+    
+  '''
+  Merges this symbol distribution with another one.
+  Optimizes the resulting symbol distribution, given the assumption
+  that these reflect the same underlying distribution.
+  '''
+  def merge(self, other):
+    raise 'TODO'
