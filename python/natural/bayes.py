@@ -67,7 +67,7 @@ class SymbolDistribution(object):
 
     
   '''
-  Predicts the frequency of a particular unknown token, given an
+  Predicts the frequency of an unknown token, given an
   assumption about how frequent it is.
   (If we have no assumption, the prediction is simply zero.)
   '''
@@ -76,8 +76,13 @@ class SymbolDistribution(object):
 
     estimation = (min_count - 1 / overshoot)
     return min(estimation, assumption)
-    
-    
+
+  '''
+  Predicts the frequency of a given symbol.
+  '''
+  def predict(self, symbol):
+    return self.symbol_count.get(symbol, 0) / self.total_count
+  
   '''
   Merges this symbol distribution with another one.
   Optimizes the resulting symbol distribution, given the assumption
