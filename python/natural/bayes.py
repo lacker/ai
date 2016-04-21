@@ -82,7 +82,27 @@ class SymbolDistribution(object):
   '''
   def predict(self, symbol):
     return self.symbol_count.get(symbol, 0) / self.total_count
-  
+
+  '''
+  Predicts the frequency of a given symbol using a new predictor in
+  conjunction, with a provided weight for the other distribution.
+  Weight should be in [0, 1].
+  '''
+  def copredict(self, other_distro, other_weight, symbol):
+    self_weight = 1.0 - other_weight
+    if symbol in self.symbol_count:
+      self_prediction = self.predict(symbol)
+      if symbol in other_distro.symbol_count:
+        return (self_weight * self_prediction +
+                other_weight * other_distro.predict(symbol))
+      return (self_weight * self_prediction +
+              other_weight * other_distro.predict_unknown(self_prediction))
+    if symbol not in other_distro.symbol_count:
+      return 0.0
+    other_prediction = other_distro.predict(symbol)
+    return (self_weight * self.predict_unknown(other_prediction) +
+            other_weight * other_prediction)
+    
   '''
   Merges this symbol distribution with another one.
   Optimizes the resulting symbol distribution, given the assumption
