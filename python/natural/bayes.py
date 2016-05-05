@@ -109,4 +109,5 @@ class SymbolDistribution(object):
   that these reflect the same underlying distribution.
   '''
   def merge(self, other):
+    symbols = set(other.symbol_count.keys()).intersect(self.symbol_count.keys())
     raise 'TODO'
