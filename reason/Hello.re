@@ -1,15 +1,10 @@
 print_string "Starting to reason....\n";
 
-let merge = fun x y => switch {x, y} {
-  | {[], y} => y
-  | {x, []} => x
-  | {[headX, ...xs], [headY, ...ys]} => {
-    if (headX < headY) {
-      [headX, ...(merge xs y)]
-    } else {
-      [headY, ...(merge x ys)]
-    }
-  }
+let rec length = fun(alist) => {
+  switch alist {
+    | [] => 0
+    | [x, ...xs] => 1 + length(xs)
+  };
 };
 
-merge [1, 3, 5] [2, 4, 6];
+print_int(length([6, 7, 8]));
