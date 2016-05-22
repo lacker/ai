@@ -7,4 +7,11 @@ let rec length = fun(alist) => {
   };
 };
 
+let isempty = fun(alist) => {
+  switch alist {
+    | [] => true
+    | [x, ...xs] => false
+  }
+};
+
 print_int(length([6, 7, 8]));
