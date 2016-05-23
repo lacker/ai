@@ -14,4 +14,20 @@ let isempty = fun(alist) => {
   }
 };
 
-print_int(length([6, 7, 8]));
+let rec merge = fun(xlist, ylist) => {
+  if (isempty(xlist)) {
+    ylist;
+  } else if (isempty(ylist)) {
+    xlist;
+  } else {
+    let [headX, ...restX] = xlist;
+    let [headY, ...restY] = ylist;
+    if (headX < headY) {
+      [headX, ...merge(restX, ylist)];
+    } else {
+      [headY, ...merge(restY, xlist)];
+    }
+  }
+};
+
+print_int(length(merge([1, 2], [3, 4])));
