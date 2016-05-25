@@ -30,4 +30,23 @@ let rec merge = fun(xlist, ylist) => {
   }
 };
 
-print_int(length(merge([1, 2], [3, 4])));
+let rec map = fun(f, alist) => {
+  switch alist {
+    | [] => []
+    | [x, ...xs] => [f(x), ...map(f, xs)]
+  }
+};
+
+let rec join = fun(alist : list string, sep : string) => {
+  switch alist {
+    | [] => ""
+    | [x] => x
+    | [x, ...rest] => x ^ sep ^ join(rest, sep)
+  }
+};
+
+let print_list_int = fun(alist) => {
+  print_string("[" ^ join(map(string_of_int, alist), ", ") ^ "]\n");
+};
+
+print_list_int(merge([1, 2], [3, 4]));
