@@ -49,4 +49,11 @@ let print_list_int = fun(alist) => {
   print_string("[" ^ join(map(string_of_int, alist), ", ") ^ "]\n");
 };
 
+let rec mult = fun(k, alist) => {
+  switch alist {
+    | [] => []
+    | [x, ...xs] => [k * x, ...mult(k, xs)]
+  }
+};
+
 print_list_int(merge([1, 2], [3, 4]));
