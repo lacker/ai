@@ -56,4 +56,13 @@ let rec mult = fun(k, alist) => {
   }
 };
 
+let rec take = fun(n, alist) => {
+  if (n <= 0) {
+    []
+  } else switch alist {
+    | [] => []
+    | [x, ...xs] => [x, ...take(n - 1, xs)]
+  }
+};
+
 print_list_int(merge([1, 2], [3, 4]));
