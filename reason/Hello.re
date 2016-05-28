@@ -65,8 +65,30 @@ let rec take = fun(n, alist) => {
   }
 };
 
+let rec undupe = fun(alist) => {
+  switch alist {
+    | [] => []
+    | [first, ...pastfirst] => {
+      switch pastfirst {
+        | [] => [first]
+        | [second, ...rest] => {
+          if (first == second) {
+            undupe(pastfirst);
+          } else {
+            [first, ...undupe(pastfirst)];
+          }
+        }
+      }
+    }
+  }
+};
+
 let expand = fun(alist) => {
   [1, ...merge(merge(mult(2, alist), mult(3, alist)), mult(5, alist))];
 };
 
+print_list_int(undupe([1, 2, 2, 3, 4, 4, 5]));
+
+/*
 print_list_int(expand(expand(expand([1]))));
+*/
