@@ -65,4 +65,8 @@ let rec take = fun(n, alist) => {
   }
 };
 
-print_list_int(merge([1, 2], [3, 4]));
+let expand = fun(alist) => {
+  [1, ...merge(merge(mult(2, alist), mult(3, alist)), mult(5, alist))];
+};
+
+print_list_int(expand(expand(expand([1]))));
