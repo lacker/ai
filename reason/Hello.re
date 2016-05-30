@@ -7,25 +7,20 @@ let rec length = fun(alist) => {
   };
 };
 
-let isempty = fun(alist) => {
-  switch alist {
-    | [] => true
-    | [x, ...xs] => false
-  }
-};
-
-let rec merge = fun(xlist, ylist) => {
-  if (isempty(xlist)) {
-    ylist;
-  } else if (isempty(ylist)) {
-    xlist;
-  } else {
-    let [headX, ...restX] = xlist;
-    let [headY, ...restY] = ylist;
-    if (headX < headY) {
-      [headX, ...merge(restX, ylist)];
-    } else {
-      [headY, ...merge(restY, xlist)];
+let rec union = fun(xset, yset) => {
+  switch xset {
+    | [] => yset
+    | [x, ...xs] => switch yset {
+      | [] => xset
+      | [y, ...ys] => {
+        if (x == y) {
+          union(xs, yset);
+        } else if (x < y) {
+          [x, ...union(xs, yset)];
+        } else {
+          [y, ...union(ys, xset)];
+        }
+      }
     }
   }
 };
@@ -84,11 +79,11 @@ let rec undupe = fun(alist) => {
 };
 
 let expand = fun(alist) => {
-  [1, ...merge(merge(mult(2, alist), mult(3, alist)), mult(5, alist))];
+  [1, ...union(union(mult(2, alist), mult(3, alist)), mult(5, alist))];
 };
 
-print_list_int(undupe([1, 2, 2, 3, 4, 4, 5]));
-
 /*
-print_list_int(expand(expand(expand([1]))));
+print_list_int(undupe([1, 2, 2, 3, 4, 4, 5]));
 */
+
+print_list_int(expand(expand(expand([1]))));
