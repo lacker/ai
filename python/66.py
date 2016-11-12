@@ -1,6 +1,9 @@
 #!/usr/bin/env python
 
+from decimal import *
 from math import floor, sqrt
+
+getcontext().prec = 100
 
 '''
 Yield the terms of
@@ -18,14 +21,21 @@ def cf_terms(x):
 
 'Returns a (numerator, denominator) tuple'
 def make_cf(values):
-  if len(values) == 1:
-    return (values[0], 1)
+  if not values:
+    raise Exception('values is zeroy')
+    
+  i = len(values) - 1
 
-  rest_numer, rest_denom = make_cf(values[1:])
+  rest_numer, rest_denom = values[i], 1
 
-  numer = values[0] * rest_numer + rest_denom
-  denom = rest_numer
-  return (numer, denom)
+  while i > 0:
+    i -= 1
+    numer = values[i] * rest_numer + rest_denom
+    denom = rest_numer
+    rest_numer = numer
+    rest_denom = denom
+
+  return rest_numer, rest_denom
     
 '''
 Given d, find the (x, y) solution to
@@ -35,23 +45,19 @@ with minimum x.
 It's kind of x/y = sqrt(d)-rounded-down.
 '''
 def solve(d):
-  s = sqrt(d)
+  s = Decimal(d).sqrt()
   if int(s) == s:
     return None, None
   terms = []
-  for term in cf_terms(sqrt(d)):
+  for term in cf_terms(s):
     terms.append(term)
-    try:
-      x, y = make_cf(terms)
-      if x * x - d * y * y == 1:
-        return x, y
-    except:
-      print d, 'is bugged'
-      return None, None
+    x, y = make_cf(terms)
+    if x * x - d * y * y == 1:
+      return x, y
 
 biggest_x = 0
 for d in range(1001):
   x, y = solve(d)
-  if x is not None and x >= biggest_x:
+  if (x is not None and x >= biggest_x) or d < 20:
     biggest_x = x
     print 'x:', x, 'y:', y, 'd:', d
