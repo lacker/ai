@@ -62,7 +62,6 @@ def imprecise(x, y):
                 + precise(x, y))
   return CACHE[key]
 
-print imprecise(2, 2)
 print imprecise(50, 50)
 
 
