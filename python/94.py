@@ -17,7 +17,8 @@ for k in xrange(3, billion, 2):
       raise Exception('done')
     semi = perimeter / 2
     # z = area / (semi - k) - heron's formula
-    z = sqrt(semi * (semi - k - u))
-    if int(z) == z:
+    sq = semi * (semi - k - u)
+    z = int(sqrt(sq))
+    if z * z == sq:
       print k, k, k + u
       answer += perimeter
