@@ -2,14 +2,18 @@
 
 let database = {}
 
-export function all(tableName) {
+function all(tableName) {
   if (!database[tableName]) {
     database[tableName] = []
   }
   return database[tableName]
 }
 
-export function push(tableName, data, limit) {
+function push(tableName, data, limit) {
+  if (!tableName) {
+    throw Error('push needs a tableName')
+  }
+  console.log('pushing:', data)
   let table = all(tableName)
   table.push(data)
   if (limit) {
@@ -18,3 +22,5 @@ export function push(tableName, data, limit) {
     }
   }
 }
+
+export default { all, push }

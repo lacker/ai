@@ -1,10 +1,10 @@
 import React from 'react'
-import database from './database'
+import database from '../database'
 
 function makeID() {
   let answer = '';
   for (let i = 0; i < 8; i++) {
-    let index = Math.floor(Math.random() * 32
+    let index = Math.floor(Math.random() * 32)
     answer += 'ABCDEFGHJKMNPQRSTVWXYZ0123456789'[index]
   }
   return answer;
@@ -13,7 +13,7 @@ function makeID() {
 export default class extends React.Component {
   static async getInitialProps({req}) {
     let id = makeID();
-    database.push({
+    database.push('messages', {
       id,
       content: 'this is message ' + id,
     })
@@ -23,13 +23,23 @@ export default class extends React.Component {
     }
   }
 
+  constructor(props) {
+    super(props)
+  }
+
   render() {
+    this.props.messages.map(message => {
+      console.log(message)
+    })
     return (
-      <ul>
-        {this.props.messages.map(message => {
-          <li key={message.id}>{message.content}</li>
-        })}
-      </ul>
+      <div>
+      Welcome to chat.
+        <ul>
+          {this.props.messages.map(message => (
+            <li key={message.id}>{message.content}</li>
+          ))}
+        </ul>
+      </div>
     )
   }
 }
