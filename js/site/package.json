@@ -5,6 +5,10 @@
     "next": "^1.2.3"
   },
   "scripts": {
-    "dev": "next"
+    "dev": "next",
+    "test": "jest"
+  },
+  "devDependencies": {
+    "jest": "^17.0.3"
   }
 }

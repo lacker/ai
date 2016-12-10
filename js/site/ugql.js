@@ -1,5 +1,5 @@
-const assert = require('assert');
-const { graphql, parse } = require('graphql');
+const assert = require('assert')
+const { graphql, parse } = require('graphql')
 
 function run(data, query) {
   // Find the actual graphql
@@ -43,3 +43,5 @@ let data = {foo: 1, bar: {baz: 2} }
 run(data, query).then(out => {
   console.log(out)
 })
+
+module.exports = { run }
