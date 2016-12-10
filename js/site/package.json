@@ -1,6 +1,7 @@
 {
   "private": true,
   "dependencies": {
+    "graphql": "^0.8.2",
     "next": "^1.2.3"
   },
   "scripts": {
