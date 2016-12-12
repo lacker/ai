@@ -17,5 +17,20 @@ test('nested queries', () => {
     expect(output).toEqual(data)
     expect(output).not.toBe(data)
   })
-  expect(sum(1, 2)).toBe(3);
-});
+})
+
+test('nested promise', () => {
+  let data = {
+    foo: Promise.resolve({
+      bar: 3
+    })
+  }
+  let query = `{
+    foo {
+      bar
+    }
+  }`
+  return run(data, query).then(output => {
+    expect(output).toEqual({ foo: { bar: 3 }})
+  })
+})

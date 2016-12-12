@@ -2,6 +2,11 @@ const assert = require('assert')
 const { graphql, parse } = require('graphql')
 
 function run(data, query) {
+  // Resolve promises
+  if (data.then) {
+    return data.then(d => run(d, query))
+  }
+
   // Find the actual graphql
   if (typeof query == 'string') {
     let document = parse(query)
@@ -30,18 +35,5 @@ function run(data, query) {
 
   return Promise.all(promises).then(() => result);
 }
-
-let query = `{
-  foo
-  bar {
-    baz
-  }
-}`
-
-let data = {foo: 1, bar: {baz: 2} }
-
-run(data, query).then(out => {
-  console.log(out)
-})
 
 module.exports = { run }
