@@ -27,6 +27,10 @@ function run(data, query) {
         promises.push(run(data[key], field).then(r => {
           result[key] = r;
         }))
+      } else if (data[key].then) {
+        promises.push(data[key].then(val => {
+          result[key] = val;
+        }))
       } else {
         result[key] = data[key]
       }

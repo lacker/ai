@@ -34,3 +34,15 @@ test('nested promise', () => {
     expect(output).toEqual({ foo: { bar: 3 }})
   })
 })
+
+test('promise of value', () => {
+  let data = {
+    foo: Promise.resolve(2)
+  }
+  let query = `{
+    foo
+  }`
+  return run(data, query).then(output => [
+    expect(output).toEqual({ foo: 2 })
+  ])
+})
