@@ -46,3 +46,15 @@ test('promise of value', () => {
     expect(output).toEqual({ foo: 2 })
   ])
 })
+
+test('arguments', () => {
+  let data = {
+    addOne: ({x}) => (x + 1)
+  }
+  let query = `{
+    addOne(x: 2)
+  }`
+  return run(data, query).then(output => {
+    expect(output).toEqual({ addOne: 3 })
+  })
+})
