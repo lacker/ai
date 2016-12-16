@@ -38,6 +38,12 @@ function run(data, query) {
     return run(data(args), q)
   }
 
+  // Functions when data is expected are ok, they get treated
+  // like thunks
+  if (typeof data == 'function') {
+    return run(data(), query)
+  }
+
   if (!query.selectionSet) {
     return Promise.resolve(data)
   }

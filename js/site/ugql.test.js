@@ -72,3 +72,15 @@ test('arguments then nesting', () => {
     expect(output).toEqual({ foo: { bar: 1 }})
   })
 })
+
+test('zero-argument functions', () => {
+  let data = {
+    foo: () => 2
+  }
+  let query = `{
+    foo
+  }`
+  return run(data, query).then(output => {
+    expect(output).toEqual({ foo: 2 })
+  })
+})
