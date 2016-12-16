@@ -10,52 +10,49 @@ function resolveValue(value) {
   throw new Error('this code needs to handle value.kind =', value.kind)
 }
 
-// TODO: refactor out the field resolver
-
 function run(data, query) {
   // Resolve promises
   if (data.then) {
     return data.then(d => run(d, query))
   }
 
-  // Find the actual graphql
+  // If we get a string, assume it's graphql with one operation
   if (typeof query == 'string') {
     let document = parse(query)
     assert.equal(document.kind, 'Document')
+    assert(document.definitions.length == 1)
     query = document.definitions[0]
     assert.equal(query.kind, 'OperationDefinition')
   }
 
+  // If we get something with arguments, resolve those first
+  // TODO: handle zero-argument things
+  if (query.arguments && query.arguments.length > 0) {
+    assert.equal(typeof data, 'function')
+    let args = {}
+    for (let arg of query.arguments) {
+      args[arg.name.value] = resolveValue(arg.value)
+    }
+    let q = Object.assign({}, query)
+    q.arguments = null
+    return run(data(args), q)
+  }
+
+  if (!query.selectionSet) {
+    return Promise.resolve(data)
+  }
+
+  // Recurse on the subselections
+
   let result = {}
   let promises = []
 
-  assert(query.selectionSet)
   for (let field of query.selectionSet.selections) {
     assert.equal(field.kind, 'Field')
     let key = field.name.value;
-    if (field.selectionSet) {
-      promises.push(run(data[key], field).then(r => {
-        result[key] = r;
-      }))
-      continue
-    }
-
-    if (field.arguments && field.arguments.length > 0) {
-      let args = {}
-      for (let arg of field.arguments) {
-        args[arg.name.value] = resolveValue(arg.value)
-      }
-      result[key] = data[key](args)
-      continue
-    }
-
-    if (data[key].then) {
-      promises.push(data[key].then(val => {
-        result[key] = val;
-      }))
-      continue
-    }
-    result[key] = data[key]
+    promises.push(run(data[key], field).then(r => {
+      result[key] = r;
+    }))
   }
 
   return Promise.all(promises).then(() => result);

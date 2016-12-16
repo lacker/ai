@@ -58,3 +58,17 @@ test('arguments', () => {
     expect(output).toEqual({ addOne: 3 })
   })
 })
+
+test('arguments then nesting', () => {
+  let data = {
+    foo: ({x}) => ({ bar: x })
+  }
+  let query = `{
+    foo(x: 1) {
+      bar
+    }
+  }`
+  return run(data, query).then(output => {
+    expect(output).toEqual({ foo: { bar: 1 }})
+  })
+})
