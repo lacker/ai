@@ -37,19 +37,25 @@ function run(data, query) {
       promises.push(run(data[key], field).then(r => {
         result[key] = r;
       }))
-    } else if (field.arguments && field.arguments.length > 0) {
+      continue
+    }
+
+    if (field.arguments && field.arguments.length > 0) {
       let args = {}
       for (let arg of field.arguments) {
         args[arg.name.value] = resolveValue(arg.value)
       }
       result[key] = data[key](args)
-    } else if (data[key].then) {
+      continue
+    }
+
+    if (data[key].then) {
       promises.push(data[key].then(val => {
         result[key] = val;
       }))
-    } else {
-      result[key] = data[key]
+      continue
     }
+    result[key] = data[key]
   }
 
   return Promise.all(promises).then(() => result);
