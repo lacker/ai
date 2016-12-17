@@ -4,10 +4,14 @@ const { graphql, parse } = require('graphql')
 // Resolves a graphql value, which is basically representing a literal.
 function resolveValue(value) {
   if (value.kind == 'IntValue') {
-    return parseInt(value.value);
+    return parseInt(value.value)
   }
 
-  throw new Error('this code needs to handle value.kind =', value.kind)
+  if (value.kind == 'StringValue') {
+    return value.value
+  }
+
+  throw new Error('this code needs to handle value.kind = ' + value.kind)
 }
 
 function run(data, query) {

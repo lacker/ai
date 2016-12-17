@@ -84,3 +84,27 @@ test('zero-argument functions', () => {
     expect(output).toEqual({ foo: 2 })
   })
 })
+
+test('string responses', () => {
+  let data = {
+    foo: 'foo'
+  }
+  let query = `{
+    foo
+  }`
+  return run(data, query).then(output => {
+    expect(output).toEqual({ foo: 'foo' })
+  })
+})
+
+test('string arguments', () => {
+  let data = {
+    double: ({x}) => (x + x)
+  }
+  let query = `{
+    double(x: "foo")
+  }`
+  return run(data, query).then(output => {
+    expect(output).toEqual({ double: 'foofoo' })
+  })
+})
