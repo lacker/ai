@@ -26,7 +26,6 @@ function run(data, query) {
   }
 
   // If we get something with arguments, resolve those first
-  // TODO: handle zero-argument things
   if (query.arguments && query.arguments.length > 0) {
     assert.equal(typeof data, 'function')
     let args = {}
