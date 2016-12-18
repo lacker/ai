@@ -15,6 +15,20 @@ function resolveValue(value) {
 }
 
 function run(data, query) {
+  // Map into arrays
+  if (Array.isArray(data)) {
+    let promises = []
+    let answer = []
+    for (let d of data) {
+      let index = answer.length
+      answer.push(null)
+      promises.push(run(d, query).then(r => {
+        answer[index] = r;
+      }))
+    }
+    return Promise.all(promises).then(() => answer)
+  }
+
   // Resolve promises
   if (data.then) {
     return data.then(d => run(d, query))

@@ -108,3 +108,17 @@ test('string arguments', () => {
     expect(output).toEqual({ double: 'foofoo' })
   })
 })
+
+test('array data', () => {
+  let data = {
+    foo: [{x: 1, y: 0}, {x: 2}]
+  }
+  let query = `{
+    foo {
+      x
+    }
+  }`
+  return run(data, query).then(output => {
+    expect(output).toEqual({ foo: [{x: 1}, {x: 2}]})
+  })
+})
