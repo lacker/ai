@@ -1,25 +1,34 @@
 import React from 'react'
-import database from '../database'
+import { extendObservable } from 'mobx'
+import { observer } from 'mobx-react'
 
 function makeID() {
-  let answer = '';
+  let answer = ''
   for (let i = 0; i < 8; i++) {
     let index = Math.floor(Math.random() * 32)
     answer += 'ABCDEFGHJKMNPQRSTVWXYZ0123456789'[index]
   }
-  return answer;
+  return answer
 }
 
-export default class extends React.Component {
+let store = {}
+
+class ListViewHelper extends React.Component {
   static async getInitialProps({req}) {
-    let id = makeID();
-    database.push('messages', {
+    let id = makeID()
+    let store = {}
+    extendObservable(store, {
+      messages: []
+    })
+
+    // The odd thing is that this adds a new message on each load
+    store.messages.push({
       id,
       content: 'this is message ' + id,
     })
 
     return {
-      messages: database.all('messages')
+      messages: store.messages
     }
   }
 
@@ -28,9 +37,6 @@ export default class extends React.Component {
   }
 
   render() {
-    this.props.messages.map(message => {
-      console.log(message)
-    })
     return (
       <div>
       Welcome to chat.
@@ -43,3 +49,5 @@ export default class extends React.Component {
     )
   }
 }
+
+export default ListView = observer(ListViewHelper)
