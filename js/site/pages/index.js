@@ -12,14 +12,13 @@ function makeID() {
 }
 
 let store = {}
+extendObservable(store, {
+  messages: []
+})
 
 class ListView extends React.Component {
   static async getInitialProps({req}) {
     let id = makeID()
-    let store = {}
-    extendObservable(store, {
-      messages: []
-    })
 
     // The odd thing is that this adds a new message on each load
     store.messages.push({
