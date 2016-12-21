@@ -13,7 +13,7 @@ function makeID() {
 
 let store = {}
 
-class ListViewHelper extends React.Component {
+class ListView extends React.Component {
   static async getInitialProps({req}) {
     let id = makeID()
     let store = {}
@@ -49,5 +49,6 @@ class ListViewHelper extends React.Component {
     )
   }
 }
+ListView = observer(ListView)
 
-export default ListView = observer(ListViewHelper)
+export default ListView
