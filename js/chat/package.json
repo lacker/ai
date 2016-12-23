@@ -1,0 +1,17 @@
+{
+  "name": "chat",
+  "version": "0.0.1",
+  "description": "A simple chat server in Node.js",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "author": "",
+  "license": "UNLICENSED",
+  "private": true,
+  "dependencies": {
+    "express": "^4.14.0",
+    "ws": "^1.1.1"
+  }
+}
