@@ -1,2 +1,11 @@
+const WebSocket = require('ws');
 
-// TODO: some integration test ish stuff, make sure the chat server works
+const ws = new WebSocket('ws://localhost:2428');
+
+ws.on('open', () => {
+  ws.send('something');
+});
+
+ws.on('message', (data, flags) => {
+  console.log('client received:', data);
+});

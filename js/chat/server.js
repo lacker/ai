@@ -13,8 +13,6 @@ const app = express();
 
 const PORT = 2428;
 
-// TODO: test out that hello worlds 1 and 2 can happen
-
 app.use(bodyParser.json());
 
 app.get('/', function (req, res) {
@@ -37,7 +35,7 @@ wss.on('connection', (ws) => {
     console.log('received: %s', message);
   });
 
-  ws.send('hello world 2');
+  ws.send('you have connected to the websocket server');
 });
 
 server.on('request', app);
