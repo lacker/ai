@@ -19,7 +19,7 @@ app.get('/', function (req, res) {
   res.send('this is the chat server')
 });
 
-app.get('/broadcast', function (req, res) {
+app.post('/broadcast', function (req, res) {
   wss.broadcast(req.body);
   res.send('OK');
 });
