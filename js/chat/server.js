@@ -19,14 +19,17 @@ app.get('/', function (req, res) {
   res.send('this is the chat server')
 });
 
-app.post('/broadcast', function (req, res) {
+app.post('/broadcast', (req, res) => {
+  console.log('handling /broadcast');
   wss.broadcast(req.body);
   res.send('OK');
 });
 
+// Takes JSON
 wss.broadcast = (data) => {
+  let payload = JSON.stringify(data);
   wss.clients.forEach((client) => {
-    client.send(data);
+    client.send(payload);
   });
 };
 
