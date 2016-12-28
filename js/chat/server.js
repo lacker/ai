@@ -13,21 +13,36 @@ const app = express();
 
 const PORT = 2428;
 
+const MESSAGES = [];
+
 app.use(bodyParser.json());
 
 app.get('/', function (req, res) {
   res.send('this is the chat server')
 });
 
+app.get('/messages', (req, res) => {
+  console.log('handling GET /messages');
+  res.send(JSON.stringify(MESSAGES));
+});
+
+app.post('/messages', (req, res) => {
+  console.log('handling POST /messages');
+  MESSAGES.push(req.body);
+  wss.broadcast(req.body);
+  res.send('OK');
+})
+
+// Just for testing
 app.post('/broadcast', (req, res) => {
-  console.log('handling /broadcast');
+  console.log('handling POST /broadcast');
   wss.broadcast(req.body);
   res.send('OK');
 });
 
-// Takes JSON
-wss.broadcast = (data) => {
-  let payload = JSON.stringify(data);
+// Takes something JSON-encodable
+wss.broadcast = (json) => {
+  let payload = JSON.stringify(json);
   wss.clients.forEach((client) => {
     client.send(payload);
   });
