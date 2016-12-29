@@ -13,7 +13,10 @@ const app = express();
 
 const PORT = 2428;
 
-const MESSAGES = [];
+const MESSAGES = [{
+  author: 'Alice',
+  content: 'Hello world',
+}];
 
 app.use(bodyParser.json());
 

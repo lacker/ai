@@ -1,38 +1,41 @@
-import React from 'react'
-import { extendObservable } from 'mobx'
-import { observer } from 'mobx-react'
+import React from 'react';
+import { extendObservable } from 'mobx';
+import { observer } from 'mobx-react';
+const rp = require('request-promise');
 
 function makeID() {
-  let answer = ''
+  let answer = '';
   for (let i = 0; i < 8; i++) {
-    let index = Math.floor(Math.random() * 32)
-    answer += 'ABCDEFGHJKMNPQRSTVWXYZ0123456789'[index]
+    let index = Math.floor(Math.random() * 32);
+    answer += 'ABCDEFGHJKMNPQRSTVWXYZ0123456789'[index];
   }
-  return answer
+  return answer;
 }
 
-let store = {}
+let store = {};
 extendObservable(store, {
   messages: []
-})
+});
 
+// TODO: try running this with the chat server going, see if it works
 class ListView extends React.Component {
   static async getInitialProps({req}) {
-    let id = makeID()
 
-    // The odd thing is that this adds a new message on each load
-    store.messages.push({
-      id,
-      content: 'this is message ' + id,
-    })
+    const options = {
+      uri: 'http://localhost:2428/messages',
+      json: true,
+    };
 
-    return {
-      messages: store.messages
-    }
+    return rp(options).then((messages) => {
+      store.messages = messages;
+      return {
+        messages: store.messages;
+      }
+    });
   }
 
   constructor(props) {
-    super(props)
+    super(props);
   }
 
   render() {
@@ -45,9 +48,9 @@ class ListView extends React.Component {
           ))}
         </ul>
       </div>
-    )
+    );
   }
 }
-ListView = observer(ListView)
+ListView = observer(ListView);
 
-export default ListView
+export default ListView;
