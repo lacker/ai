@@ -61,5 +61,5 @@ wss.on('connection', (ws) => {
 
 server.on('request', app);
 server.listen(PORT, () => {
-  console.log('Listening on ' + server.address().port);
+  console.log('Running chat server on port ' + server.address().port);
 });

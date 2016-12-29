@@ -29,8 +29,8 @@ class ListView extends React.Component {
     return rp(options).then((messages) => {
       store.messages = messages;
       return {
-        messages: store.messages;
-      }
+        messages: store.messages,
+      };
     });
   }
 
