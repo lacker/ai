@@ -1,7 +1,7 @@
 import React from 'react';
 import { extendObservable } from 'mobx';
 import { observer } from 'mobx-react';
-const rp = require('request-promise');
+import 'isomorphic-fetch';
 
 function makeID() {
   let answer = '';
@@ -21,17 +21,12 @@ extendObservable(store, {
 class ListView extends React.Component {
   static async getInitialProps({req}) {
 
-    const options = {
-      uri: 'http://localhost:2428/messages',
-      json: true,
+    const res = await fetch('http://localhost:2428/messages');
+    const data = await res.json();
+    store.messages = data;
+    return {
+      messages: store.messages,
     };
-
-    return rp(options).then((messages) => {
-      store.messages = messages;
-      return {
-        messages: store.messages,
-      };
-    });
   }
 
   constructor(props) {
