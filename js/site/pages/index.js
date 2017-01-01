@@ -3,6 +3,8 @@ import { extendObservable } from 'mobx';
 import { observer } from 'mobx-react';
 import 'isomorphic-fetch';
 
+import ChatInput from '../ChatInput';
+
 function makeID() {
   let answer = '';
   for (let i = 0; i < 8; i++) {
@@ -17,7 +19,6 @@ extendObservable(store, {
   messages: []
 });
 
-// TODO: try running this with the chat server going, see if it works
 class ListView extends React.Component {
   static async getInitialProps({req}) {
 
@@ -31,12 +32,14 @@ class ListView extends React.Component {
 
   constructor(props) {
     super(props);
-
-    this.handleClick = this.handleClick.bind(this);
   }
 
-  handleClick(e) {
-    console.log('button pressed with event:', e);
+  handleSubmit(value) {
+    // TODO: use chat server instead of just locally doing stuff
+    store.messages.push({
+      id: makeID(),
+      content: value,
+    });
   }
 
   render() {
@@ -48,7 +51,7 @@ class ListView extends React.Component {
             <li key={message.id}>{message.content}</li>
           ))}
         </ul>
-        <button onClick={this.handleClick} title='Add Chat' />
+        <ChatInput onSubmit={this.handleClick} />
       </div>
     );
   }
