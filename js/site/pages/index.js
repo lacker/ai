@@ -31,6 +31,12 @@ class ListView extends React.Component {
 
   constructor(props) {
     super(props);
+
+    this.handleClick = this.handleClick.bind(this);
+  }
+
+  handleClick(e) {
+    console.log('button pressed with event:', e);
   }
 
   render() {
@@ -42,6 +48,7 @@ class ListView extends React.Component {
             <li key={message.id}>{message.content}</li>
           ))}
         </ul>
+        <button onClick={this.handleClick} title='Add Chat' />
       </div>
     );
   }
