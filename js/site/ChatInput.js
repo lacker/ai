@@ -16,7 +16,6 @@ export default class ChatInput extends React.Component {
   }
 
   handleSubmit(event) {
-    alert('A chat was submitted: ' + this.state.value);
     event.preventDefault();
     this.onSubmit(this.state.value);
     this.setState({value: ''});
@@ -26,7 +25,6 @@ export default class ChatInput extends React.Component {
     return (
       <form onSubmit={this.handleSubmit}>
         <label>
-          Name:
           <input type="text" value={this.state.value} onChange={this.handleChange} />
         </label>
         <input type="submit" value="Submit" />

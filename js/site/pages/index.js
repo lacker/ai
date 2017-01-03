@@ -16,7 +16,7 @@ function makeID() {
 
 let store = {};
 extendObservable(store, {
-  messages: []
+  messages: [],
 });
 
 class ListView extends React.Component {
@@ -32,17 +32,29 @@ class ListView extends React.Component {
 
   constructor(props) {
     super(props);
+
+    this.handleSubmit = this.handleSubmit.bind(this);
   }
 
   handleSubmit(value) {
+    console.log(
+      'at the start of handleSubmit messages is:',
+      JSON.stringify(this.props.messages));
+
     // TODO: use chat server instead of just locally doing stuff
-    store.messages.push({
+    // TODO: figure out how to make this rerender the ListView
+    this.props.messages.push({
       id: makeID(),
       content: value,
     });
+    
+    console.log(
+      'at the end of handleSubmit messages is:',
+      JSON.stringify(this.props.messages));
   }
 
   render() {
+    console.log('rendering messages:', JSON.stringify(this.props.messages));
     return (
       <div>
       Welcome to chat.
@@ -51,7 +63,7 @@ class ListView extends React.Component {
             <li key={message.id}>{message.content}</li>
           ))}
         </ul>
-        <ChatInput onSubmit={this.handleClick} />
+        <ChatInput onSubmit={this.handleSubmit} />
       </div>
     );
   }

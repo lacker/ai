@@ -14,7 +14,7 @@ const app = express();
 const PORT = 2428;
 
 const MESSAGES = [{
-  author: 'Alice',
+  id: '1234',
   content: 'Hello world',
 }];
 
