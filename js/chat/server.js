@@ -6,6 +6,7 @@ const WebSocket = require('ws');
 const urllib = require('url');
 const express = require('express');
 const bodyParser = require('body-parser');
+const cors = require('cors');
 
 const server = http.createServer();
 const wss = new WebSocket.Server({ server: server });
@@ -19,6 +20,7 @@ const MESSAGES = [{
 }];
 
 app.use(bodyParser.json());
+app.use(cors());
 
 app.get('/', function (req, res) {
   res.send('this is the chat server')
