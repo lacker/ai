@@ -3,22 +3,22 @@ import { observable } from 'mobx';
 import 'isomorphic-fetch';
 
 import ListView from './ListView';
+import MessageClient from './MessageClient';
 
 class App extends React.Component {
   constructor(props) {
     super(props);
 
+    this.client = new MessageClient();
+
     this.state = {
       loading: true,
     };
 
-    fetch('http://localhost:2428/messages').then(res => {
-      return res.json();
-    }).then(data => {
-      let messages = observable(data);
+    // TODO: check if this works
+    this.client.load().then(() => {
       this.setState({
-        loading: false,
-        messages: messages,
+        messages: this.client.messages,
       });
     });
   }
