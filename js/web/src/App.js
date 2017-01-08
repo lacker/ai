@@ -1,6 +1,4 @@
 import React from 'react';
-import { observable } from 'mobx';
-import 'isomorphic-fetch';
 
 import ListView from './ListView';
 import MessageClient from './MessageClient';
@@ -18,6 +16,7 @@ class App extends React.Component {
     // TODO: check if this works
     this.client.load().then(() => {
       this.setState({
+        loading: false,
         messages: this.client.messages,
       });
     });
