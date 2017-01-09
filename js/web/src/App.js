@@ -13,13 +13,18 @@ class App extends React.Component {
       loading: true,
     };
 
+    this.handleSubmit = this.handleSubmit.bind(this);
+
     // TODO: check if this works
     this.client.load().then(() => {
       this.setState({
         loading: false,
-        messages: this.client.messages,
       });
     });
+  }
+
+  handleSubmit(content) {
+    this.client.create(content);
   }
 
   render() {
@@ -27,7 +32,9 @@ class App extends React.Component {
       return <div>Loading...</div>;
     }
 
-    return <ListView messages={this.state.messages} />;
+    return <ListView
+             onSubmit={this.handleSubmit}
+             messages={this.client.messages} />;
   }
 }
 
