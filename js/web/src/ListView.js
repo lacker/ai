@@ -3,20 +3,7 @@ import { observer } from 'mobx-react';
 
 import ChatInput from './ChatInput';
 
-function makeID() {
-  let answer = '';
-  for (let i = 0; i < 8; i++) {
-    let index = Math.floor(Math.random() * 32);
-    answer += 'ABCDEFGHJKMNPQRSTVWXYZ0123456789'[index];
-  }
-  return answer;
-}
-
 class ListView extends React.Component {
-  constructor(props) {
-    super(props);
-  }
-
   render() {
     console.log(
       'rendering messages:',
