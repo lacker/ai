@@ -15,7 +15,6 @@ class App extends React.Component {
 
     this.handleSubmit = this.handleSubmit.bind(this);
 
-    // TODO: check if this works
     this.client.load().then(() => {
       this.setState({
         loading: false,
