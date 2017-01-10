@@ -11,6 +11,7 @@ function makeID() {
 }
 
 export default class MessageClient {
+  // TODO: also kick off a websocket listen
   constructor() {
     this.messages = observable([]);
   }
@@ -25,6 +26,7 @@ export default class MessageClient {
   }
 
   // Creates a new message
+  // TODO: make this post to the chat server
   create(content) {
     this.messages.push({
       id: makeID(),
