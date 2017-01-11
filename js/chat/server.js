@@ -17,6 +17,7 @@ const PORT = 2428;
 const MESSAGES = [{
   id: '1234',
   content: 'Hello world',
+  timestamp: 0,
 }];
 
 app.use(bodyParser.json());

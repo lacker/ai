@@ -31,6 +31,7 @@ export default class MessageClient {
     this.messages.push({
       id: makeID(),
       content: content,
+      timestamp: (new Date()).getTime(),
     });
   }
 }
