@@ -16,12 +16,20 @@ export default class MessageClient {
     this.messages = observable([]);
   }
 
-  // TODO: make this multi-entrant
+  // TODO: see if this works
   load() {
     return fetch('http://localhost:2428/messages').then(res => {
       return res.json();
     }).then(data => {
-      this.messages.replace(data);
+      let newMessages = {};
+      for (let message of this.messages) {
+        newMessages[message.id] = message;
+      }
+      for (let message of data) {
+        newMessages[message.id] = message;
+      }
+      newMessages.sort((m1, m2) => (m1.timestamp - m2.timestamp));
+      this.messages.replace(newMessages);
     });
   }
 
