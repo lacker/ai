@@ -16,7 +16,6 @@ export default class MessageClient {
     this.messages = observable([]);
   }
 
-  // TODO: see if this works
   load() {
     return fetch('http://localhost:2428/messages').then(res => {
       return res.json();
@@ -30,6 +29,7 @@ export default class MessageClient {
       }
       newMessages.sort((m1, m2) => (m1.timestamp - m2.timestamp));
       this.messages.replace(newMessages);
+      return this.messages;
     });
   }
 
