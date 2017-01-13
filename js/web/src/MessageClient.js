@@ -34,12 +34,23 @@ export default class MessageClient {
   }
 
   // Creates a new message
-  // TODO: make this post to the chat server
   create(content) {
-    this.messages.push({
+    const message = {
       id: makeID(),
       content: content,
       timestamp: (new Date()).getTime(),
+    };
+    this.messages.push(message);
+
+    // Post to the chat server
+    let data = new FormData();
+    fetch('http://localhost:2428/messages', {
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      },
+      method: 'POST',
+      body: JSON.stringify(message),
     });
   }
 }
