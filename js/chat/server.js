@@ -34,6 +34,11 @@ app.get('/messages', (req, res) => {
 
 app.post('/messages', (req, res) => {
   console.log('handling POST /messages');
+  if (!req.body.id) {
+    console.log('bad req.body:', req.body);
+    res.send('NO');
+    return;
+  }
   MESSAGES.push(req.body);
   wss.broadcast(req.body);
   res.send('OK');
