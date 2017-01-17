@@ -39,6 +39,9 @@ app.post('/messages', (req, res) => {
     res.send('NO');
     return;
   }
+  if (!req.body.timestamp) {
+    req.body.timestamp = (new Date()).getTime();
+  }
   MESSAGES.push(req.body);
   wss.broadcast(req.body);
   res.send('OK');
