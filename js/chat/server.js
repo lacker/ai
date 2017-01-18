@@ -32,12 +32,20 @@ app.get('/messages', (req, res) => {
   res.send(JSON.stringify(MESSAGES));
 });
 
+function makeID() {
+  let answer = '';
+  for (let i = 0; i < 8; i++) {
+    let index = Math.floor(Math.random() * 32);
+    answer += 'ABCDEFGHJKMNPQRSTVWXYZ0123456789'[index];
+  }
+  return answer;
+}
+
+
 app.post('/messages', (req, res) => {
   console.log('handling POST /messages');
   if (!req.body.id) {
-    console.log('bad req.body:', req.body);
-    res.send('NO');
-    return;
+    req.body.id = makeID();
   }
   if (!req.body.timestamp) {
     req.body.timestamp = (new Date()).getTime();
