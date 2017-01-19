@@ -1,15 +1,6 @@
 import { observable } from 'mobx';
 import 'isomorphic-fetch';
 
-function makeID() {
-  let answer = '';
-  for (let i = 0; i < 8; i++) {
-    let index = Math.floor(Math.random() * 32);
-    answer += 'ABCDEFGHJKMNPQRSTVWXYZ0123456789'[index];
-  }
-  return answer;
-}
-
 export default class MessageClient {
   // TODO: also kick off a websocket listen
   constructor() {
@@ -41,7 +32,6 @@ export default class MessageClient {
   // Creates a new message
   create(content) {
     const message = {
-      id: makeID(),
       content: content,
       timestamp: (new Date()).getTime(),
     };
