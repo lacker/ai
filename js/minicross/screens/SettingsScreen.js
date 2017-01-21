@@ -7,6 +7,8 @@ import {
   ExponentConfigView,
 } from '@exponent/samples';
 
+// This should be totally unused. TODO: delete
+
 export default class SettingsScreen extends React.Component {
   static route = {
     navigationBar: {
