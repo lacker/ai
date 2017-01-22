@@ -20,3 +20,14 @@ def ioc(text):
     answer += frac * frac
 
   return answer
+
+def modbuckets(text, modulus):
+  '''
+  Makes equivalence classes for the given modulus, each class is a list/bucket
+  Returns a list of these buckets
+  '''
+  output = [[] for _ in range(modulus)]
+  for i, ch in enumerate(text):
+    index = i % modulus
+    output[index].append(ch)
+  return output
