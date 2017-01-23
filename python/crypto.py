@@ -31,3 +31,13 @@ def modbuckets(text, modulus):
     index = i % modulus
     output[index].append(ch)
   return output
+
+def indextest(text):
+  '''
+  Tries out the indices of coincidence for blocks of different lengths.
+  '''
+  for m in range(1, 11):
+    buckets = modbuckets(text, m)
+    indices = map(ioc, buckets)
+    print 'block size %d:' % m
+    print indices
