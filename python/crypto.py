@@ -52,7 +52,46 @@ def blast(text):
     if triple in tcount:
       print '%d = %d - %d' % (i - tcount[triple], i, tcount[triple])
     tcount[triple] = i
-    
+
+ENGLISH = {    
+  'A': .082,
+  'B': .015,
+  'C': .028,
+  'D': .043,
+  'E': .127,
+  'F': .022,
+  'G': .020,
+  'H': .061,
+  'I': .070,
+  'J': .002,
+  'K': .008,
+  'L': .040,
+  'M': .024,
+  'N': .067,
+  'O': .075,
+  'P': .019,
+  'Q': .001,
+  'R': .060,
+  'S': .063,
+  'T': .091,
+  'U': .028,
+  'V': .010,
+  'W': .023,
+  'X': .001,
+  'Y': .020,
+  'Z': .001,
+}
+
+def dot(a, b):
+  '''
+  dot-products two distribution-vectors encoded as dicts.
+  '''
+  answer = 0
+  for key, value1 in a.items():
+    value2 = b.get(key, 0)
+    answer += value1 * value2
+  return answer
+
 # Vigenere from 1.21 b
 ciphertext = '''
 KCCPKEGUFDPHQTYAVINRRTMVGRKDNBVFDETDGILTXRGUD
