@@ -40,4 +40,34 @@ def indextest(text):
     buckets = modbuckets(text, m)
     indices = map(ioc, buckets)
     print 'block size %d:' % m
+    print 'average:', float(sum(indices)) / len(indices)
     print indices
+
+def blast(text):
+  tcount = {}
+  for i in range(len(text)):
+    triple = text[i:i+3]
+    if len(triple) < 3:
+      break
+    if triple in tcount:
+      print '%d = %d - %d' % (i - tcount[triple], i, tcount[triple])
+    tcount[triple] = i
+    
+# Vigenere from 1.21 b
+ciphertext = '''
+KCCPKEGUFDPHQTYAVINRRTMVGRKDNBVFDETDGILTXRGUD
+DKOTFMBPVGEGLTGCKQRACQCWDNAWCRXIZAKFTLEWRPTYC
+QKYVXCHKFTPONCQQRHJVAJUWETMCMSPKQDYHJVDAHCTRL
+SVSKCGCZQQDZXGSFRLSWCWSJTBHAFSIASPRJAHKJRJUMV
+GKMITZHFPDISPZLVLGWTFPLKKEBDPGCEBSHCTJRWXBAFS
+PEZQNRWXCVYCGAONWDDKACKAWBBIKFTIOVKCGGHJVLNHI
+FFSQESVYCLACNVRWBBIREPBBVFEXOSCDYGZWPFDTKFQIY
+CWHJVLNHIQIBTKHJVNPIST
+'''.replace('\n', '')
+
+if __name__ == '__main__':
+  # Doesn't seem to yield much. Hrmph.
+  indextest(ciphertext)
+
+  # This makes me suspect that block size = 6
+  blast(ciphertext)
