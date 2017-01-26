@@ -109,6 +109,16 @@ def rotate(vector, n):
   for key, value in vector.items():
     answer[chrotate(key, n)] = value
   return answer
+
+def best_rotation(vector):
+  best_rot = -1
+  best_score = 0
+  for rot in range(26):
+    score = dot(ENGLISH, rotate(vector, rot))
+    if score > best_score:
+      best_rot = rot
+      best_score = score
+  return best_rot
   
 # Vigenere from 1.21 b
 ciphertext = '''
