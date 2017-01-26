@@ -92,6 +92,24 @@ def dot(a, b):
     answer += value1 * value2
   return answer
 
+def ch2num(ch):
+  return ord(ch) - ord('A')
+
+def num2ch(num):
+  return chr(ord('A') + num)
+
+def chrotate(ch, n):
+  return num2ch((ch2num(ch) + n) % 26)
+  
+def rotate(vector, n):
+  '''
+  vector is a dict. n is like, if n = 2 then A -> C.
+  '''
+  answer = {}
+  for key, value in vector.items():
+    answer[chrotate(key, n)] = value
+  return answer
+  
 # Vigenere from 1.21 b
 ciphertext = '''
 KCCPKEGUFDPHQTYAVINRRTMVGRKDNBVFDETDGILTXRGUD
