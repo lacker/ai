@@ -100,6 +100,9 @@ def num2ch(num):
 
 def chrotate(ch, n):
   return num2ch((ch2num(ch) + n) % 26)
+
+def srotate(s, n):
+  return ''.join(chrotate(ch, n) for ch in s)
   
 def rotate(vector, n):
   '''
@@ -110,7 +113,16 @@ def rotate(vector, n):
     answer[chrotate(key, n)] = value
   return answer
 
-def best_rotation(vector):
+def make_count_vector(text):
+  answer = {}
+  for ch in text:
+    if ch in answer:
+      answer[ch] += 1
+    else:
+      answer[ch] = 1
+  return answer
+  
+def best_rot_score(vector):
   best_rot = -1
   best_score = 0
   for rot in range(26):
@@ -118,7 +130,24 @@ def best_rotation(vector):
     if score > best_score:
       best_rot = rot
       best_score = score
-  return best_rot
+  return best_rot, best_score
+
+def vcrack(ciphertext, m):
+  '''
+  Prints out crack info
+  m is the keyword length
+  '''
+  plainslices = []
+  for i in range(m):
+    modslice = ciphertext[i::m]
+    cvector = make_count_vector(modslice)
+    rot, score = best_rot_score(cvector)
+    print 'rot:', rot, 'score:', score
+    plainslice = srotate(modslice, rot)
+    print 'ps:', plainslice
+    plainslices.append(plainslice)
+  for block in zip(*plainslices):
+    print ''.join(block)
   
 # Vigenere from 1.21 b
 ciphertext = '''
@@ -138,3 +167,7 @@ if __name__ == '__main__':
 
   # This makes me suspect that block size = 6
   blast(ciphertext)
+
+  print '... vcracking'
+  
+  vcrack(ciphertext, 6)
