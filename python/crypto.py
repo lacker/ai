@@ -148,26 +148,19 @@ def vcrack(ciphertext, m):
     plainslices.append(plainslice)
   for block in zip(*plainslices):
     print ''.join(block)
-  
-# Vigenere from 1.21 b
-ciphertext = '''
-KCCPKEGUFDPHQTYAVINRRTMVGRKDNBVFDETDGILTXRGUD
-DKOTFMBPVGEGLTGCKQRACQCWDNAWCRXIZAKFTLEWRPTYC
-QKYVXCHKFTPONCQQRHJVAJUWETMCMSPKQDYHJVDAHCTRL
-SVSKCGCZQQDZXGSFRLSWCWSJTBHAFSIASPRJAHKJRJUMV
-GKMITZHFPDISPZLVLGWTFPLKKEBDPGCEBSHCTJRWXBAFS
-PEZQNRWXCVYCGAONWDDKACKAWBBIKFTIOVKCGGHJVLNHI
-FFSQESVYCLACNVRWBBIREPBBVFEXOSCDYGZWPFDTKFQIY
-CWHJVLNHIQIBTKHJVNPIST
-'''.replace('\n', '')
 
+def chaffine(ch, a, b):
+  '''
+  Does an ax+b on a character
+  '''
+  return num2ch((ch2num(ch) * a + b) % 26)
+
+def saffine(s, a, b):
+  '''
+  Does an ax+b on a string
+  '''
+  return ''.join(chaffine(ch, a, b) for ch in s)
+  
+    
 if __name__ == '__main__':
-  # Doesn't seem to yield much. Hrmph.
-  indextest(ciphertext)
-
-  # This makes me suspect that block size = 6
-  blast(ciphertext)
-
-  print '... vcracking'
-  
-  vcrack(ciphertext, 6)
+  print 'TODO: solving 1.21 c'
