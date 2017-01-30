@@ -160,7 +160,15 @@ def saffine(s, a, b):
   Does an ax+b on a string
   '''
   return ''.join(chaffine(ch, a, b) for ch in s)
-  
+
+def brutecrack(s1, s2):
+  '''
+  Prints all (a, b) where saffine takes s1 -> s2
+  '''
+  for a in range(1, 26):
+    for b in range(0, 26):
+      if saffine(s1, a, b) == s2:
+        print (a, b)
     
 if __name__ == '__main__':
   print 'TODO: solving 1.21 c'
