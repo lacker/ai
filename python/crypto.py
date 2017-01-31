@@ -92,6 +92,15 @@ def dot(a, b):
     answer += value1 * value2
   return answer
 
+def s2vec(s):
+  answer = {}
+  for ch in s:
+    if ch in answer:
+      answer[ch] += 1
+    else:
+      answer[ch] = 1
+  return answer
+  
 def ch2num(ch):
   return ord(ch) - ord('A')
 
@@ -169,6 +178,23 @@ def brutecrack(s1, s2):
     for b in range(0, 26):
       if saffine(s1, a, b) == s2:
         print (a, b)
-    
+
+def gcd(a, b):
+  if b > a:
+    a, b = b, a
+  if b == 0:
+    return a
+  if b == 1:
+    return 1
+  if a == b:
+    return a
+  return gcd(b, a % b)
+        
+def best_affine(s):
+  '''
+  Finds the affine transformation of s that looks the most English.
+  '''
+  raise 'TODO'
+        
 if __name__ == '__main__':
   print 'TODO: solving 1.21 c'
