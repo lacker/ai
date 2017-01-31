@@ -194,7 +194,11 @@ def best_affine(s):
   '''
   Finds the affine transformation of s that looks the most English.
   '''
-  raise 'TODO'
+  for a in range(1, 26):
+    if gcd(a, 26) != 1:
+      continue
+    for b in range(0, 26):
+      raise 'TODO'
         
 if __name__ == '__main__':
   print 'TODO: solving 1.21 c'
