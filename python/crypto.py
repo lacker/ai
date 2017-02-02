@@ -206,7 +206,15 @@ def best_affine(s):
         best_score = score
         best_transform = transform
   return best_transform
-        
+
+ciphertext = '''
+KQEREJEBCPPCJCRKIEACUZBKRVPKRBCIBQCARBJCVFCUP
+KRIOFKPACUZQEPBKRXPEIIEABDKPBCPFCDCCAFIEABDKP
+BCPFEQPKAZBKRHAIBKAPCCIBURCCDKDCCJCIDFUIXPAFF
+ERBICZDFKABICBBENEFCUPJCVKABPCYDCCDPKBCOCPERK
+IVKSCPICBRKIJPKABI
+'''.replace('\n', '')
         
 if __name__ == '__main__':
-  print 'TODO: solving 1.21 c'
+  print 'solving 1.21 c'
+  print best_affine(ciphertext)
