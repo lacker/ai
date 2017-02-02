@@ -194,11 +194,19 @@ def best_affine(s):
   '''
   Finds the affine transformation of s that looks the most English.
   '''
+  best_score = -1
+  best_transform = None
   for a in range(1, 26):
     if gcd(a, 26) != 1:
       continue
     for b in range(0, 26):
-      raise 'TODO'
+      transform = saffine(s, a, b)
+      score = dot(ENGLISH, make_count_vector(transform))
+      if score > best_score:
+        best_score = score
+        best_transform = transform
+  return best_transform
+        
         
 if __name__ == '__main__':
   print 'TODO: solving 1.21 c'
