@@ -1,5 +1,8 @@
 #!/usr/bin/env python
 
+from numpy import linalg
+from numpy import matrix
+
 def ioc(text):
   'Finds the index of coincidence of a text.'
   total = 0
@@ -207,14 +210,30 @@ def best_affine(s):
         best_transform = transform
   return best_transform
 
-ciphertext = '''
-KQEREJEBCPPCJCRKIEACUZBKRVPKRBCIBQCARBJCVFCUP
-KRIOFKPACUZQEPBKRXPEIIEABDKPBCPFCDCCAFIEABDKP
-BCPFEQPKAZBKRHAIBKAPCCIBURCCDKDCCJCIDFUIXPAFF
-ERBICZDFKABICBBENEFCUPJCVKABPCYDCCDPKBCOCPERK
-IVKSCPICBRKIJPKABI
-'''.replace('\n', '')
-        
+ciphertext = 'RUPOTENTOIFV'
+plaintext = 'BREATHTAKING'
+
+def known_m_hill(plain, cipher, m):
+  '''
+  Does a known-plaintext attack on a hill cipher
+  Assumes we know m
+  Prints whether it succeeds or fails
+  '''
+  i = 0
+  pairs = [] # (in, out) tuples
+  
+  while i + m <= len(cipher):
+    pairs.append((plain[i:i+m], cipher[i:i+m]))
+    i += m
+  raise 'TODO: finish this'
+
+def known_hill(plain, cipher):
+  '''
+  Does a known-plaintext attack on a hill cipher
+  Just tries different m
+  '''
+  raise 'TODO: finish this'
+  
 if __name__ == '__main__':
   print 'solving 1.21 c'
   print best_affine(ciphertext)
