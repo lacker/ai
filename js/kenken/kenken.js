@@ -47,6 +47,23 @@ function merge(a, b) {
   return answer;
 }
 
+// Intersects two ascending lists.
+function intersect(a, b) {
+  let answer = [];
+  while (aIndex < a.length && bIndex < b.length) {
+    if (a[aIndex] < b[bIndex]) {
+      aIndex++;
+    } else if (a[aIndex] > b[bIndex]) {
+      bIndex++;
+    } else {
+      // They must be equal
+      answer.push(a[aIndex]);
+      aIndex++;
+      bIndex++;
+    }
+  }
+}
+
 // soFar is an ascending list of numbers
 // containers is a list of ascending lists of numbers
 // This returns an ascending list of all numbers that could be added to
@@ -69,7 +86,8 @@ class Puzzle {
 
     // Each constraint is an object with:
     // variables: a list of ints, indices in this.variables. In order
-    // sets: A list of sets. The constraint is that the variables must
+    // containers:
+    //       A list of sets. The constraint is that the variables must
     //       map to one of these sets. A "set" here is an ascending
     //       list of integers.
     this.constraints = [];
@@ -81,11 +99,13 @@ class Puzzle {
     }
   }
 
-  addConstraint(variables, sets) {
+  // The constraint is that the variables specified in 'variables' must
+  // be a subset of one of the lists in 'containers'.
+  addConstraint(variables, containers) {
     let index = this.constraints.length;
     this.constraints.push({
       variables: variables,
-      sets: sets,
+      containers: containers,
     });
     for (let v of variables) {
       this.constraintsForVariable[v].push(index);
@@ -101,9 +121,27 @@ class Puzzle {
     // The constraints that are relevant to the next value
     let constraints = this.constraintsForVariable[values.length];
 
+    // If answer is non-null, it's a superset of the possible values.
+    // This is because any possible value must meet each constraint.
+    let answer = null;
+
     for (let constraint of constraints) {
-      // XXX
+      // Let's find partial solutions, that are at least ok with
+      // this constraint.
+      let partials = possibilities(values, constraint.containers);
+      if (answer === null) {
+        answer = partials;
+      } else {
+        answer = intersect(answer, partials);
+      }
+
+      // Shortcut
+      if (answer.length == 0) {
+        return answer;
+      }
     }
+
+    return answer;
   }
 
   // Solves with backtracking.
