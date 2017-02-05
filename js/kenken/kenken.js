@@ -150,3 +150,30 @@ class Puzzle {
     // XXX
   }
 }
+
+// Creates a Puzzle whose constraints just represent a valid Sudoku board.
+// 'size' is the length of one side length of the square.
+function anySudoku(size) {
+  let puzzle = new Puzzle(size * size);
+
+  // Each row and column has a container list with just one
+  // legitimate container - the list of 1..size numbers
+  let validNumbers = [];
+  for (let i = 1; i <= size; i++) {
+    validNumbers.push(i);
+  }
+  const containers = [validNumbers];
+
+  for (let i = 0; i < size; i++) {
+    let row = [];
+    let col = [];
+    for (let j = 0; j < size; j++) {
+      row.push(i * size + j);
+      col.push(j * size + i);
+    }
+    puzzle.addConstraint(row, containers);
+    puzzle.addConstraint(col, containers);
+  }
+
+  return puzzle;
+}
