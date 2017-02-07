@@ -146,8 +146,17 @@ class Puzzle {
 
   // Solves with backtracking.
   // values is the variable values that have been figured out so far.
+  // Returns a list of values if there's a solution.
+  // Returns null otherwise.
   solve(values) {
-    // XXX
+    let possible = this.possibleNext(values);
+    for (let nextValue of possible) {
+      const answer = solve(values.concat([nextValue]));
+      if (answer !== null) {
+        return answer;
+      }
+    }
+    return null;
   }
 }
 
