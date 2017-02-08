@@ -117,9 +117,11 @@ class Puzzle {
 
   // Returns a list of the possible values that could come next.
   possibleNext(values) {
-    console.log('XXX possibleNext(', values, ')');
     if (values.length >= this.variables.length) {
       throw 'values is too long for possibleNext';
+    }
+    if (this.variables[values.length] !== null) {
+      return [this.variables[values.length]];
     }
 
     // The constraints that are relevant to the next value
@@ -131,18 +133,26 @@ class Puzzle {
 
     for (let constraintIndex of constraintIndices) {
       let constraint = this.constraints[constraintIndex];
-      console.log('XXX constraint:', constraint);
 
       // Let's find partial solutions, that are at least ok with
       // this constraint.
-      let partials = possibilities(values, constraint.containers);
-      console.log('XXX partials:', partials);
+      // First figure out what values are already filled in, for this
+      // constraint.
+      let alreadyFilled = [];
+      for (let index of constraint.variables) {
+        if (index >= values.length) {
+          break;
+        }
+        alreadyFilled.push(values[index]);
+      }
+      alreadyFilled.sort(); // NOTE: this assumes numbers are < 10 !
+
+      let partials = possibilities(alreadyFilled, constraint.containers);
       if (answer === null) {
         answer = partials;
       } else {
         answer = intersect(answer, partials);
       }
-      console.log('XXX accumulating:', answer);
 
       // Shortcut
       if (answer.length == 0) {
@@ -158,6 +168,9 @@ class Puzzle {
   // Returns a list of values if there's a solution.
   // Returns null otherwise.
   solve(values) {
+    if (values.length === this.variables.length) {
+      return values;
+    }
     let possible = this.possibleNext(values);
     for (let nextValue of possible) {
       const answer = this.solve(values.concat([nextValue]));
@@ -198,8 +211,8 @@ function anySudoku(size) {
 
 const size = 3;
 let board = anySudoku(size);
-let solution = board.solve([]);
-console.log('XXX solution:', solution);
+let solution = board.solve([1, 2, 3]);
+
 let line = [];
 for (let value of solution) {
   line.push(value);
