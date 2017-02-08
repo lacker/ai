@@ -19,6 +19,15 @@ function diff(a, b) {
   }
 }
 
+function shuffle(arr) {
+  for (let i = arr.length - 1; i > 0; i--) {
+    let j = Math.floor(Math.random() * (i + 1));
+    let tmp = arr[i];
+    arr[i] = arr[j];
+    arr[j] = tmp;
+  }
+}
+
 // Merges two ascending lists, deduping.
 function merge(a, b) {
   let answer = [];
@@ -165,15 +174,21 @@ class Puzzle {
 
   // Solves with backtracking.
   // values is the variable values that have been figured out so far.
+  // method can be: 'reverse' or 'random'. others do it in order
   // Returns a list of values if there's a solution.
   // Returns null otherwise.
-  solve(values) {
+  solve(values, method) {
     if (values.length === this.variables.length) {
       return values;
     }
     let possible = this.possibleNext(values);
+    if (method === 'reverse') {
+      possible.reverse();
+    } else if (method === 'random') {
+      shuffle(possible);
+    }
     for (let nextValue of possible) {
-      const answer = this.solve(values.concat([nextValue]));
+      const answer = this.solve(values.concat([nextValue]), method);
       if (answer !== null) {
         return answer;
       }
@@ -209,9 +224,9 @@ function anySudoku(size) {
   return puzzle;
 }
 
-const size = 3;
+const size = 6;
 let board = anySudoku(size);
-let solution = board.solve([1, 2, 3]);
+let solution = board.solve([], 'random');
 
 let line = [];
 for (let value of solution) {
