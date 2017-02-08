@@ -64,6 +64,7 @@ function intersect(a, b) {
       bIndex++;
     }
   }
+  return answer;
 }
 
 // soFar is an ascending list of numbers
@@ -135,11 +136,13 @@ class Puzzle {
       // Let's find partial solutions, that are at least ok with
       // this constraint.
       let partials = possibilities(values, constraint.containers);
+      console.log('XXX partials:', partials);
       if (answer === null) {
         answer = partials;
       } else {
         answer = intersect(answer, partials);
       }
+      console.log('XXX accumulating:', answer);
 
       // Shortcut
       if (answer.length == 0) {
@@ -157,7 +160,7 @@ class Puzzle {
   solve(values) {
     let possible = this.possibleNext(values);
     for (let nextValue of possible) {
-      const answer = solve(values.concat([nextValue]));
+      const answer = this.solve(values.concat([nextValue]));
       if (answer !== null) {
         return answer;
       }
