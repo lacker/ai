@@ -114,18 +114,22 @@ class Puzzle {
 
   // Returns a list of the possible values that could come next.
   possibleNext(values) {
+    console.log('XXX possibleNext(', values, ')');
     if (values.length >= this.variables.length) {
       throw 'values is too long for possibleNext';
     }
 
     // The constraints that are relevant to the next value
-    let constraints = this.constraintsForVariable[values.length];
+    let constraintIndices = this.constraintsForVariable[values.length];
 
     // If answer is non-null, it's a superset of the possible values.
     // This is because any possible value must meet each constraint.
     let answer = null;
 
-    for (let constraint of constraints) {
+    for (let constraintIndex of constraintIndices) {
+      let constraint = this.constraints[constraintIndex];
+      console.log('XXX constraint:', constraint);
+
       // Let's find partial solutions, that are at least ok with
       // this constraint.
       let partials = possibilities(values, constraint.containers);
@@ -185,4 +189,16 @@ function anySudoku(size) {
   }
 
   return puzzle;
+}
+
+const size = 4;
+let board = anySudoku(size);
+let solution = board.solve([]);
+let line = [];
+for (let value of solution) {
+  line.push(value);
+  if (line.length == size) {
+    console.log(line);
+    line = [];
+  }
 }
