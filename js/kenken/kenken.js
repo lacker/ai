@@ -196,9 +196,10 @@ function anySudoku(size) {
   return puzzle;
 }
 
-const size = 4;
+const size = 3;
 let board = anySudoku(size);
 let solution = board.solve([]);
+console.log('XXX solution:', solution);
 let line = [];
 for (let value of solution) {
   line.push(value);
