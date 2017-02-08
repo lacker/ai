@@ -50,6 +50,8 @@ function merge(a, b) {
 // Intersects two ascending lists.
 function intersect(a, b) {
   let answer = [];
+  let aIndex = 0;
+  let bIndex = 0;
   while (aIndex < a.length && bIndex < b.length) {
     if (a[aIndex] < b[bIndex]) {
       aIndex++;
