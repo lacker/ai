@@ -28,6 +28,21 @@ function shuffle(arr) {
   }
 }
 
+function choose(arr) {
+  return arr[Math.floor(Math.random() * arr.length)];
+}
+
+function logSquare(arr) {
+  let line = [];
+  for (let value of arr) {
+    line.push(value);
+    if (line.length == size) {
+      console.log(line);
+      line = [];
+    }
+  }
+}
+
 // Merges two ascending lists, deduping.
 function merge(a, b) {
   let answer = [];
@@ -54,6 +69,68 @@ function merge(a, b) {
     }
   }
   return answer;
+}
+
+// A "cage" here is a list of variable indices from 0 .. sideLength ^ 2 - 1
+// Returns a list of cages
+function randomCages(sideLength) {
+  // indices is just the order we'll process the indices in
+  let indices = [];
+
+  // cageForIndex maps index to the cage it's in, or null if not known yet
+  let cageForIndex = [];
+
+  for (let i = 0; i < sideLength * sideLength; i++) {
+    indices.push(i);
+    cageForIndex.push(null);
+  }
+  shuffle(indices);
+
+  let cages = [];
+  for (let index of indices) {
+    let adjacent = [];
+    if (index % sideLength !== 0) {
+      adjacent.push(index - 1);
+    }
+    if ((index + 1) % sideLength !== 0) {
+      adjacent.push(index + 1);
+    }
+    if (index - sideLength >= 0) {
+      adjacent.push(index - sideLength);
+    }
+    if (index + sideLength < sideLength * sideLength) {
+      adjacent.push(index + sideLength);
+    }
+
+    // Lower cage score is better
+    let bestCage = null;
+    let bestCageScore = 100;
+
+    for (let index of adjacent) {
+      let cage = cageForIndex[index];
+      if (cage === null) {
+        continue;
+      }
+
+      let score = cages[cage].length;
+      if (score >= 4) {
+        continue;
+      }
+      if (score < bestCageScore) {
+        bestCage = cage;
+        bestCageScore = score;
+      }
+    }
+
+    if (bestCage === null) {
+      bestCage = cages.length;
+      cages.push([]);
+    }
+    cageForIndex[index] = bestCage;
+    cages[bestCage].push(index);
+  }
+
+  return cages;
 }
 
 // Intersects two ascending lists.
@@ -224,15 +301,21 @@ function anySudoku(size) {
   return puzzle;
 }
 
-const size = 6;
-let board = anySudoku(size);
-let solution = board.solve([], 'random');
 
-let line = [];
-for (let value of solution) {
-  line.push(value);
-  if (line.length == size) {
-    console.log(line);
-    line = [];
+
+const size = 6;
+/*
+let board = anySudoku(size);
+let solution = board.solve([], 'reverse');
+logSquare(solution);
+*/
+
+let cages = randomCages(6);
+let x = [];
+for (let i = 0; i < cages.length; i++) {
+  let cage = cages[i];
+  for (let index of cage) {
+    x[index] = i;
   }
 }
+logSquare(x);
