@@ -133,6 +133,21 @@ function randomCages(sideLength) {
   return cages;
 }
 
+// Makes the containers for a particular cage
+// operation can be either '*' or '+'
+// result is what everything is supposed to go into
+// each container should be numValues values from [0, size)
+function makeContainers(operation, result, numValues, size) {
+  // XXX
+}
+
+// cage is a list of indices in values.
+// it is thus the "variables" arg to addConstraint.
+// returns an object with {description, containers}.
+function makeCageConstraint(values, cage) {
+  // XXX
+}
+
 // Intersects two ascending lists.
 function intersect(a, b) {
   let answer = [];
@@ -179,6 +194,7 @@ class Puzzle {
     //       A list of sets. The constraint is that the variables must
     //       map to one of these sets. A "set" here is an ascending
     //       list of integers.
+    // description: a string describing this constraint
     this.constraints = [];
 
     // Maps to a list of indices in this.constraints
@@ -190,11 +206,12 @@ class Puzzle {
 
   // The constraint is that the variables specified in 'variables' must
   // be a subset of one of the lists in 'containers'.
-  addConstraint(variables, containers) {
+  addConstraint(variables, containers, description) {
     let index = this.constraints.length;
     this.constraints.push({
       variables: variables,
       containers: containers,
+      description: description,
     });
     for (let v of variables) {
       this.constraintsForVariable[v].push(index);
