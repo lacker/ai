@@ -204,8 +204,12 @@ function makeCageConstraint(values, cage, size) {
   }
   let result = runOperation(operation, numbers);
   let containers = makeContainers(operation, result, cage.length, size);
+  let description = '' + result;
+  if (numbers.length > 1) {
+    description += operation;
+  }
   return {
-    description: '' + result + operation,
+    description: description,
     containers: containers,
   };
 }
