@@ -135,11 +135,14 @@ function randomCages(sideLength) {
 
 // Returns a list of lists.
 // Subsets are in the same order as the superset
-function allSubsets(items, numItems) {
+function allSubsets(items, numItems, allowDupes) {
   if (numItems === 0) {
     return [[]];
   }
-  if (numItems > items.length) {
+  if (!allowDupes && numItems > items.length) {
+    return [];
+  }
+  if (items.length === 0) {
     return [];
   }
   let answer = [];
@@ -147,16 +150,33 @@ function allSubsets(items, numItems) {
   // First handle the cases where we do take the first item
   let firstItem = items[0];
   let otherItems = items.slice(1);
-  for (let tail of allSubsets(otherItems, numItems - 1)) {
+  let tails = allSubsets(
+    allowDupes ? items : otherItems,
+    numItems - 1,
+    allowDupes);
+  for (let tail of tails) {
     answer.push([firstItem].concat(tail));
   }
 
   // Then handle the cases where we don't take the first item
-  return answer.concat(allSubsets(otherItems, numItems));
+  return answer.concat(allSubsets(otherItems, numItems, allowDupes));
+}
+
+// operation can be either '*' or '+'
+function runOperation(operation, numbers) {
+  switch (operation) {
+    case '+':
+    return numbers.reduce((a, b) => (a + b), 0);
+
+    case '*':
+    return numbers.reduce((a, b) => (a * b), 1);
+
+    default:
+    throw new Error('bad operation: ' + operation);
+  }
 }
 
 // Makes the containers for a particular cage
-// operation can be either '*' or '+'
 // result is what everything is supposed to go into
 // each container should be numValues values in [1, size]
 function makeContainers(operation, result, numValues, size) {
@@ -165,19 +185,8 @@ function makeContainers(operation, result, numValues, size) {
   for (let i = 1; i <= size; i++) {
     domain.push(i);
   }
-  for (let container of allSubsets(domain, numValues)) {
-    let res;
-    switch (operation) {
-      case '+':
-      res = container.reduce((a, b) => (a + b), 0);
-      break;
-      case '*':
-      res = container.reduce((a, b) => (a * b), 1);
-      break;
-      default:
-      throw new Error('bad operation: ' + operation);
-    }
-    if (res === result) {
+  for (let container of allSubsets(domain, numValues, true)) {
+    if (runOperation(operation, container) === result) {
       containers.push(container);
     }
   }
@@ -187,8 +196,18 @@ function makeContainers(operation, result, numValues, size) {
 // cage is a list of indices in values.
 // it is thus the "variables" arg to addConstraint.
 // returns an object with {description, containers}.
-function makeCageConstraint(values, cage) {
-  // XXX
+function makeCageConstraint(values, cage, size) {
+  let operation = choose(['*', '+']);
+  let numbers = [];
+  for (let index of cage) {
+    numbers.push(values[index]);
+  }
+  let result = runOperation(operation, numbers);
+  let containers = makeContainers(operation, result, cage.length, size);
+  return {
+    description: '' + result + operation,
+    containers: containers,
+  };
 }
 
 // Intersects two ascending lists.
@@ -365,15 +384,23 @@ function anySudoku(size) {
 
 const size = 6;
 
+// Fill in a puzzle in a sudoku-valid way
+let puzzle = anySudoku(size);
+let values = puzzle.solve([], 'random');
+
 // This code is just to print cages reasonably.
-let cages = randomCages(6);
-let x = [];
+let cages = randomCages(size);
+let cageForIndex = [];
 for (let i = 0; i < cages.length; i++) {
   let cage = cages[i];
   for (let index of cage) {
-    x[index] = i;
+    cageForIndex[index] = i;
   }
+  let constraint = makeCageConstraint(values, cage, size);
+  console.log('constraint', i, '=', constraint);
 }
-logSquare(x);
+console.log();
+logSquare(cageForIndex);
 
-console.log(makeContainers('*', 30, 3, 6));
+console.log();
+logSquare(values);
