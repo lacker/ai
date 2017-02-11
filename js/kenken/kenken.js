@@ -158,9 +158,30 @@ function allSubsets(items, numItems) {
 // Makes the containers for a particular cage
 // operation can be either '*' or '+'
 // result is what everything is supposed to go into
-// each container should be numValues values from [0, size)
+// each container should be numValues values in [1, size]
 function makeContainers(operation, result, numValues, size) {
-  // XXX
+  let containers = [];
+  let domain = [];
+  for (let i = 1; i <= size; i++) {
+    domain.push(i);
+  }
+  for (let container of allSubsets(domain, numValues)) {
+    let res;
+    switch (operation) {
+      case '+':
+      res = container.reduce((a, b) => (a + b), 0);
+      break;
+      case '*':
+      res = container.reduce((a, b) => (a * b), 1);
+      break;
+      default:
+      throw new Error('bad operation: ' + operation);
+    }
+    if (res === result) {
+      containers.push(container);
+    }
+  }
+  return containers;
 }
 
 // cage is a list of indices in values.
@@ -343,12 +364,8 @@ function anySudoku(size) {
 
 
 const size = 6;
-/*
-let board = anySudoku(size);
-let solution = board.solve([], 'reverse');
-logSquare(solution);
-*/
 
+// This code is just to print cages reasonably.
 let cages = randomCages(6);
 let x = [];
 for (let i = 0; i < cages.length; i++) {
@@ -359,4 +376,4 @@ for (let i = 0; i < cages.length; i++) {
 }
 logSquare(x);
 
-console.log(allSubsets([1, 2, 3, 4, 5, 6], 3));
+console.log(makeContainers('*', 30, 3, 6));
