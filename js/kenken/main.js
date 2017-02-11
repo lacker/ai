@@ -10,11 +10,10 @@ import kenken from './kenken';
 
 class Cell extends React.Component {
   render() {
-    if (Math.random() < 0.5) {
-      return <View style={{backgroundColor:'#ff0000'}}/>;
-    } else {
-      return <View style={{backgroundColor:'#0000ff'}}/>;
-    }
+    let color = (Math.random() < 0.5) ? '#f00' : '#00f';
+    return (
+      <View style={[styles.cell, {backgroundColor: color}]} />
+    );
   }
 }
 
@@ -83,7 +82,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
   },
   cell: {
-
+    flex: 1,
   },
 });
 
