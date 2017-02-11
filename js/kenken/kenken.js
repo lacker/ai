@@ -102,7 +102,9 @@ function randomCages(sideLength) {
       adjacent.push(index + sideLength);
     }
 
-    // Lower cage score is better
+    // Lower cage score is better.
+    // Heuristics chosen so that cages can be size-4 but
+    // not so frequently the puzzle has multiple solutions
     let bestCage = null;
     let bestCageScore = 100;
 
@@ -113,6 +115,10 @@ function randomCages(sideLength) {
       }
 
       let score = cages[cage].length;
+
+      if (score === 3 && Math.random() < 0.9) {
+        continue;
+      }
       if (score >= 4) {
         continue;
       }
@@ -355,6 +361,24 @@ class Puzzle {
     }
     return null;
   }
+
+  // Solves twice if possible.
+  // Only once or zero times if that's all that's possible.
+  // Returns a list of solutions.
+  multisolve() {
+    // Solve forwards
+    let solution1 = this.solve([]);
+    if (solution1 === null) {
+      return [];
+    }
+    let solution2 = this.solve([], 'reverse');
+    if (JSON.stringify(solution1) === JSON.stringify(solution2)) {
+      // There's only one solution
+      return [solution1];
+    } else {
+      return [solution1, solution2];
+    }
+  }
 }
 
 // Creates a Puzzle whose constraints just represent a valid Sudoku board.
@@ -384,27 +408,44 @@ function anySudoku(size) {
   return puzzle;
 }
 
+// Returns a valid kenken puzzle.
+// In particular it should have exactly one solution.
+function kenken(size) {
+  let tries = 0;
+  while (true) {
+    tries++;
 
+    // Fill in a puzzle in a sudoku-valid way
+    let puzzle = anySudoku(size);
+    let values = puzzle.solve([], 'random');
+    let cages = randomCages(size);
+
+    // cageForIndex just for visual logging
+    let cageForIndex = [];
+    for (let i = 0; i < cages.length; i++) {
+      let cage = cages[i];
+      for (let index of cage) {
+        cageForIndex[index] = i;
+      }
+      let constraint = makeCageConstraint(values, cage, size);
+      console.log('constraint', i, '=', constraint);
+      puzzle.addConstraint(cage, constraint.containers, constraint.description);
+    }
+
+    console.log();
+    logSquare(cageForIndex);
+    console.log();
+    logSquare(values);
+    console.log();
+    let multi = puzzle.multisolve();
+    console.log(multi);
+    console.log(multi.length);
+    console.log('Try #', tries);
+    if (multi.length === 1) {
+      return puzzle;
+    }
+  }
+}
 
 const size = 6;
-
-// Fill in a puzzle in a sudoku-valid way
-let puzzle = anySudoku(size);
-let values = puzzle.solve([], 'random');
-
-// This code is just to print cages reasonably.
-let cages = randomCages(size);
-let cageForIndex = [];
-for (let i = 0; i < cages.length; i++) {
-  let cage = cages[i];
-  for (let index of cage) {
-    cageForIndex[index] = i;
-  }
-  let constraint = makeCageConstraint(values, cage, size);
-  console.log('constraint', i, '=', constraint);
-}
-console.log();
-logSquare(cageForIndex);
-
-console.log();
-logSquare(values);
+let p = kenken(size);
