@@ -258,10 +258,10 @@ function possibilities(soFar, containers) {
 // Does backtracking
 class Puzzle {
   constructor(numVariables) {
-    this.variables = Array(numVariables).fill(null);
+    this.numVariables = numVariables;
 
     // Each constraint is an object with:
-    // variables: a list of ints, indices in this.variables. In order
+    // variables: a list of ints, indices in [0, numVariables). In order
     // containers:
     //       A list of sets. The constraint is that the variables must
     //       map to one of these sets. A "set" here is an ascending
@@ -271,7 +271,7 @@ class Puzzle {
 
     // Maps to a list of indices in this.constraints
     this.constraintsForVariable = [];
-    for (let v of this.variables) {
+    for (let i = 0; i < this.numVariables; i++) {
       this.constraintsForVariable.push([]);
     }
   }
@@ -292,11 +292,8 @@ class Puzzle {
 
   // Returns a list of the possible values that could come next.
   possibleNext(values) {
-    if (values.length >= this.variables.length) {
+    if (values.length >= this.numVariables) {
       throw 'values is too long for possibleNext';
-    }
-    if (this.variables[values.length] !== null) {
-      return [this.variables[values.length]];
     }
 
     // The constraints that are relevant to the next value
@@ -344,7 +341,7 @@ class Puzzle {
   // Returns a list of values if there's a solution.
   // Returns null otherwise.
   solve(values, method) {
-    if (values.length === this.variables.length) {
+    if (values.length === this.numVariables) {
       return values;
     }
     let possible = this.possibleNext(values);
@@ -428,19 +425,23 @@ function kenken(size) {
         cageForIndex[index] = i;
       }
       let constraint = makeCageConstraint(values, cage, size);
-      console.log('constraint', i, '=', constraint);
-      puzzle.addConstraint(cage, constraint.containers, constraint.description);
+      // console.log('constraint', i, '=', constraint);
+      puzzle.addConstraint(
+        cage, constraint.containers, constraint.description);
     }
+    let multi = puzzle.multisolve();
 
+    /*
     console.log();
     logSquare(cageForIndex);
     console.log();
     logSquare(values);
     console.log();
-    let multi = puzzle.multisolve();
     console.log(multi);
     console.log(multi.length);
     console.log('Try #', tries);
+    */
+
     if (multi.length === 1) {
       return puzzle;
     }
