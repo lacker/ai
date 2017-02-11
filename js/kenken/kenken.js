@@ -405,9 +405,9 @@ function anySudoku(size) {
   return puzzle;
 }
 
-// Returns a valid kenken puzzle.
+// Returns {puzzle, solution} for a valid KenKen puzzle.
 // In particular it should have exactly one solution.
-function kenken(size) {
+export default function kenken(size) {
   let tries = 0;
   while (true) {
     tries++;
@@ -417,7 +417,7 @@ function kenken(size) {
     let values = puzzle.solve([], 'random');
     let cages = randomCages(size);
 
-    // cageForIndex just for visual logging
+    // cageForIndex helps draw cages
     let cageForIndex = [];
     for (let i = 0; i < cages.length; i++) {
       let cage = cages[i];
@@ -429,6 +429,7 @@ function kenken(size) {
       puzzle.addConstraint(
         cage, constraint.containers, constraint.description);
     }
+    puzzle.cageForIndex = cageForIndex;
     let multi = puzzle.multisolve();
 
     /*
@@ -443,7 +444,10 @@ function kenken(size) {
     */
 
     if (multi.length === 1) {
-      return puzzle;
+      return {
+        puzzle: puzzle,
+        solution: multi[0],
+      };
     }
   }
 }
