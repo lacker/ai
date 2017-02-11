@@ -133,6 +133,28 @@ function randomCages(sideLength) {
   return cages;
 }
 
+// Returns a list of lists.
+// Subsets are in the same order as the superset
+function allSubsets(items, numItems) {
+  if (numItems === 0) {
+    return [[]];
+  }
+  if (numItems > items.length) {
+    return [];
+  }
+  let answer = [];
+
+  // First handle the cases where we do take the first item
+  let firstItem = items[0];
+  let otherItems = items.slice(1);
+  for (let tail of allSubsets(otherItems, numItems - 1)) {
+    answer.push([firstItem].concat(tail));
+  }
+
+  // Then handle the cases where we don't take the first item
+  return answer.concat(allSubsets(otherItems, numItems));
+}
+
 // Makes the containers for a particular cage
 // operation can be either '*' or '+'
 // result is what everything is supposed to go into
@@ -336,3 +358,5 @@ for (let i = 0; i < cages.length; i++) {
   }
 }
 logSquare(x);
+
+console.log(allSubsets([1, 2, 3, 4, 5, 6], 3));
