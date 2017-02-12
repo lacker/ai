@@ -18,11 +18,18 @@ class Cell extends React.Component {
   }
 
   render() {
-    // Customizing the style
+    // Figure out if this cell should display the description
     let cageNum = this.props.cageForIndex[this.props.index];
+    let descriptionIndex = this.props.cageForIndex.indexOf(cageNum);
+    let description = (descriptionIndex === this.props.index) && (
+      <Text style={styles.description}>
+        {this.props.descriptions[cageNum]}
+      </Text>
+    );
+
+    // Figure out the borders
     let custom = {};
     let border = '#000';
-
     if (this.props.index < SIZE || this.cageBorder(-SIZE)) {
       custom.borderTopColor = border;
     }
@@ -37,7 +44,13 @@ class Cell extends React.Component {
     }
 
     return (
-      <View style={[styles.cell, custom]} />
+      <View style={[styles.cell, custom]}>
+        <View style={{flex: 1}}>
+          {description}
+        </View>
+        <View style={{flex: 2, backgroundColor: '#fee'}} />
+        <View style={{flex: 1}} />
+      </View>
     );
   }
 }
@@ -67,6 +80,7 @@ class App extends React.Component {
           key={'cell' + index}
           index={index}
           cageForIndex={this.puzzle.cageForIndex}
+          descriptions={this.puzzle.descriptions}
           />
       );
     }
@@ -121,6 +135,9 @@ const styles = StyleSheet.create({
     flex: 1,
     borderWidth: 1,
     borderColor: '#fafafa',
+  },
+  description: {
+    marginLeft: 2,
   },
 });
 

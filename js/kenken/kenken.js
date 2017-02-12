@@ -419,6 +419,7 @@ export default function kenken(size) {
 
     // cageForIndex helps draw cages
     let cageForIndex = [];
+    let descriptions = [];
     for (let i = 0; i < cages.length; i++) {
       let cage = cages[i];
       for (let index of cage) {
@@ -428,8 +429,10 @@ export default function kenken(size) {
       // console.log('constraint', i, '=', constraint);
       puzzle.addConstraint(
         cage, constraint.containers, constraint.description);
+      descriptions.push(constraint.description);
     }
     puzzle.cageForIndex = cageForIndex;
+    puzzle.descriptions = descriptions;
     let multi = puzzle.multisolve();
 
     console.log('XXX');
