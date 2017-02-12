@@ -83,16 +83,49 @@ class App extends React.Component {
   constructor(props) {
     super(props);
 
+    this.state = {playing: true};
+    this.newGame = this.newGame.bind(this);
+  }
+
+  newGame() {
+    this.setState({playing: false});
+    setTimeout(() => {
+      this.setState({playing: true});
+    }, 3000);
+  }
+
+  render() {
+    if (!this.state.playing) {
+      return (
+        <View style={styles.container}>
+          <Text style={{textAlign: 'center', fontSize: 200}}>
+            😍 
+          </Text>
+        </View>
+      );
+    }
+    return <Game number={this.state.number} newGame={this.newGame}/>;
+  }
+}
+
+class Game extends React.Component {
+  constructor(props) {
+    super(props);
+
     let k = kenken(SIZE);
     this.puzzle = k.puzzle;
     this.solution = k.solution;
-    let answer = [];
-    for (let i = 0; i < SIZE; i++) {
-      answer.push(Array(SIZE).fill(null));
+    this.answer = Array(SIZE * SIZE).fill(null);
+  }
+
+  report(index, value) {
+    this.answer[index] = value;
+    console.log('sol:', this.solution);
+    console.log('ans:', this.answer);
+    if (this.solution.join(',') === this.answer.join(',')) {
+      console.log('new game');
+      this.props.newGame();
     }
-    this.state = {
-      answer: answer,
-    };
   }
 
   renderRow(i) {
@@ -105,7 +138,7 @@ class App extends React.Component {
           index={index}
           cageForIndex={this.puzzle.cageForIndex}
           descriptions={this.puzzle.descriptions}
-          report={t => console.log(t)}
+          report={t => this.report(index, t)}
           />
       );
     }
