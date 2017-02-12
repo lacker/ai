@@ -8,11 +8,28 @@ import {
 } from 'react-native';
 import kenken from './kenken';
 
+const SIZE = 6;
+
 class Cell extends React.Component {
-  render() {
-    let color = (Math.random() < 0.5) ? '#f00' : '#00f';
+  cageBorder(delta) {
     return (
-      <View style={[styles.cell, {backgroundColor: color}]} />
+      this.props.cageForIndex[this.props.index] !==
+      this.props.cageForIndex[this.props.index + delta]);
+  }
+
+  render() {
+    // Customizing the style
+    let cageNum = this.props.cageForIndex[this.props.index];
+    let custom = {
+      backgroundColor: (cageNum % 2 == 0) ? '#fdd' : '#ddf',
+    };
+
+    if (this.props.index < SIZE || this.cageBorder(-SIZE)) {
+      custom.borderTopWidth = 1;
+    }
+
+    return (
+      <View style={[styles.cell, custom]} />
     );
   }
 }
@@ -21,13 +38,12 @@ class App extends React.Component {
   constructor(props) {
     super(props);
 
-    this.size = 6;
-    let k = kenken(this.size);
+    let k = kenken(SIZE);
     this.puzzle = k.puzzle;
     this.solution = k.solution;
     let answer = [];
-    for (let i = 0; i < this.size; i++) {
-      answer.push(Array(this.size).fill(null));
+    for (let i = 0; i < SIZE; i++) {
+      answer.push(Array(SIZE).fill(null));
     }
     this.state = {
       answer: answer,
@@ -36,8 +52,14 @@ class App extends React.Component {
 
   renderRow(i) {
     let cells = [];
-    for (let j = 0; j < this.size; j++) {
-      cells.push(<Cell key={'cell' + i + '-' + j}/>);
+    for (let j = 0; j < SIZE; j++) {
+      let index = SIZE * i + j;
+      cells.push(
+        <Cell
+          key={'cell' + index}
+          index={index}
+          cageForIndex={this.puzzle.cageForIndex}
+        />);
     }
     return (
       <View style={styles.row} key={'row' + i}>
@@ -49,9 +71,12 @@ class App extends React.Component {
   render() {
     let {height, width} = Dimensions.get('window');
     let dim = Math.min(height, width);
+    while (dim % 6 !== 1) {
+      dim--;
+    }
 
     let rows = [];
-    for (let i = 0; i < this.size; i++) {
+    for (let i = 0; i < SIZE; i++) {
       rows.push(this.renderRow(i));
     }
     return (
@@ -76,6 +101,8 @@ const styles = StyleSheet.create({
   board: {
     backgroundColor: '#ccc',
     alignItems: 'stretch',
+    borderWidth: 1,
+    borderColor: '#000',
   },
   row: {
     flex: 1,
@@ -83,6 +110,7 @@ const styles = StyleSheet.create({
   },
   cell: {
     flex: 1,
+    borderColor: '#000',
   },
 });
 

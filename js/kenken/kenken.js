@@ -432,7 +432,10 @@ export default function kenken(size) {
     puzzle.cageForIndex = cageForIndex;
     let multi = puzzle.multisolve();
 
-    /*
+    console.log('XXX');
+    logSquare(cageForIndex);
+
+    /* I used this to debug how fast it would take to generate a puzzle.
     console.log();
     logSquare(cageForIndex);
     console.log();
