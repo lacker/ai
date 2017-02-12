@@ -2,8 +2,10 @@ import Exponent from 'exponent';
 import React from 'react';
 import {
   Dimensions,
+  Keyboard,
   StyleSheet,
   Text,
+  TextInput,
   View,
 } from 'react-native';
 import kenken from './kenken';
@@ -11,10 +13,24 @@ import kenken from './kenken';
 const SIZE = 6;
 
 class Cell extends React.Component {
+  constructor(props) {
+    super(props);
+
+    this.handleChangeText = this.handleChangeText.bind(this);
+    this.state = { text: '' };
+  }
+
   cageBorder(delta) {
     return (
       this.props.cageForIndex[this.props.index] !==
       this.props.cageForIndex[this.props.index + delta]);
+  }
+
+  handleChangeText(newText) {
+    Keyboard.dismiss();
+    let text = newText.replace(/[7890]/g, '')
+    this.props.report(text);
+    this.setState({text: text});
   }
 
   render() {
@@ -48,7 +64,15 @@ class Cell extends React.Component {
         <View style={{flex: 1}}>
           {description}
         </View>
-        <View style={{flex: 2, backgroundColor: '#fee'}} />
+        <View style={{flex: 2}}>
+          <TextInput
+            style={{flex: 1, fontSize: 32, textAlign: 'center'}}
+            keyboardType='number-pad'
+            maxLength={4}
+            onChangeText={this.handleChangeText}
+            value={this.state.text}
+            />
+        </View>
         <View style={{flex: 1}} />
       </View>
     );
@@ -81,6 +105,7 @@ class App extends React.Component {
           index={index}
           cageForIndex={this.puzzle.cageForIndex}
           descriptions={this.puzzle.descriptions}
+          report={t => console.log(t)}
           />
       );
     }
