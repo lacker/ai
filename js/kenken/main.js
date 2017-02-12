@@ -20,12 +20,20 @@ class Cell extends React.Component {
   render() {
     // Customizing the style
     let cageNum = this.props.cageForIndex[this.props.index];
-    let custom = {
-      backgroundColor: (cageNum % 2 == 0) ? '#fdd' : '#ddf',
-    };
+    let custom = {};
+    let border = '#000';
 
     if (this.props.index < SIZE || this.cageBorder(-SIZE)) {
-      custom.borderTopWidth = 1;
+      custom.borderTopColor = border;
+    }
+    if (this.props.index >= SIZE * SIZE - SIZE || this.cageBorder(SIZE)) {
+      custom.borderBottomColor = border;
+    }
+    if (this.props.index % SIZE === 0 || this.cageBorder(-1)) {
+      custom.borderLeftColor = border;
+    }
+    if (this.props.index % SIZE === SIZE - 1 || this.cageBorder(1)) {
+      custom.borderRightColor = border;
     }
 
     return (
@@ -59,7 +67,8 @@ class App extends React.Component {
           key={'cell' + index}
           index={index}
           cageForIndex={this.puzzle.cageForIndex}
-        />);
+          />
+      );
     }
     return (
       <View style={styles.row} key={'row' + i}>
@@ -71,7 +80,7 @@ class App extends React.Component {
   render() {
     let {height, width} = Dimensions.get('window');
     let dim = Math.min(height, width);
-    while (dim % 6 !== 1) {
+    while (dim % 6 !== 2) {
       dim--;
     }
 
@@ -99,7 +108,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   board: {
-    backgroundColor: '#ccc',
+    backgroundColor: '#fff',
     alignItems: 'stretch',
     borderWidth: 1,
     borderColor: '#000',
@@ -110,7 +119,8 @@ const styles = StyleSheet.create({
   },
   cell: {
     flex: 1,
-    borderColor: '#000',
+    borderWidth: 1,
+    borderColor: '#fafafa',
   },
 });
 
