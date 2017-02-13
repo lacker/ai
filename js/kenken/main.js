@@ -35,11 +35,10 @@ class Cell extends React.Component {
 
   render() {
     // Figure out if this cell should display the description
-    let cageNum = this.props.cageForIndex[this.props.index];
-    let descriptionIndex = this.props.cageForIndex.indexOf(cageNum);
-    let description = (descriptionIndex === this.props.index) && (
+    let descriptionText = this.props.descriptions[this.props.index];
+    let description = (descriptionText !== null) && (
       <Text style={styles.description}>
-        {this.props.descriptions[cageNum]}
+        {descriptionText}
       </Text>
     );
 
@@ -99,7 +98,7 @@ class App extends React.Component {
       return (
         <View style={styles.container}>
           <Text style={{textAlign: 'center', fontSize: 200}}>
-            😍 
+            😍
           </Text>
         </View>
       );

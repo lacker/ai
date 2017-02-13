@@ -71,9 +71,26 @@ function merge(a, b) {
   return answer;
 }
 
+// Returns a list of two indices that have the same value. Randomly
+function makeHeartCage(values) {
+  let index1 = Math.floor(Math.random() * values.length);
+  let heartValue = values[index1];
+  let possible = [];
+  for (let i = 0; i < values.length; i++) {
+    if (values[i] === heartValue && i !== index1) {
+      possible.push(i);
+    }
+  }
+  let index2 = choose(possible);
+  let answer = [index1, index2];
+  answer.sort((a, b) => (a - b));
+  return answer;
+}
+
 // A "cage" here is a list of variable indices from 0 .. sideLength ^ 2 - 1
+// exclude is a list of indices to exclude because they already got caged
 // Returns a list of cages
-function randomCages(sideLength) {
+function randomCages(sideLength, exclude) {
   // indices is just the order we'll process the indices in
   let indices = [];
 
@@ -88,6 +105,9 @@ function randomCages(sideLength) {
 
   let cages = [];
   for (let index of indices) {
+    if (exclude.includes(index)) {
+      continue;
+    }
     let adjacent = [];
     if (index % sideLength !== 0) {
       adjacent.push(index - 1);
@@ -415,27 +435,44 @@ export default function kenken(size) {
     // Fill in a puzzle in a sudoku-valid way
     let puzzle = anySudoku(size);
     let values = puzzle.solve([], 'random');
-    let cages = randomCages(size);
+    let heartCage = makeHeartCage(values);
+    let cages = randomCages(size, heartCage);
 
     // cageForIndex helps draw cages
     let cageForIndex = [];
-    let descriptions = [];
+
+    // Maps index to the description to *show* there
+    let descriptions = Array(size * size).fill(null);
+
+    // Index zero is the heartCage
+    for (let heartIndex of heartCage) {
+      descriptions[heartIndex] = '❤️️';
+      cageForIndex[heartIndex] = 0;
+    }
+    let heartConstraint = [];
+    for (let i = 1; i <= size; i++) {
+      heartConstraint.push([i, i]);
+    }
+    puzzle.addConstraint(heartCage, heartConstraint, 'h');
+
     for (let i = 0; i < cages.length; i++) {
       let cage = cages[i];
       for (let index of cage) {
-        cageForIndex[index] = i;
+        cageForIndex[index] = i + 1;
       }
       let constraint = makeCageConstraint(values, cage, size);
       // console.log('constraint', i, '=', constraint);
       puzzle.addConstraint(
         cage, constraint.containers, constraint.description);
-      descriptions.push(constraint.description);
+      descriptions[Math.min(...cage)] = constraint.description;
     }
     puzzle.cageForIndex = cageForIndex;
     puzzle.descriptions = descriptions;
     let multi = puzzle.multisolve();
 
-    console.log('XXX');
+    console.log('XXX', descriptions);
+    logSquare(values);
+    console.log();
     logSquare(cageForIndex);
 
     /* I used this to debug how fast it would take to generate a puzzle.
