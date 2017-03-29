@@ -1,0 +1,5 @@
+{
+    "name" : "bucklescript",
+    "sources" : { "dir" :  "src"}
+}
+
