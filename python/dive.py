@@ -13,6 +13,8 @@ def evaluate(alist):
   rest = alist[1:]
 
   if first == 'quote':
-    return rest
+    if len(rest) != 1:
+      raise Exception('quote takes exactly one arg')
+    return rest[0]
   else:
     raise Exception('unrecognized functiony thing: ' + first)
