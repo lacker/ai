@@ -16,5 +16,8 @@ def evaluate(alist):
     if len(rest) != 1:
       raise Exception('quote takes exactly one arg')
     return rest[0]
+  if first == 'car':
+    arg = evaluate(rest[0])
+    return arg[0]
   else:
     raise Exception('unrecognized functiony thing: ' + first)
