@@ -19,5 +19,8 @@ def evaluate(alist):
   if first == 'car':
     arg = evaluate(rest[0])
     return arg[0]
+  if first == 'cdr':
+    arg = evaluate(rest[0])
+    return arg[1]
   else:
     raise Exception('unrecognized functiony thing: ' + first)
