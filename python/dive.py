@@ -22,5 +22,11 @@ def evaluate(alist):
   if first == 'cdr':
     arg = evaluate(rest[0])
     return arg[1]
+  if first == 'if':
+    cond = evaluate(rest[0])
+    if cond:
+      return evaluate(rest[1])
+    else:
+      return evalute(rest[2])
   else:
     raise Exception('unrecognized functiony thing: ' + first)
