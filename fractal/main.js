@@ -2,8 +2,8 @@
 
 const Jimp = require('jimp');
 
-jimp = new Jimp(500, 1500, 0x00000000, function (error, image) {
-  console.log(error, canvas);
+jimp = new Jimp(500, 1500, 0x00000000, (error, image) => {
+  console.log(error, image);
   image.scan(0, 0, image.bitmap.width, image.bitmap.height).then(
     (x, y, idx) => {
       // x, y is the position of this pixel on the image
@@ -19,6 +19,6 @@ jimp = new Jimp(500, 1500, 0x00000000, function (error, image) {
       this.bitmap.data[ idx + 2 ] = blue;
       this.bitmap.data[ idx + 3 ] = alpha;
 
-      // TODO: write out
+      image.write('output.png');
     });
 });
